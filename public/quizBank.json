@@ -1,0 +1,116 @@
+{
+    "chapter1": [
+        {
+            "question": "What does RGB stand for in image processing?",
+            "options": [
+                "Red Green Blue",
+                "Random Gray Base",
+                "Raster Graphic Binary",
+                "Read Group Base"
+            ],
+            "correctAnswer": "Red Green Blue"
+        },
+        {
+            "question": "Which filter is commonly used for edge detection?",
+            "options": [
+                "Sobel",
+                "Gaussian",
+                "Median",
+                "Box"
+            ],
+            "correctAnswer": "Sobel"
+        },
+        {
+            "question": "Which image format supports transparency?",
+            "options": [
+                "JPEG",
+                "BMP",
+                "PNG",
+                "TIFF"
+            ],
+            "correctAnswer": "PNG"
+        },
+        {
+            "question": "What is the value range for pixel intensity in 8-bit grayscale?",
+            "options": [
+                "0-128",
+                "0-255",
+                "1-100",
+                "0-1000"
+            ],
+            "correctAnswer": "0-255"
+        },
+        {
+            "question": "Which of the following is a lossless image format?",
+            "options": [
+                "JPEG",
+                "PNG",
+                "GIF",
+                "WebP"
+            ],
+            "correctAnswer": "PNG"
+        },
+        {
+            "question": "What does a histogram show in image processing?",
+            "options": [
+                "Color Depth",
+                "Image Size",
+                "Pixel Intensity Distribution",
+                "Resolution"
+            ],
+            "correctAnswer": "Pixel Intensity Distribution"
+        }
+    ],
+    "chapter2": [
+        {
+            "question": "What is the primary use of thresholding in image processing?",
+            "options": [
+                "Blurring",
+                "Edge detection",
+                "Segmentation",
+                "Resizing"
+            ],
+            "correctAnswer": "Segmentation"
+        },
+        {
+            "question": "Which filter helps in reducing salt and pepper noise?",
+            "options": [
+                "Median filter",
+                "Gaussian filter",
+                "Sobel filter",
+                "Laplacian filter"
+            ],
+            "correctAnswer": "Median filter"
+        },
+        {
+            "question": "What does convolution in image processing mean?",
+            "options": [
+                "Color transformation",
+                "Matrix multiplication",
+                "Filter application",
+                "Image addition"
+            ],
+            "correctAnswer": "Filter application"
+        },
+        {
+            "question": "Which technique is used for detecting boundaries in images?",
+            "options": [
+                "Thresholding",
+                "Edge Detection",
+                "Histogram Equalization",
+                "Morphology"
+            ],
+            "correctAnswer": "Edge Detection"
+        },
+        {
+            "question": "Which of the following operations is used in morphological processing?",
+            "options": [
+                "Erosion",
+                "Zoom",
+                "Crop",
+                "Resize"
+            ],
+            "correctAnswer": "Erosion"
+        }
+    ]
+}

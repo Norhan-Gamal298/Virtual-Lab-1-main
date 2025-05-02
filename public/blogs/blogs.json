@@ -1,0 +1,50 @@
+[
+    {
+        "id": 1,
+        "title": "Introduction to Image Processing",
+        "author": "John Doe",
+        "createdAt": "2025-04-27T01:20:00Z",
+        "content": "Figma has become a household name in the UIUX community. Being a truly browser-first product (not just storage in the cloud - no installation, no patching, no updates) and with highly collaborative features that no other player could think of or execute, Figma emerged as the clear market leader. You can design anything on Figma – from a cool logo to native apps and much more. But design is just the beginning of building a world-class product. You need to bring your product to life by actually building it - Writing the damn code! That’s where Locofy.ai comes in. While Figma is enough to get the ball rolling, Locofy.ai even takes it further by enabling anyone with a Figma design to get high-quality, pixel-perfect code. Hence, accelerating the building process – with minimal time and a shallow learning curve, builders can now quickly and easily go from Figma to code. Validating an idea? Revamping your UI? The Locofy plugin puts Figma on steroids by taking your idea from design to websites and app.",
+        "image": "https://miro.medium.com/v2/resize:fit:1400/format:webp/1*08_mC73bTLmACsZibB15qA.jpeg"
+    },
+    {
+        "id": 2,
+        "title": "Understanding Image Segmentation Techniques",
+        "author": "Jane Smith",
+        "createdAt": "2025-04-25T09:15:00Z",
+        "content": "Image segmentation is a critical process in image analysis. It involves partitioning an image into multiple segments or regions to simplify its representation. Popular techniques include thresholding, clustering, and edge-based methods. This blog explores these techniques and how they are used in various industries.",
+        "image": "https://mindy-support.com/wp-content/uploads/2022/10/types-of-image-segmentation-1.jpg"
+    },
+    {
+        "id": 3,
+        "title": "The Role of Filters in Image Processing",
+        "author": "Emily Johnson",
+        "createdAt": "2025-04-24T14:45:00Z",
+        "content": "Filters are one of the most important tools in image processing. They allow us to smooth, sharpen, or enhance images based on specific requirements. This blog dives into the different types of filters, such as low-pass and high-pass filters, and their practical applications.",
+        "image": "https://ai.stanford.edu/~syyeung/cvweb/Pictures1/sharpening2.png"
+    },
+    {
+        "id": 4,
+        "title": "Edge Detection: Techniques and Algorithms",
+        "author": "Michael Brown",
+        "createdAt": "2025-04-23T16:20:00Z",
+        "content": "Edge detection is a fundamental technique used to identify boundaries of objects in an image. Common algorithms include the Sobel operator, Canny edge detection, and Laplacian of Gaussian. In this blog, we’ll explore these methods and their use cases in computer vision and image analysis.",
+        "image": "https://blog.roboflow.com/content/images/size/w1200/format/webp/2024/06/Copy-of-Blog-Image-Template-1--1.jpg"
+    },
+    {
+        "id": 5,
+        "title": "Enhancing Images Using Histogram Equalization",
+        "author": "Sophia Davis",
+        "createdAt": "2025-04-22T11:10:00Z",
+        "content": "Histogram equalization is a powerful technique for improving the contrast of an image. By adjusting the brightness and contrast of an image, it can make details more visible. In this post, we’ll explore how histogram equalization works and its application in image processing.",
+        "image": "https://www.mathworks.com/discovery/image-enhancement/_jcr_content/mainParsys/image_1.adapt.full.medium.jpg/1744202086287.jpg"
+    },
+    {
+        "id": 6,
+        "title": "Machine Learning and Image Processing",
+        "author": "David Lee",
+        "createdAt": "2025-04-21T08:05:00Z",
+        "content": "Machine learning has revolutionized image processing by automating many tasks, such as image classification, object detection, and segmentation. This blog discusses the synergy between machine learning and image processing, highlighting popular algorithms like Convolutional Neural Networks (CNNs) and their impact on the field.",
+        "image": "https://media.licdn.com/dms/image/v2/C5612AQEHUufYdYCNrQ/article-cover_image-shrink_600_2000/article-cover_image-shrink_600_2000/0/1522480552138?e=1750896000&v=beta&t=T22k7SjPa3EflI_cjXMhsyIgOO-DBQYOQRqIAohp7Ps"
+    }
+]

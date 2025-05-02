@@ -1,0 +1,312 @@
+[
+    {
+        "question": "What is the primary goal of image processing?",
+        "options": [
+            "Enhance images",
+            "Destroy images",
+            "Blur images",
+            "Shrink images"
+        ],
+        "answer": "Enhance images"
+    },
+    {
+        "question": "Which of the following is a common application of image processing?",
+        "options": [
+            "Video compression",
+            "Image compression",
+            "All of the above",
+            "Only image enhancement"
+        ],
+        "answer": "All of the above"
+    },
+    {
+        "question": "Which domain involves modifying pixel values directly?",
+        "options": [
+            "Frequency domain",
+            "Spatial domain",
+            "Time domain",
+            "None"
+        ],
+        "answer": "Spatial domain"
+    },
+    {
+        "question": "Which spectrum range is most commonly used in digital image processing?",
+        "options": [
+            "Gamma rays",
+            "Ultraviolet",
+            "Visible light",
+            "X-rays"
+        ],
+        "answer": "Visible light"
+    },
+    {
+        "question": "MRI is an example of which imaging modality?",
+        "options": [
+            "Ultrasound imaging",
+            "Magnetic Resonance Imaging",
+            "X-ray imaging",
+            "Nuclear imaging"
+        ],
+        "answer": "Magnetic Resonance Imaging"
+    },
+    {
+        "question": "Which is NOT a type of image processing?",
+        "options": [
+            "Analog",
+            "Digital",
+            "Manual",
+            "None of the above"
+        ],
+        "answer": "Manual"
+    },
+    {
+        "question": "In image acquisition, what is the role of a sensor?",
+        "options": [
+            "Display image",
+            "Capture image",
+            "Store image",
+            "Edit image"
+        ],
+        "answer": "Capture image"
+    },
+    {
+        "question": "In electromagnetic spectrum, which wave has the shortest wavelength?",
+        "options": [
+            "Radio waves",
+            "X-rays",
+            "Microwaves",
+            "Infrared"
+        ],
+        "answer": "X-rays"
+    },
+    {
+        "question": "Which imaging modality uses sound waves?",
+        "options": [
+            "MRI",
+            "Ultrasound",
+            "X-ray",
+            "CT Scan"
+        ],
+        "answer": "Ultrasound"
+    },
+    {
+        "question": "Digital images are represented by:",
+        "options": [
+            "Continuous signals",
+            "Discrete signals",
+            "Analog signals",
+            "Random signals"
+        ],
+        "answer": "Discrete signals"
+    },
+    {
+        "question": "What is an image histogram?",
+        "options": [
+            "A plot of pixel intensity frequency",
+            "A plot of image size",
+            "A 3D model of image",
+            "A Fourier transform"
+        ],
+        "answer": "A plot of pixel intensity frequency"
+    },
+    {
+        "question": "Which device converts light into electronic signals?",
+        "options": [
+            "Monitor",
+            "Camera Sensor",
+            "Printer",
+            "Speaker"
+        ],
+        "answer": "Camera Sensor"
+    },
+    {
+        "question": "CT scans use which type of radiation?",
+        "options": [
+            "Ultrasound",
+            "X-ray",
+            "Infrared",
+            "Microwave"
+        ],
+        "answer": "X-ray"
+    },
+    {
+        "question": "The process of converting an analog image into digital form is called?",
+        "options": [
+            "Quantization",
+            "Sampling",
+            "Scanning",
+            "Acquisition"
+        ],
+        "answer": "Sampling"
+    },
+    {
+        "question": "Which application is most related to medical imaging?",
+        "options": [
+            "Photo editing",
+            "MRI",
+            "Image compression",
+            "3D modeling"
+        ],
+        "answer": "MRI"
+    },
+    {
+        "question": "Which is an example of a linear operation?",
+        "options": [
+            "Median filtering",
+            "Histogram equalization",
+            "Low-pass filtering",
+            "Morphological operations"
+        ],
+        "answer": "Low-pass filtering"
+    },
+    {
+        "question": "What determines the spatial resolution of an image?",
+        "options": [
+            "Number of bits per pixel",
+            "Number of pixels per unit area",
+            "Color depth",
+            "File size"
+        ],
+        "answer": "Number of pixels per unit area"
+    },
+    {
+        "question": "Which type of imaging is used to see inside the human body without surgery?",
+        "options": [
+            "Photography",
+            "Medical imaging",
+            "Microscopy",
+            "Astronomy"
+        ],
+        "answer": "Medical imaging"
+    },
+    {
+        "question": "Higher sampling rate results in?",
+        "options": [
+            "Higher resolution",
+            "Lower resolution",
+            "No change",
+            "Pixelation"
+        ],
+        "answer": "Higher resolution"
+    },
+    {
+        "question": "An image can be described as a function of two variables. Which are they?",
+        "options": [
+            "x and y",
+            "length and width",
+            "height and weight",
+            "amplitude and time"
+        ],
+        "answer": "x and y"
+    },
+    {
+        "question": "Which of these is an imaging sensor?",
+        "options": [
+            "Laser",
+            "Scanner",
+            "Printer",
+            "Solar panel"
+        ],
+        "answer": "Scanner"
+    },
+    {
+        "question": "In image processing, noise is considered:",
+        "options": [
+            "Desirable",
+            "Undesirable",
+            "Mandatory",
+            "Essential"
+        ],
+        "answer": "Undesirable"
+    },
+    {
+        "question": "The visible spectrum ranges between:",
+        "options": [
+            "400nm to 700nm",
+            "100nm to 200nm",
+            "900nm to 1200nm",
+            "10nm to 20nm"
+        ],
+        "answer": "400nm to 700nm"
+    },
+    {
+        "question": "An 8-bit image has how many gray levels?",
+        "options": [
+            "64",
+            "128",
+            "256",
+            "512"
+        ],
+        "answer": "256"
+    },
+    {
+        "question": "In a color image, each pixel typically has how many components?",
+        "options": [
+            "1",
+            "2",
+            "3",
+            "4"
+        ],
+        "answer": "3"
+    },
+    {
+        "question": "Compression is used to:",
+        "options": [
+            "Increase file size",
+            "Reduce file size",
+            "Enhance color",
+            "Increase pixel size"
+        ],
+        "answer": "Reduce file size"
+    },
+    {
+        "question": "JPEG compression is mainly based on:",
+        "options": [
+            "Fourier Transform",
+            "Histogram Equalization",
+            "Discrete Cosine Transform",
+            "Median Filtering"
+        ],
+        "answer": "Discrete Cosine Transform"
+    },
+    {
+        "question": "Infrared imaging is mostly used for:",
+        "options": [
+            "Medical imaging",
+            "Thermal imaging",
+            "Astronomical imaging",
+            "Microscopy"
+        ],
+        "answer": "Thermal imaging"
+    },
+    {
+        "question": "What kind of images are X-rays?",
+        "options": [
+            "Visible light images",
+            "Thermal images",
+            "Radiographic images",
+            "Microscopic images"
+        ],
+        "answer": "Radiographic images"
+    },
+    {
+        "question": "Which one of these is a source of electromagnetic radiation?",
+        "options": [
+            "Fire",
+            "Radio transmitter",
+            "Battery",
+            "Magnet"
+        ],
+        "answer": "Radio transmitter"
+    },
+    {
+        "question": "Which technology uses gamma rays for imaging?",
+        "options": [
+            "PET scan",
+            "MRI",
+            "CT scan",
+            "Ultrasound"
+        ],
+        "answer": "PET scan"
+    }
+]
