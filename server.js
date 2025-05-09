@@ -6,9 +6,6 @@ import cors from "cors";
 import dotenv from "dotenv";
 import bodyParser from "body-parser";
 
-// Load environment variables from .env file
-dotenv.config();
-
 // Initialize Express App
 const app = express();
 const PORT = 8080;
@@ -18,11 +15,14 @@ app.use(cors()); // Enable Cross-Origin Resource Sharing
 app.use(express.json()); // Parse incoming JSON requests
 app.use(bodyParser.json()); // Parse JSON body (redundant with express.json but kept)
 
+// Load environment variables from .env file
+dotenv.config();
 // Connect to MongoDB
 mongoose
-  .connect(
-    "mongodb+srv://norhangamal298:dtKOXI4k1QF4bxJi@mydbdata.z73pk.mongodb.net/?retryWrites=true&w=majority&appName=mydbdata"
-  )
+  .connect(process.env.MONGO_URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
   .then(() => console.log("MongoDB connected"))
   .catch((err) => {
     console.error("MongoDB connection error:", err);
@@ -155,12 +155,10 @@ app.post("/api/quiz-results", async (req, res) => {
       existingResult.score = score;
       existingResult.totalQuestions = totalQuestions;
       await existingResult.save();
-      res
-        .status(200)
-        .json({
-          message: "Quiz result updated successfully",
-          result: existingResult,
-        });
+      res.status(200).json({
+        message: "Quiz result updated successfully",
+        result: existingResult,
+      });
     } else {
       // Save new quiz result
       const newResult = new QuizResult({
