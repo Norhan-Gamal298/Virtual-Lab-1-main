@@ -59,7 +59,7 @@ export default function Sidebar() {
     return (
         <aside
             className={`markdownSidebar transition-all duration-900 ease-in-out
-                ${sidebarCollapsed ? "w-[50px]" : "w-[440px] bg-[#1a1a1a]"} 
+                ${sidebarCollapsed ? "w-[50px]" : "w-[380px] bg-[#1a1a1a]"} 
                 pb-[3rem] text-white sticky z-40`}
         >
             <div className="sidebarViewport">

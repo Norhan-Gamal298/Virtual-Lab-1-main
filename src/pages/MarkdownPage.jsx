@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
@@ -11,7 +11,9 @@ import {
     FiChevronUp,
     FiChevronDown,
 } from "react-icons/fi";
-import {  useSelector } from "react-redux";
+import { useSelector } from "react-redux";
+
+import VideoNote from "../components/VideoNote"
 
 export default function MarkdownPage() {
     const { topicId } = useParams();
@@ -20,6 +22,9 @@ export default function MarkdownPage() {
     const [headings, setHeadings] = useState([]);
     const [chapters, setChapters] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [notes, setNotes] = useState({});
+    const [currentNote, setCurrentNote] = useState("");
+    const videoRef = useRef(null);
 
     // const dispatch = useDispatch();
     const { user } = useSelector((state) => state.auth);
@@ -85,6 +90,11 @@ export default function MarkdownPage() {
     const prevTopic = currentIndex > 0 ? allTopics[currentIndex - 1] : null;
     const nextTopic = currentIndex < allTopics.length - 1 ? allTopics[currentIndex + 1] : null;
 
+
+
+
+
+
     const extractHeadings = (markdown) => {
         const lines = markdown.split("\n");
         const extractedHeadings = [];
@@ -120,34 +130,41 @@ export default function MarkdownPage() {
 
     const handleNextTopicClick = () => {
         if (user) {
-          // Mark topic as completed in backend
-          fetch('http://localhost:8080/api/update-progress', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              email: user.email,        // user email must be here  // you should have the current chapter ID
-              topicId: topicId          // current topic ID
-            }),
-          })
-          .then(response => response.json())
-          .then(data => {
-            console.log('Progress updated:', data);
-            // After marking as completed, navigate to the next topic
-            navigate(`/docs/${nextTopic.id}`);
-          })
-          .catch(error => {
-            console.error('Error updating progress:', error);
-            // Even if error, maybe still allow navigation
-            navigate(`/docs/${nextTopic.id}`);
-          });
+            // Mark topic as completed in backend
+            fetch('http://localhost:8080/api/update-progress', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    email: user.email,        // user email must be here  // you should have the current chapter ID
+                    topicId: topicId          // current topic ID
+                }),
+            })
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Progress updated:', data);
+                    // After marking as completed, navigate to the next topic
+                    navigate(`/docs/${nextTopic.id}`);
+                })
+                .catch(error => {
+                    console.error('Error updating progress:', error);
+                    // Even if error, maybe still allow navigation
+                    navigate(`/docs/${nextTopic.id}`);
+                });
         } else {
-          // If user not logged in, just navigate
-          navigate(`/docs/${nextTopic.id}`);
+            // If user not logged in, just navigate
+            navigate(`/docs/${nextTopic.id}`);
         }
-      };
-      
+    };
+
+
+
+
+
+
+
+
 
     return (
         <div className="container markdownMain">
@@ -166,7 +183,7 @@ export default function MarkdownPage() {
                                 remarkPlugins={[remarkGfm]}
                                 rehypePlugins={[rehypeRaw]}
                                 components={{
-                                    h1: ({  children }) => {
+                                    h1: ({ children }) => {
                                         const text = String(children).trim();
                                         const id = text.toLowerCase().replace(/[^a-z0-9\s]/g, "").replace(/\s+/g, "-");
                                         return <h1 id={id} className="scroll-mt-24">{children}</h1>;
@@ -212,19 +229,25 @@ export default function MarkdownPage() {
                                             const chapterFolder = currentTopic.path.split('/')[0];
                                             const encodedPath = chapterFolder.replace(/ /g, '%20');
                                             return (
-                                                <video
-                                                    src={`/docs/${encodedPath}/${src}`}
-                                                    controls
-                                                    className="my-4 max-w-full rounded-lg border"
-                                                    {...props}
-                                                />
+                                                <div>
+                                                    {/* <video
+                                                        src={`/docs/${encodedPath}/${src}`}
+                                                        controls
+                                                        className="my-4 max-w-full rounded-lg border"
+                                                        {...props}
+                                                    /> */}
+                                                    <VideoNote
+                                                        videoPath={`/docs/${encodedPath}/${src}`}
+                                                        topicId={topicId}
+                                                    />
+                                                </div>
                                             );
                                         }
 
                                         // fallback
                                         return <video src={src} controls className="my-4 max-w-full rounded-lg border" {...props} />;
                                     },
-                                    iframe: ({  ...props }) => (
+                                    iframe: ({ ...props }) => (
                                         <div className="my-4 aspect-video max-w-full rounded-lg overflow-hidden border">
                                             <iframe {...props} className="w-full h-full" allowFullScreen />
                                         </div>
