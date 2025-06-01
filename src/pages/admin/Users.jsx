@@ -24,7 +24,7 @@ export default function Users() {
         { field: 'email', headerName: 'Email', width: 200, headerClassName: 'dark-header' },
         { field: 'firstName', headerName: 'First Name', width: 150, headerClassName: 'dark-header' },
         { field: 'lastName', headerName: 'Last Name', width: 150, headerClassName: 'dark-header' },
-        {
+        /* {
             field: 'role',
             headerName: 'Role',
             width: 120,
@@ -33,7 +33,7 @@ export default function Users() {
                 const role = params.row?.role || 'user';
                 return typeof role === 'string' ? role.toUpperCase() : 'UNKNOWN';
             }
-        },
+        }, */
         /* {
             field: 'actions',
             headerName: 'Actions',
@@ -58,7 +58,7 @@ export default function Users() {
             const response = await fetch(`http://localhost:8080/api/admin/users/${userId}/block`, {
                 method: 'PATCH',
                 headers: {
-                    'Authorization': `Bearer ${token || localStorage.getItem('token')}`
+                    'Authorization': `Bearer ${token}`
                 }
             });
 
@@ -95,7 +95,8 @@ export default function Users() {
 
             try {
                 const roleFilter = type === 'admins' ? 'admin' : 'user';
-                const authToken = token || localStorage.getItem('token');
+                const authToken = token;
+
 
                 const response = await fetch(`http://localhost:8080/api/admin/users?role=${roleFilter}`, {
                     headers: {

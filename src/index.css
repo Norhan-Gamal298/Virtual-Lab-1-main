@@ -129,6 +129,7 @@
   color: rgba(255, 255, 255, 0.87);
   background-color: #101010;
 
+
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
@@ -148,6 +149,7 @@ body {
   display: flex;
   place-items: center;
   box-sizing: border-box;
+  transition: background-color 0.3s ease;
 }
 
 #root {
@@ -965,7 +967,7 @@ pre {
 
 
 
-*/ .modal-overlay {
+.modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
