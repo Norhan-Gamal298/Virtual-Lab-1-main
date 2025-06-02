@@ -7,8 +7,8 @@ const applications = [
         id: 1,
         title: "Medical Imaging",
         description: "Used to analyze X-rays, MRI, and CT scans for disease detection and diagnosis.",
-        image: (<svg width="800px" height="800px" viewBox="0 0 76 76" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" baseProfile="full" enable-background="new 0 0 76.00 76.00" xml:space="preserve">
-            <path fill="#5865F2" fill-opacity="1" stroke-width="0.2" stroke-linejoin="round" d="M 57.3958,49.0833L 47.5,49.0833L 42.75,63.3333L 40.375,63.3333L 37.6041,26.5209L 34.4375,49.0833L 28.5,49.0833L 22.9583,45.5208L 19,49.0833L 11.0833,49.0833L 11.0833,46.3125L 19,46.3125L 22.9583,42.75L 28.5,46.3125L 31.5883,46.3125L 36.4166,11.4792L 39.1875,11.875L 42.7499,55.0209L 46.3125,46.3125L 57,46.3125L 63.3333,41.1667L 66.5,41.1667L 66.5,43.9375L 63.3333,43.9375L 57.3958,49.0833 Z " />
+        image: (<svg width="800px" height="800px" viewBox="0 0 76 76" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink" version="1.1" baseProfile="full" enableBackground="new 0 0 76.00 76.00" xmlSpace="preserve">
+            <path fill="#5865F2" fillOpacity="1" strokeWidth="0.2" strokeLinejoin="round" d="M 57.3958,49.0833L 47.5,49.0833L 42.75,63.3333L 40.375,63.3333L 37.6041,26.5209L 34.4375,49.0833L 28.5,49.0833L 22.9583,45.5208L 19,49.0833L 11.0833,49.0833L 11.0833,46.3125L 19,46.3125L 22.9583,42.75L 28.5,46.3125L 31.5883,46.3125L 36.4166,11.4792L 39.1875,11.875L 42.7499,55.0209L 46.3125,46.3125L 57,46.3125L 63.3333,41.1667L 66.5,41.1667L 66.5,43.9375L 63.3333,43.9375L 57.3958,49.0833 Z " />
         </svg>
         )
     },
@@ -16,14 +16,14 @@ const applications = [
         id: 2,
         title: "Facial Recognition",
         description: "Helps in identifying individuals for security and authentication.",
-        image: (<svg width="800px" height="800px" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none"><path stroke="#5865F2" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 3H5a2 2 0 0 0-2 2v2m0 10v2a2 2 0 0 0 2 2h2m10 0h2a2 2 0 0 0 2-2v-2m0-10V5a2 2 0 0 0-2-2h-2" /><circle cx="12" cy="9" r="3" stroke="#5865F2" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" /><path stroke="#5865F2" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16c0-2.21-2.239-4-5-4s-5 1.79-5 4" /></svg>)
+        image: (<svg width="800px" height="800px" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none"><path stroke="#5865F2" stroke-linecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 3H5a2 2 0 0 0-2 2v2m0 10v2a2 2 0 0 0 2 2h2m10 0h2a2 2 0 0 0 2-2v-2m0-10V5a2 2 0 0 0-2-2h-2" /><circle cx="12" cy="9" r="3" stroke="#5865F2" stroke-linecap="round" strokeLinejoin="round" strokeWidth="2" /><path stroke="#5865F2" stroke-linecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 16c0-2.21-2.239-4-5-4s-5 1.79-5 4" /></svg>)
     },
     {
         id: 3,
         title: "Agriculture",
-        description: "Monitors crop health and detects pests using drone-captured images.",
-        image: (<svg fill="#5865F2" height="800px" width="800px" version="1.1" id="Icons" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
-            viewBox="0 0 32 32" xml:space="preserve">
+        description: "Monitors crop health and detects pests using",
+        image: (<svg fill="#5865F2" height="800px" width="800px" version="1.1" id="Icons" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink"
+            viewBox="0 0 32 32" xmlSpace="preserve">
             <g>
                 <path d="M12,16c-0.4,0-0.7-0.2-0.9-0.5l-6-10C4.9,5.1,5,4.6,5.3,4.3C5.6,4,6.1,3.9,6.5,4.1l10,6c0.3,0.2,0.5,0.5,0.5,0.9
            C17,13.8,14.8,16,12,16z"/>

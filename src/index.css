@@ -1,8 +1,139 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
-
 @import "tailwindcss";
 
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+
+:root {
+  /* Neutral - Light Mode */
+  --color-neutral-background: #F4F4F4;
+  --color-neutral-surface: #F9F9F9;
+  --color-neutral-border: #E1E1E1;
+  --color-neutral-text-primary: #1A1A1A;
+  --color-neutral-text-secondary: #4D4D4D;
+
+  /* Primary */
+  --color-primary-base: #246BFD;
+  --color-primary-hover: #1A5CE0;
+  --color-primary-pressed: #144FC4;
+  --color-primary-surface-tint: #E8F0FE;
+  --color-primary-text-on-primary: #FFFFFF;
+
+  /* Secondary */
+  --color-secondary-base: #5C6672;
+  --color-secondary-hover: #47505A;
+  --color-secondary-pressed: #39414B;
+  --color-secondary-surface-tint: #E9EAEC;
+
+  /* Success */
+  --color-success-base: #22C55E;
+  --color-success-hover: #16A34A;
+  --color-success-pressed: #15803D;
+  --color-success-surface-tint: #D1FADF;
+
+  /* Warning */
+  --color-warning-base: #FACC15;
+  --color-warning-hover: #EAB308;
+  --color-warning-pressed: #CA8A04;
+  --color-warning-surface-tint: #FEF9C3;
+
+  /* Error */
+  --color-error-base: #F44336;
+  --color-error-hover: #E53935;
+  --color-error-pressed: #D32F2F;
+  --color-error-surface-tint: #FEE2E2;
+
+  /* Shades */
+  --color-shades-light: #F9FAFB;
+  --color-shades-mid: #E5E7EB;
+  --color-shades-dark: #111827;
+}
+
+.dark {
+  /* Neutral - Dark Mode */
+  --color-neutral-background: #0F0F0F;
+  --color-neutral-surface: #0F0F0F;
+  --color-neutral-border: #3D3D3D;
+  --color-neutral-text-primary: #FFFFFF;
+  --color-neutral-text-secondary: #B5B5B5;
+
+  /* Primary */
+  --color-primary-base: #246BFD;
+  --color-primary-hover: #1A5CE0;
+  --color-primary-pressed: #144FC4;
+  --color-primary-surface-tint: #1E293B;
+  --color-primary-text-on-primary: #FFFFFF;
+
+  /* Secondary */
+  --color-secondary-base: #5C6672;
+  --color-secondary-hover: #47505A;
+  --color-secondary-pressed: #39414B;
+  --color-secondary-surface-tint: #1E1F21;
+
+  /* Success */
+  --color-success-base: #22C55E;
+  --color-success-hover: #16A34A;
+  --color-success-pressed: #15803D;
+  --color-success-surface-tint: #052E16;
+
+  /* Warning */
+  --color-warning-base: #FACC15;
+  --color-warning-hover: #EAB308;
+  --color-warning-pressed: #CA8A04;
+  --color-warning-surface-tint: #78350F;
+
+  /* Error */
+  --color-error-base: #F44336;
+  --color-error-hover: #E53935;
+  --color-error-pressed: #D32F2F;
+  --color-error-surface-tint: #7F1D1D;
+
+  /* Shades */
+  --color-shades-light: #111827;
+  --color-shades-mid: #1F2937;
+  --color-shades-dark: #F9FAFB;
+}
+
+
+.dark .navLogo{
+  filter: none;
+}
+.navLogo{
+  filter: invert(1);
+}
+
 @plugin "@tailwindcss/typography";
+
+html {
+  transition: background-color 300ms ease, color 300ms ease;
+}
+
+@keyframes background-pulse {
+  0% {
+    opacity: 0.5;
+  }
+
+  100% {
+    opacity: 0.3;
+  }
+}
+
+
+body {
+  @apply m-0 flex place-items-center box-border transition-colors duration-300;
+}
+
+html,
+body {
+  height: 100%;
+  overflow: hidden;
+  overflow-x: hidden;
+}
+
 
 
 .container {
@@ -124,12 +255,6 @@
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
-
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #101010;
-
-
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
@@ -137,22 +262,9 @@
 }
 
 
-html,
-body {
-  height: 100%;
-  overflow: hidden;
-  overflow-x: hidden;
-}
-
-body {
-  margin: 0;
-  display: flex;
-  place-items: center;
-  box-sizing: border-box;
-  transition: background-color 0.3s ease;
-}
 
 #root {
+  height: 100%;
   width: 100%;
 }
 
@@ -165,26 +277,6 @@ button {
   transition: border-color 0.25s;
 }
 
-
-/* button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
-}
- */
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
-
-  a:hover {
-    color: #747bff;
-  }
-
-  button {
-    background-color: #f9f9f9;
-  }
-}
 
 .proflieSidebar .sidebarTab {
   cursor: pointer;
@@ -512,7 +604,6 @@ button:focus-visible {
   max-height: calc(100vh - (83px - 2rem));
   overflow-y: auto;
   position: sticky;
-  border-left: 0.5px solid rgb(33, 33, 33);
   top: 20px;
 }
 
@@ -1068,4 +1159,16 @@ pre {
 
 .authorIdentity div {
   line-height: normal;
+}
+
+
+
+
+@layer utilities {
+  .darkBtn {
+    @apply bg-[#1f1f1f] py-[16px] px-[16px] rounded-[12px] border border-[#3B3B3B] hover:bg-[#3B3B3B] cursor-pointer transition
+  }
+  .lightBtn{
+    @apply bg-[##fbfbfb] py-[16px] px-[16px] rounded-[12px] border border-[#3B3B3B] hover:bg-[#3B3B3B] cursor-pointer transition
+  }
 }

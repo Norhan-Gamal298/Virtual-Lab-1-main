@@ -1,8 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, useMotionValue, useTransform } from "framer-motion";
 import showCaseImg from "../assets/showCase-input.jpg";
-import showCase from "../assets/default-avatar.png";
-import snippetImg from "../assets/code snippets.png"
+import snippetImg from "../assets/code snippets.png";
+
 const ImageProcessingShowcase = () => {
     const containerRef = useRef(null);
     const [constraints, setConstraints] = useState({ left: 0, right: 0 });
@@ -13,14 +13,13 @@ const ImageProcessingShowcase = () => {
         if (containerRef.current) {
             const containerWidth = containerRef.current.offsetWidth;
             setConstraints({ left: 0, right: containerWidth });
-            x.set(containerWidth / 2); // Start in center position
+            x.set(containerWidth / 2); // Start centered
         }
     }, []);
 
     return (
-        <section className="py-20 bg-[#0f0f0f]">
+        <section className="py-20 bg-neutral-background">
             <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 items-center px-6">
-
                 {/* Left Content */}
                 <motion.div
                     initial={{ opacity: 0, x: -50 }}
@@ -37,7 +36,7 @@ const ImageProcessingShowcase = () => {
                 {/* Image Reveal Slider */}
                 <div
                     ref={containerRef}
-                    className="relative w-[300px] h-[300px] rounded-2xl overflow-hidden shadow-lg border border-[#3a3a3a] justify-self-end"
+                    className="relative w-[300px] h-[300px] rounded-2xl overflow-hidden shadow-lg border border-neutral-border justify-self-end"
                 >
                     {/* Bottom Image (Original) */}
                     <img
@@ -48,7 +47,7 @@ const ImageProcessingShowcase = () => {
 
                     {/* Top Image (Processed) */}
                     <motion.div
-                        className="absolute top-0 left-0 w-full h-full overflow-hidden"
+                        className="absolute top-0 left-0 w-full h-full overflow-hidden bg-gray-700"
                         style={{ clipPath }}
                     >
                         <img
@@ -63,10 +62,10 @@ const ImageProcessingShowcase = () => {
                         drag="x"
                         dragConstraints={constraints}
                         style={{ x }}
-                        className="absolute top-0 h-full w-8 cursor-col-resize z-10 flex items-center justify-center"
+                        className="absolute top-0 h-full w-auto cursor-col-resize z-10 flex items-center justify-center"
                     >
-                        <div className="w-1 h-full bg-blue-500" />
-                        <div className="absolute w-6 h-6 bg-white rounded-full shadow-md border-2 border-blue-500" />
+                        <div className="w-1 h-full bg-[#00a0ff]" />
+                        <div className="absolute w-6 h-6 bg-white dark:bg-neutral-surface rounded-full shadow-md border-2 border-primary" />
                     </motion.div>
                 </div>
             </div>

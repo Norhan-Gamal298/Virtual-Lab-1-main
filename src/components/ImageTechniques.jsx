@@ -16,12 +16,12 @@ const techniques = [
 
 const ImageTechniques = () => {
     return (
-        <section className="py-20 bg-[#0f0f0f]">
+        <section className="py-20 bg-neutral-background">
             <motion.h2
                 initial={{ opacity: 0, y: -30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6 }}
-                className="text-4xl md:text-5xl font-extrabold text-center mb-16 text-[#EFF6FF]"
+                className="text-4xl md:text-5xl font-extrabold text-center mb-16 text-neutral-text-primary"
             >
                 Techniques of Image Processing
             </motion.h2>
@@ -35,13 +35,13 @@ const ImageTechniques = () => {
                             initial={{ opacity: 0, y: 40 }}
                             whileInView={{ opacity: 1, y: 0 }}
                             transition={{ duration: 0.5, delay: index * 0.05 }}
-                            className={`bg-[#1f1f1f] rounded-2xl shadow-md hover:shadow-2xl transition-shadow duration-300 p-8 flex flex-col items-start text-left border border-[#3a3a3a] hover:border-[#2563EB]
+                            className={`bg-neutral-surface rounded-2xl shadow-md hover:shadow-2xl transition-shadow duration-300 p-8 flex flex-col items-start text-left border border-neutral-border hover:border-primary
                                 ${isLast ? "lg:col-span-2" : ""}`}
                         >
-                            <div className="text-xl poppins-semibold mb-2 text-white">
+                            <div className="text-xl font-semibold mb-2 text-neutral-text-primary">
                                 {technique.title}
                             </div>
-                            <p className="text-sm poppins-regular text-[#B0B0B0]">
+                            <p className="text-sm text-neutral-text-secondary">
                                 {technique.description}
                             </p>
                         </motion.div>
@@ -50,6 +50,6 @@ const ImageTechniques = () => {
             </div>
         </section>
     );
-}
+};
 
 export default ImageTechniques;

@@ -3,8 +3,6 @@ import { useParams, useNavigate } from "react-router-dom";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import rehypeRaw from "rehype-raw";
-// import { markTopicCompleted } from '../features/auth/authSlice'
-
 import {
     FiChevronLeft,
     FiChevronRight,
@@ -12,8 +10,7 @@ import {
     FiChevronDown,
 } from "react-icons/fi";
 import { useSelector } from "react-redux";
-
-import VideoNote from "../components/VideoNote"
+import VideoNote from "../components/VideoNote";
 
 export default function MarkdownPage() {
     const { topicId } = useParams();
@@ -26,7 +23,6 @@ export default function MarkdownPage() {
     const [currentNote, setCurrentNote] = useState("");
     const videoRef = useRef(null);
 
-    // const dispatch = useDispatch();
     const { user } = useSelector((state) => state.auth);
 
     useEffect(() => {
@@ -90,18 +86,12 @@ export default function MarkdownPage() {
     const prevTopic = currentIndex > 0 ? allTopics[currentIndex - 1] : null;
     const nextTopic = currentIndex < allTopics.length - 1 ? allTopics[currentIndex + 1] : null;
 
-
-
-
-
-
     const extractHeadings = (markdown) => {
         const lines = markdown.split("\n");
         const extractedHeadings = [];
         let insideCodeBlock = false;
 
         for (let line of lines) {
-            // Toggle code block state
             if (line.trim().startsWith("```")) {
                 insideCodeBlock = !insideCodeBlock;
                 continue;
@@ -130,227 +120,339 @@ export default function MarkdownPage() {
 
     const handleNextTopicClick = () => {
         if (user) {
-            // Mark topic as completed in backend
             fetch('http://localhost:8080/api/update-progress', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    email: user.email,        // user email must be here  // you should have the current chapter ID
-                    topicId: topicId          // current topic ID
+                    email: user.email,
+                    topicId: topicId
                 }),
             })
                 .then(response => response.json())
                 .then(data => {
                     console.log('Progress updated:', data);
-                    // After marking as completed, navigate to the next topic
                     navigate(`/docs/${nextTopic.id}`);
                 })
                 .catch(error => {
                     console.error('Error updating progress:', error);
-                    // Even if error, maybe still allow navigation
                     navigate(`/docs/${nextTopic.id}`);
                 });
         } else {
-            // If user not logged in, just navigate
             navigate(`/docs/${nextTopic.id}`);
         }
     };
 
-
-
-
-
-
-
-
-
     return (
-        <div className="container markdownMain">
-            <div className="markdownContainer">
-                <div className="flex flex-1 flex-col markdownContentContainer">
-                    <div className="prose prose-lg dark:prose-invert markdownContent">
-                        {loading ? (
-                            // Replace the empty skeleton with:
-                            <div className="space-y-6 animate-pulse">
-                                <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded w-3/4"></div>
-                                <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-5/6"></div>
-                                <div className="h-64 bg-gray-200 dark:bg-gray-700 rounded-lg"></div>
-                            </div>
-                        ) : (
-                            <ReactMarkdown
-                                remarkPlugins={[remarkGfm]}
-                                rehypePlugins={[rehypeRaw]}
-                                components={{
-                                    h1: ({ children }) => {
-                                        const text = String(children).trim();
-                                        const id = text.toLowerCase().replace(/[^a-z0-9\s]/g, "").replace(/\s+/g, "-");
-                                        return <h1 id={id} className="scroll-mt-24">{children}</h1>;
-                                    },
-                                    h2: ({ children }) => {
-                                        const text = String(children).trim();
-                                        const id = text.toLowerCase().replace(/[^a-z0-9\s]/g, "").replace(/\s+/g, "-");
-                                        return <h2 id={id} className="scroll-mt-24">{children}</h2>;
-                                    },
-                                    img: ({ src, alt }) => {
-                                        if (!src) return null;
+        <div className="docsLayoutContainer">
+            <div className="markdownMain">
+                <div className="markdownContainer">
+                    <div className="flex flex-1 flex-col markdownContentContainer">
+                        {/* Remove prose classes and use custom styling */}
+                        <div className="max-w-none markdownContent">
+                            {loading ? (
+                                <div className="space-y-6 animate-pulse">
+                                    <div className="h-8 bg-neutral-surface rounded w-3/4"></div>
+                                    <div className="h-4 bg-neutral-surface rounded w-5/6"></div>
+                                    <div className="h-64 bg-neutral-surface rounded-lg"></div>
+                                </div>
+                            ) : (
+                                <ReactMarkdown
+                                    remarkPlugins={[remarkGfm]}
+                                    rehypePlugins={[rehypeRaw]}
+                                    components={{
+                                        h1: ({ children }) => {
+                                            const text = String(children).trim();
+                                            const id = text.toLowerCase().replace(/[^a-z0-9\s]/g, "").replace(/\s+/g, "-");
+                                            return (
+                                                <h1
+                                                    id={id}
+                                                    className="scroll-mt-24 text-neutral-text-primary text-3xl font-bold mb-6 mt-8 first:mt-0"
+                                                >
+                                                    {children}
+                                                </h1>
+                                            );
+                                        },
+                                        h2: ({ children }) => {
+                                            const text = String(children).trim();
+                                            const id = text.toLowerCase().replace(/[^a-z0-9\s]/g, "").replace(/\s+/g, "-");
+                                            return (
+                                                <h2
+                                                    id={id}
+                                                    className="scroll-mt-24 text-neutral-text-primary text-2xl font-semibold mb-4 mt-8"
+                                                >
+                                                    {children}
+                                                </h2>
+                                            );
+                                        },
+                                        h3: ({ children }) => {
+                                            const text = String(children).trim();
+                                            const id = text.toLowerCase().replace(/[^a-z0-9\s]/g, "").replace(/\s+/g, "-");
+                                            return (
+                                                <h3
+                                                    id={id}
+                                                    className="scroll-mt-24 text-neutral-text-primary text-xl font-semibold mb-3 mt-6"
+                                                >
+                                                    {children}
+                                                </h3>
+                                            );
+                                        },
+                                        p: ({ children }) => (
+                                            <p className="text-neutral-text-secondary mb-4 leading-relaxed text-base">
+                                                {children}
+                                            </p>
+                                        ),
+                                        img: ({ src, alt }) => {
+                                            if (!src) return null;
 
-                                        // Handle both possible folder names (photos/ or assets/)
-                                        if (src.startsWith("photos/") || src.startsWith("photo/") || src.startsWith("photows/") || src.startsWith("phhotos/")
-                                            || src.startsWith("phOotos/") || src.startsWith("photows/")) {
+                                            if (src.startsWith("photos/") || src.startsWith("photo/") || src.startsWith("photows/") || src.startsWith("phhotos/")
+                                                || src.startsWith("phOotos/") || src.startsWith("photows/")) {
+                                                const currentTopic = chapters
+                                                    .flatMap(ch => ch.topics)
+                                                    .find(t => t.id === topicId);
+
+                                                if (currentTopic) {
+                                                    const chapterFolder = currentTopic.path.split('/')[0];
+                                                    const encodedPath = chapterFolder.replace(/ /g, '%20');
+                                                    return (
+                                                        <img
+                                                            src={`/docs/${encodedPath}/${src}`}
+                                                            alt={alt || ""}
+                                                            loading="lazy"
+                                                            className="max-w-full h-auto my-6 rounded-lg border border-neutral-border shadow-sm"
+                                                        />
+                                                    );
+                                                }
+                                            }
+
+                                            return (
+                                                <img
+                                                    src={src}
+                                                    alt={alt || ""}
+                                                    loading="lazy"
+                                                    className="max-w-full h-auto my-6 rounded-lg border border-neutral-border shadow-sm"
+                                                />
+                                            );
+                                        },
+                                        video: ({ src, ...props }) => {
+                                            if (!src) return null;
+
                                             const currentTopic = chapters
                                                 .flatMap(ch => ch.topics)
                                                 .find(t => t.id === topicId);
 
                                             if (currentTopic) {
-                                                // Extract chapter folder name from the topic's path
                                                 const chapterFolder = currentTopic.path.split('/')[0];
-                                                // Encode for URL but keep forward slashes
                                                 const encodedPath = chapterFolder.replace(/ /g, '%20');
-                                                return <img src={`/docs/${encodedPath}/${src}`}
-                                                    alt={alt || ""}
-                                                    loading="lazy"
-                                                    className="max-w-full h-auto my-4 border rounded-lg" />;
+                                                return (
+                                                    <div className="my-6">
+                                                        <VideoNote
+                                                            videoPath={`/docs/${encodedPath}/${src}`}
+                                                            topicId={topicId}
+                                                        />
+                                                    </div>
+                                                );
                                             }
-                                        }
 
-                                        // Fallback for absolute paths or external images
-                                        return <img src={src} alt={alt || ""} loading="lazy" />;
-                                    },
-                                    video: ({ src, ...props }) => {
-                                        if (!src) return null;
-
-                                        const currentTopic = chapters
-                                            .flatMap(ch => ch.topics)
-                                            .find(t => t.id === topicId);
-
-                                        if (currentTopic) {
-                                            const chapterFolder = currentTopic.path.split('/')[0];
-                                            const encodedPath = chapterFolder.replace(/ /g, '%20');
                                             return (
-                                                <div>
-                                                    {/* <video
-                                                        src={`/docs/${encodedPath}/${src}`}
-                                                        controls
-                                                        className="my-4 max-w-full rounded-lg border"
-                                                        {...props}
-                                                    /> */}
-                                                    <VideoNote
-                                                        videoPath={`/docs/${encodedPath}/${src}`}
-                                                        topicId={topicId}
-                                                    />
-                                                </div>
+                                                <video
+                                                    src={src}
+                                                    controls
+                                                    className="my-6 max-w-full rounded-lg border border-neutral-border shadow-sm"
+                                                    {...props}
+                                                />
                                             );
-                                        }
+                                        },
+                                        iframe: ({ ...props }) => (
+                                            <div className="my-6 aspect-video max-w-full rounded-lg overflow-hidden border border-neutral-border shadow-sm">
+                                                <iframe {...props} className="w-full h-full" allowFullScreen />
+                                            </div>
+                                        ),
+                                        code({ className, children }) {
+                                            const language = className?.replace("language-", "");
 
-                                        // fallback
-                                        return <video src={src} controls className="my-4 max-w-full rounded-lg border" {...props} />;
-                                    },
-                                    iframe: ({ ...props }) => (
-                                        <div className="my-4 aspect-video max-w-full rounded-lg overflow-hidden border">
-                                            <iframe {...props} className="w-full h-full" allowFullScreen />
-                                        </div>
-                                    ),
-                                    code({ className, children }) {
-                                        const language = className?.replace("language-", "");
+                                            if (language === "python") {
+                                                const codeString = String(children).trim();
+                                                const encodedCode = encodeURIComponent(codeString);
 
-                                        if (language === "python") {
-                                            const codeString = String(children).trim();
-                                            const encodedCode = encodeURIComponent(codeString);
-
-                                            return (
-                                                <div className="relative mb-4">
-                                                    <pre>
-                                                        <code className={className}>{children}</code>
-                                                    </pre>
-                                                    <div className="mt-2">
-                                                        <button className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-purple-700"
-                                                            onClick={() => navigate(`/terminal-page?code=${encodedCode}`, { state: { fromLesson: true } })}>Try it yourself</button>
-                                                        <div className="text-sm mt-1 text-gray-600 dark:text-gray-400">
-                                                            Note: You'll be able to upload required files in the terminal
+                                                return (
+                                                    <div className="relative mb-6">
+                                                        <pre className="bg-neutral-surface border border-neutral-border rounded-lg p-4 overflow-x-auto">
+                                                            <code className={`${className} text-neutral-text-primary text-sm`}>
+                                                                {children}
+                                                            </code>
+                                                        </pre>
+                                                        <div className="mt-3">
+                                                            <button
+                                                                className="bg-primary hover:bg-primary-hover text-primary-on px-4 py-2 rounded-lg transition-colors duration-200 font-medium"
+                                                                onClick={() => navigate(`/terminal-page?code=${encodedCode}`, { state: { fromLesson: true } })}
+                                                            >
+                                                                Try it yourself
+                                                            </button>
+                                                            <div className="text-sm mt-2 text-neutral-text-secondary">
+                                                                Note: You'll be able to upload required files in the terminal
+                                                            </div>
                                                         </div>
                                                     </div>
-                                                </div>
-                                            );
-                                        }
-                                        if (language === "matlab") {
-                                            return (
-                                                <div className="relative mb-4">
-                                                    <pre><code className={className}>{children}</code></pre>
-                                                    <div className="mt-2">
-                                                        <a
-                                                            href="https://www.mathworks.com/products/matlab-online.html"
-                                                            target="_blank"
-                                                            rel="noopener noreferrer nofollow"
-                                                            className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-                                                        >
-                                                            Try on MATLAB Online
-                                                        </a>
+                                                );
+                                            }
+                                            if (language === "matlab") {
+                                                return (
+                                                    <div className="relative mb-6">
+                                                        <pre className="bg-neutral-surface border border-neutral-border rounded-lg p-4 overflow-x-auto">
+                                                            <code className={`${className} text-neutral-text-primary text-sm`}>
+                                                                {children}
+                                                            </code>
+                                                        </pre>
+                                                        <div className="mt-3">
+                                                            <a
+                                                                href="https://www.mathworks.com/products/matlab-online.html"
+                                                                target="_blank"
+                                                                rel="noopener noreferrer nofollow"
+                                                                className="inline-block bg-primary hover:bg-primary-hover text-primary-on px-4 py-2 rounded-lg transition-colors duration-200 font-medium"
+                                                            >
+                                                                Try on MATLAB Online
+                                                            </a>
+                                                        </div>
                                                     </div>
-                                                </div>
+                                                );
+                                            }
+
+                                            return (
+                                                <pre className="bg-neutral-surface border border-neutral-border rounded-lg p-4 overflow-x-auto my-4">
+                                                    <code className={`${className} text-neutral-text-primary text-sm`}>
+                                                        {children}
+                                                    </code>
+                                                </pre>
                                             );
-                                        }
+                                        },
+                                        a: ({ href, children }) => (
+                                            <a
+                                                href={href}
+                                                className="text-primary hover:text-primary-hover underline underline-offset-2 transition-colors duration-200"
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                            >
+                                                {children}
+                                            </a>
+                                        ),
+                                        blockquote: ({ children }) => (
+                                            <blockquote className="border-l-4 border-primary bg-neutral-surface pl-4 py-2 italic text-neutral-text-secondary my-6 rounded-r-lg">
+                                                {children}
+                                            </blockquote>
+                                        ),
+                                        ul: ({ children }) => (
+                                            <ul className="list-disc pl-6 my-4 space-y-2 text-neutral-text-secondary">
+                                                {children}
+                                            </ul>
+                                        ),
+                                        ol: ({ children }) => (
+                                            <ol className="list-decimal pl-6 my-4 space-y-2 text-neutral-text-secondary">
+                                                {children}
+                                            </ol>
+                                        ),
+                                        li: ({ children }) => (
+                                            <li className="text-neutral-text-secondary leading-relaxed">
+                                                {children}
+                                            </li>
+                                        ),
+                                        table: ({ children }) => (
+                                            <div className="overflow-x-auto my-6 rounded-lg border border-neutral-border">
+                                                <table className="min-w-full">
+                                                    {children}
+                                                </table>
+                                            </div>
+                                        ),
+                                        thead: ({ children }) => (
+                                            <thead className="bg-neutral-surface">
+                                                {children}
+                                            </thead>
+                                        ),
+                                        tbody: ({ children }) => (
+                                            <tbody className="bg-neutral-background">
+                                                {children}
+                                            </tbody>
+                                        ),
+                                        th: ({ children }) => (
+                                            <th className="px-4 py-3 text-left text-neutral-text-primary font-semibold border-b border-neutral-border">
+                                                {children}
+                                            </th>
+                                        ),
+                                        td: ({ children }) => (
+                                            <td className="px-4 py-3 text-neutral-text-secondary border-b border-neutral-border">
+                                                {children}
+                                            </td>
+                                        ),
+                                        strong: ({ children }) => (
+                                            <strong className="text-neutral-text-primary font-semibold">
+                                                {children}
+                                            </strong>
+                                        ),
+                                        em: ({ children }) => (
+                                            <em className="text-neutral-text-secondary italic">
+                                                {children}
+                                            </em>
+                                        ),
+                                    }}
+                                >
+                                    {content}
+                                </ReactMarkdown>
+                            )}
+                        </div>
 
-                                        return <pre><code className={className}>{children}</code></pre>
+                        {!loading && (
+                            <nav className="paginationButtons mt-12 grid gap-4 grid-cols-2">
+                                {prevTopic ? (
+                                    <button
+                                        onClick={() => navigate(`/docs/${prevTopic.id}`)}
+                                        className="border border-neutral-border hover:border-primary bg-neutral-background hover:bg-neutral-surface rounded-lg cursor-pointer paginationNavLink paginationNavLinkPrev p-4 text-left transition-all duration-200"
+                                    >
+                                        <div className="text-neutral-text-secondary text-sm">Previous</div>
+                                        <div className="paginationLabel break-normal text-primary font-medium mt-1">
+                                            {prevTopic.title}
+                                        </div>
+                                    </button>
+                                ) : <div />}
 
-                                    }
-                                }}
-                            >
-                                {content}
-                            </ReactMarkdown>
-
+                                {nextTopic ? (
+                                    <button
+                                        onClick={handleNextTopicClick}
+                                        className="border border-neutral-border hover:border-primary bg-neutral-background hover:bg-neutral-surface rounded-lg text-right cursor-pointer paginationNavLink paginationNavLinkNext p-4 transition-all duration-200"
+                                    >
+                                        <div className="text-neutral-text-secondary text-sm">Next</div>
+                                        <div className="paginationLabel break-normal text-primary font-medium mt-1">
+                                            {nextTopic.title}
+                                        </div>
+                                    </button>
+                                ) : <div />}
+                            </nav>
                         )}
                     </div>
 
-                    {!loading && (
-                        <nav className="paginationButtons mt-4 grid gap-2 grid-cols-2">
-                            {prevTopic ? (
-                                <a
-                                    onClick={() => navigate(`/docs/${prevTopic.id}`)}
-                                    className="border border-[#606770] hover:border-[#845097] rounded-[0.4rem] cursor-pointer paginationNavLink paginationNavLinkPrev p-4"
-                                >
-                                    <div>Previous</div>
-                                    <div className="paginationLabel break-normal text-[#845097] font-bold">
-                                        {prevTopic.title}
-                                    </div>
-                                </a>
-                            ) : <div />}
-
-                            {nextTopic ? (
-                                <a
-                                    onClick={handleNextTopicClick}
-                                    className="border border-[#606770] hover:border-[#845097] rounded-[0.4rem] text-right cursor-pointer paginationNavLink paginationNavLinkNext p-4"
-                                >
-                                    <div>Next</div>
-                                    <div className="paginationLabel break-normal text-[#845097] font-bold">
-                                        {nextTopic.title}
-                                    </div>
-                                </a>
-                            ) : <div />}
-                        </nav>
+                    {!loading && headings.length > 0 && (
+                        <div className="markdownTableContainer">
+                            <div className="markdownTable bg-neutral-background rounded-lg p-4">
+                                <ul className="space-y-2">
+                                    {headings.map((heading, index) => (
+                                        <li
+                                            key={`${heading.id}-${index}`}
+                                            className={`${heading.level === 2 ? "pl-4" : "pl-2"}`}
+                                        >
+                                            <button
+                                                onClick={() => handleScrollTo(heading.id)}
+                                                className="text-neutral-text-secondary hover:text-primary text-left w-full transition-colors duration-200 focus:outline-none text-sm py-1 rounded hover:bg-neutral-surface px-2 -mx-2"
+                                                aria-label={`Jump to ${heading.text}`}
+                                            >
+                                                {heading.text}
+                                            </button>
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
+                        </div>
                     )}
                 </div>
-
-                {!loading && headings.length > 0 && (
-                    <div className="markdownTableContainer">
-                        <div className="markdownTable">
-                            <ul>
-                                {headings.map((heading, index) => (
-                                    <li key={`${heading.id}-${index}`} className={`ml-${heading.level === 2 ? "4 pl-2" : "2"} py-1 text-sm`}>
-                                        <button
-                                            onClick={() => handleScrollTo(heading.id)}
-                                            className="text-left w-full hover:text-blue-500 focus:outline-none"
-                                            aria-label={`Jump to ${heading.text}`}
-                                        >
-                                            {heading.text}
-                                        </button>
-                                    </li>
-                                ))}
-                            </ul>
-                        </div>
-                    </div>
-                )}
             </div>
         </div>
     );
