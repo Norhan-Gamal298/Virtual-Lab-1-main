@@ -1,15 +1,28 @@
-// src/features/auth/authSlice.js
 import { createSlice } from '@reduxjs/toolkit';
 
-const initialState = {
-    user: JSON.parse(localStorage.getItem('user')) || null,
-    token: localStorage.getItem('token') || null,
-    quizProgress: JSON.parse(localStorage.getItem('quizProgress')) || {},
-    chapterProgress: JSON.parse(localStorage.getItem('chapterProgress')) || {},
-    topicProgress: JSON.parse(localStorage.getItem('topicProgress')) || {}, 
+// Helper function to safely parse localStorage items
+const getLocalStorageItem = (key) => {
+    try {
+        const item = localStorage.getItem(key);
+        if (item === "undefined") {
+            localStorage.removeItem(key); // Clean up invalid data
+            return null;
+        }
+        return item ? JSON.parse(item) : null;
+    } catch (error) {
+        console.error(`Error parsing localStorage item "${key}":`, error);
+        localStorage.removeItem(key); // Remove corrupt data
+        return null;
+    }
 };
 
-
+const initialState = {
+    user: getLocalStorageItem('user'),
+    token: localStorage.getItem('token'),
+    quizProgress: getLocalStorageItem('quizProgress') || {},
+    chapterProgress: getLocalStorageItem('chapterProgress') || {},
+    topicProgress: getLocalStorageItem('topicProgress') || {},
+};
 
 const authSlice = createSlice({
     name: 'auth',
@@ -53,12 +66,12 @@ const authSlice = createSlice({
             state.token = null;
             state.quizProgress = {};
             state.chapterProgress = {};
-            state.topicProgress = {}; // Add this line
+            state.topicProgress = {};
             localStorage.removeItem('user');
             localStorage.removeItem('token');
             localStorage.removeItem('quizProgress');
             localStorage.removeItem('chapterProgress');
-            localStorage.removeItem('topicProgress'); // Add this line
+            localStorage.removeItem('topicProgress');
         },
     },
 });

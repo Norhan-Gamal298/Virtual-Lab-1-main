@@ -56,24 +56,19 @@ const User = mongoose.model("User", userSchema);
 
 const adminAuth = async (req, res, next) => {
   const token = req.headers.authorization?.split(' ')[1];
-  console.log('Token received:', token);
-
   if (!token) return res.status(401).json({ error: "Unauthorized" });
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    console.log('Decoded token:', decoded);
-
     const user = await User.findById(decoded.id);
+
     if (!user || !['admin', 'root'].includes(user.role)) {
-      console.log('Access denied: user not found or insufficient role');
       return res.status(403).json({ error: "Access denied" });
     }
 
     req.user = user;
     next();
   } catch (error) {
-    console.error('Authentication error:', error.message);
     res.status(401).json({ error: "Invalid token" });
   }
 };
@@ -148,23 +143,18 @@ app.listen(PORT, () => {
 
 app.get('/api/admin/users', adminAuth, async (req, res) => {
   try {
-    console.log('Received request with query:', req.query);
     const { role } = req.query;
     let filter = {};
 
     if (role === 'admin') {
       filter.role = { $in: ['admin', 'root'] };
     } else if (role === 'user') {
-      filter.role = { $in: ['user', undefined] }; // Handle legacy users
+      filter.role = 'user';
     }
 
-    console.log('MongoDB filter:', filter);
     const users = await User.find(filter).select('-password');
-    console.log('Found users:', users.length);
-
     res.json(users);
   } catch (error) {
-    console.error('Error in /api/admin/users:', error);
     res.status(500).json({ error: error.message });
   }
 });
@@ -183,7 +173,7 @@ app.patch('/api/admin/users/:id/block', adminAuth, async (req, res) => {
 
 // Add this to your server.js
 // Add this with your other routes in server.js
-app.post('/api/admin/login', async (req, res) => {
+/* app.post('/api/admin/login', async (req, res) => {
   const { email, password } = req.body;
 
   try {
@@ -231,7 +221,7 @@ app.post('/api/admin/login', async (req, res) => {
     console.error('Admin login error:', error);
     res.status(500).json({ error: "Internal server error" });
   }
-});
+}); */
 
 
 // Sign-Up Route
@@ -268,24 +258,38 @@ app.post("/api/register", async (req, res) => {
 app.post("/api/signin", async (req, res) => {
   const { email, password } = req.body;
   try {
-    // Find user by email
     const user = await User.findOne({ email });
-    if (!user || !['admin', 'root'].includes(user.role)) {
-      return res.status(403).json({ error: "Access denied" });
-    }
-    // Check if password matches
-    const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) return res.status(400).json({ error: "Invalid credentials" });
 
-    // Successful login
+    if (!user) {
+      return res.status(401).json({ error: "Invalid credentials" });
+    }
+
+    if (user.isBlocked) {
+      return res.status(403).json({ error: "Account is blocked" });
+    }
+
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) return res.status(401).json({ error: "Invalid credentials" });
+
+    const token = jwt.sign(
+      {
+        id: user._id,
+        email: user.email,
+        role: user.role
+      },
+      process.env.JWT_SECRET,
+      { expiresIn: '1h' }
+    );
+
     res.status(200).json({
       user: {
         id: user._id,
         firstName: user.firstName,
         lastName: user.lastName,
         email: user.email,
+        role: user.role
       },
-      token: "dummy-token", // Replace with real token (JWT) later
+      token
     });
   } catch (error) {
     console.error("Error during signin:", error);
