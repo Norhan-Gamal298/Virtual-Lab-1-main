@@ -1,0 +1,302 @@
+[
+    {
+        "question": "What is the primary goal of image segmentation?",
+        "options": [
+            "To enhance image contrast",
+            "To divide an image into meaningful regions",
+            "To compress the image",
+            "To remove noise"
+        ],
+        "answer": "To divide an image into meaningful regions"
+    },
+    {
+        "question": "Which of the following is a type of thresholding technique?",
+        "options": [
+            "Sobel",
+            "Otsu",
+            "Watershed",
+            "Canny"
+        ],
+        "answer": "Otsu"
+    },
+    {
+        "question": "Global thresholding applies:",
+        "options": [
+            "A single threshold value across the entire image",
+            "Different thresholds for different regions",
+            "A threshold based on edge detection",
+            "A threshold based on region growing"
+        ],
+        "answer": "A single threshold value across the entire image"
+    },
+    {
+        "question": "Adaptive thresholding is useful when:",
+        "options": [
+            "The image has uniform lighting",
+            "The image has varying illumination",
+            "The image is noise-free",
+            "The image is grayscale only"
+        ],
+        "answer": "The image has varying illumination"
+    },
+    {
+        "question": "Otsu’s method is used to:",
+        "options": [
+            "Detect edges in an image",
+            "Automatically determine an optimal threshold",
+            "Grow regions based on seed points",
+            "Apply a watershed transform"
+        ],
+        "answer": "Automatically determine an optimal threshold"
+    },
+    {
+        "question": "Which thresholding technique minimizes the variance between two classes of pixels?",
+        "options": [
+            "Global thresholding",
+            "Adaptive thresholding",
+            "Otsu’s thresholding",
+            "Manual thresholding"
+        ],
+        "answer": "Otsu’s thresholding"
+    },
+    {
+        "question": "Edge-based segmentation relies on:",
+        "options": [
+            "Intensity discontinuities",
+            "Region homogeneity",
+            "Seed point selection",
+            "Watershed markers"
+        ],
+        "answer": "Intensity discontinuities"
+    },
+    {
+        "question": "The Sobel operator is primarily used for:",
+        "options": [
+            "Region growing",
+            "Edge detection",
+            "Thresholding",
+            "Watershed segmentation"
+        ],
+        "answer": "Edge detection"
+    },
+    {
+        "question": "Which of the following is a key feature of the Canny edge detector?",
+        "options": [
+            "Single threshold application",
+            "Noise reduction via Gaussian smoothing",
+            "Region merging",
+            "Seed-based growth"
+        ],
+        "answer": "Noise reduction via Gaussian smoothing"
+    },
+    {
+        "question": "Canny edge detection involves:",
+        "options": [
+            "Only gradient computation",
+            "Hysteresis thresholding",
+            "Region splitting",
+            "Manual seed selection"
+        ],
+        "answer": "Hysteresis thresholding"
+    },
+    {
+        "question": "Region-based segmentation focuses on:",
+        "options": [
+            "Detecting edges",
+            "Grouping similar pixels into regions",
+            "Applying global thresholds",
+            "Computing gradients"
+        ],
+        "answer": "Grouping similar pixels into regions"
+    },
+    {
+        "question": "Region growing segmentation requires:",
+        "options": [
+            "A global threshold",
+            "Seed points",
+            "Edge detection",
+            "A watershed transform"
+        ],
+        "answer": "Seed points"
+    },
+    {
+        "question": "The watershed algorithm is based on:",
+        "options": [
+            "Edge detection",
+            "Topological interpretation of image intensity",
+            "Global thresholding",
+            "Sobel gradients"
+        ],
+        "answer": "Topological interpretation of image intensity"
+    },
+    {
+        "question": "A common issue with the watershed algorithm is:",
+        "options": [
+            "Under-segmentation",
+            "Over-segmentation",
+            "Noise amplification",
+            "Edge blurring"
+        ],
+        "answer": "Over-segmentation"
+    },
+    {
+        "question": "Which method is most sensitive to noise in edge detection?",
+        "options": [
+            "Sobel",
+            "Canny",
+            "Otsu",
+            "Watershed"
+        ],
+        "answer": "Sobel"
+    },
+    {
+        "question": "Adaptive thresholding divides the image into:",
+        "options": [
+            "Uniform regions",
+            "Sub-regions with local thresholds",
+            "Edges and non-edges",
+            "Seed points"
+        ],
+        "answer": "Sub-regions with local thresholds"
+    },
+    {
+        "question": "In region growing, pixels are grouped based on:",
+        "options": [
+            "Edge strength",
+            "Similarity criteria",
+            "Global intensity",
+            "Gradient direction"
+        ],
+        "answer": "Similarity criteria"
+    },
+    {
+        "question": "Which technique is best suited for images with complex textures?",
+        "options": [
+            "Global thresholding",
+            "Adaptive thresholding",
+            "Sobel edge detection",
+            "Region growing"
+        ],
+        "answer": "Adaptive thresholding"
+    },
+    {
+        "question": "The Canny edge detector uses:",
+        "options": [
+            "A single threshold",
+            "Two thresholds (high and low)",
+            "No thresholds",
+            "Adaptive thresholds"
+        ],
+        "answer": "Two thresholds (high and low)"
+    },
+    {
+        "question": "Watershed segmentation treats the image as:",
+        "options": [
+            "A gradient map",
+            "A topographic surface",
+            "A binary mask",
+            "A histogram"
+        ],
+        "answer": "A topographic surface"
+    },
+    {
+        "question": "Which method is computationally simplest?",
+        "options": [
+            "Global thresholding",
+            "Adaptive thresholding",
+            "Canny edge detection",
+            "Watershed"
+        ],
+        "answer": "Global thresholding"
+    },
+    {
+        "question": "Otsu’s method assumes the image histogram is:",
+        "options": [
+            "Uniform",
+            "Bimodal",
+            "Skewed",
+            "Monomodal"
+        ],
+        "answer": "Bimodal"
+    },
+    {
+        "question": "Which technique is most likely to fail in low-contrast images?",
+        "options": [
+            "Global thresholding",
+            "Adaptive thresholding",
+            "Region growing",
+            "Watershed"
+        ],
+        "answer": "Global thresholding"
+    },
+    {
+        "question": "The Sobel operator computes:",
+        "options": [
+            "Image intensity",
+            "Image gradients",
+            "Region boundaries",
+            "Seed points"
+        ],
+        "answer": "Image gradients"
+    },
+    {
+        "question": "Region growing stops when:",
+        "options": [
+            "All pixels are processed",
+            "No more pixels meet the similarity criteria",
+            "Edges are detected",
+            "A threshold is reached"
+        ],
+        "answer": "No more pixels meet the similarity criteria"
+    },
+    {
+        "question": "Watershed segmentation requires:",
+        "options": [
+            "A single threshold",
+            "Markers or seed points",
+            "Edge gradients",
+            "A global histogram"
+        ],
+        "answer": "Markers or seed points"
+    },
+    {
+        "question": "Which method is best for detecting fine edges in noisy images?",
+        "options": [
+            "Sobel",
+            "Canny",
+            "Otsu",
+            "Region growing"
+        ],
+        "answer": "Canny"
+    },
+    {
+        "question": "In adaptive thresholding, the threshold is calculated:",
+        "options": [
+            "Globally",
+            "Locally for each pixel or region",
+            "Based on edge strength",
+            "Using a fixed value"
+        ],
+        "answer": "Locally for each pixel or region"
+    },
+    {
+        "question": "Which segmentation method is most dependent on user input?",
+        "options": [
+            "Otsu’s thresholding",
+            "Canny edge detection",
+            "Region growing",
+            "Global thresholding"
+        ],
+        "answer": "Region growing"
+    },
+    {
+        "question": "The main advantage of Otsu’s method is:",
+        "options": [
+            "Its computational complexity",
+            "Its ability to automatically select a threshold",
+            "Its noise robustness",
+            "Its edge detection accuracy"
+        ],
+        "answer": "Its ability to automatically select a threshold"
+    }
+]

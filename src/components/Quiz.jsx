@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
-// import questionsData from "../../public/quizzes/chapter1.json";
+import { motion, AnimatePresence } from "framer-motion";
+import { FiClock, FiCheckCircle, FiXCircle, FiArrowLeft, FiArrowRight, FiSend, FiLoader, FiAlertCircle } from "react-icons/fi";
 
 const Quiz = ({ chapterId }) => {
     // State to hold the quiz questions
@@ -10,41 +11,93 @@ const Quiz = ({ chapterId }) => {
     const [userAnswers, setUserAnswers] = useState([]);
     // State to indicate whether the quiz has been submitted
     const [isSubmitted, setIsSubmitted] = useState(false);
+    // Loading and error states
+    const [isLoading, setIsLoading] = useState(true);
+    const [error, setError] = useState(null);
+    // Quiz metadata
+    const [quizTitle, setQuizTitle] = useState("");
+    const [startTime, setStartTime] = useState(null);
+    const [timeElapsed, setTimeElapsed] = useState(0);
+    // Submission state
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     // Retrieve user data (specifically email) from local storage
-    const user = JSON.parse(localStorage.getItem("user"));
-    const email = user?.email; // Safe access in case user is null
+    const user = JSON.parse(localStorage.getItem("user") || "{}");
+    const email = user?.email;
+
+    // Timer effect
+    useEffect(() => {
+        if (startTime && !isSubmitted) {
+            const timer = setInterval(() => {
+                setTimeElapsed(Math.floor((Date.now() - startTime) / 1000));
+            }, 1000);
+            return () => clearInterval(timer);
+        }
+    }, [startTime, isSubmitted]);
 
     useEffect(() => {
         // Fetch questions when the component mounts or when chapterId changes
         const fetchQuestions = async () => {
+            setIsLoading(true);
+            setError(null);
+
             try {
+                // First, try to fetch topics.json to get the chapter title
+                let chapterTitle = `Chapter ${chapterId}`;
+                try {
+                    const topicsResponse = await fetch("/topics.json");
+                    if (topicsResponse.ok) {
+                        const topicsData = await topicsResponse.json();
+                        const chapter = topicsData.find((_, index) => index + 1 === parseInt(chapterId));
+                        if (chapter) {
+                            chapterTitle = chapter.chapter;
+                        }
+                    }
+                } catch (topicsError) {
+                    console.warn("Could not fetch topics data:", topicsError);
+                }
+
+                setQuizTitle(chapterTitle);
+
                 // Fetch the quiz questions JSON file based on the chapterId
                 const response = await fetch(`/quizzes/chapter${chapterId}.json`);
 
-                if (!response.ok) throw new Error('Failed to fetch questions');
+                if (!response.ok) {
+                    throw new Error(`Failed to fetch questions: ${response.status} ${response.statusText}`);
+                }
 
                 const data = await response.json();
 
-                // Shuffle the questions randomly and pick the first 10
-                const shuffled = data.sort(() => 0.5 - Math.random()).slice(0, 10);
+                if (!Array.isArray(data) || data.length === 0) {
+                    throw new Error("No questions found in the quiz data");
+                }
 
-                setQuestions(shuffled); // Set the fetched and shuffled questions
+                // Shuffle the questions randomly and pick the first 10 (or all if less than 10)
+                const shuffled = data.sort(() => 0.5 - Math.random()).slice(0, Math.min(10, data.length));
+
+                setQuestions(shuffled);
+                setUserAnswers(new Array(shuffled.length).fill(undefined));
+                setStartTime(Date.now());
 
             } catch (error) {
                 console.error('Error loading quiz:', error);
-                setQuestions([]); // Set empty if error occurs
+                setError(error.message);
+                setQuestions([]);
+            } finally {
+                setIsLoading(false);
             }
         };
 
-        fetchQuestions();
-    }, [chapterId]); // Depend on chapterId
+        if (chapterId) {
+            fetchQuestions();
+        }
+    }, [chapterId]);
 
     // Handle selecting an answer for the current question
     const handleAnswer = (option) => {
-        if (isSubmitted) return; // Prevent changing answers after submission
+        if (isSubmitted) return;
         const updated = [...userAnswers];
-        updated[current] = option; // Update the selected answer
+        updated[current] = option;
         setUserAnswers(updated);
     };
 
@@ -69,24 +122,34 @@ const Quiz = ({ chapterId }) => {
             0
         );
 
+    // Get percentage score
+    const getPercentage = () => Math.round((getScore() / questions.length) * 100);
+
     // Handle submitting the quiz
     const submitQuiz = async () => {
-        setIsSubmitted(true); // Prevent further answer changes after submission
-        
-        const score = getScore(); // Calculate the score
-        
+        setIsSubmitting(true);
+
+        const score = getScore();
+        const percentage = getPercentage();
+        const timeTaken = timeElapsed;
+
         // Prepare result data to send to the server
         const resultData = {
-            email, // Taken from localStorage
-            quizId: `chapter${chapterId}`, // Which chapter's quiz
+            email,
+            quizId: `chapter${chapterId}`,
+            chapterTitle: quizTitle,
             score,
             totalQuestions: questions.length,
+            percentage,
+            timeTaken,
+            answers: userAnswers,
+            timestamp: new Date().toISOString()
         };
-        
+
         console.log("Sending quiz result to backend:", resultData);
 
         try {
-            // Send the quiz result to the server (localhost API)
+            // Send the quiz result to the server
             const response = await fetch("http://localhost:8080/api/quiz-results", {
                 method: "POST",
                 headers: {
@@ -97,111 +160,283 @@ const Quiz = ({ chapterId }) => {
 
             if (response.ok) {
                 console.log("Quiz result saved successfully");
+                setIsSubmitted(true);
             } else {
                 const errorText = await response.text();
                 console.error("Failed to save quiz result:", errorText);
+                // Still show results even if saving failed
+                setIsSubmitted(true);
             }
         } catch (error) {
             console.error("Error while saving quiz result:", error);
+            // Still show results even if saving failed
+            setIsSubmitted(true);
+        } finally {
+            setIsSubmitting(false);
         }
     };
-        
+
+    // Format time display
+    const formatTime = (seconds) => {
+        const mins = Math.floor(seconds / 60);
+        const secs = seconds % 60;
+        return `${mins}:${secs.toString().padStart(2, '0')}`;
+    };
+
+    // Get progress percentage
+    const getProgress = () => ((current + 1) / questions.length) * 100;
+
+    // Loading state
+    if (isLoading) {
+        return (
+            <div className="max-w-4xl mx-auto px-4 py-8">
+                <div className="bg-white rounded-2xl shadow-lg p-8 text-center">
+                    <motion.div
+                        animate={{ rotate: 360 }}
+                        transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                        className="inline-block mb-4"
+                    >
+                        <FiLoader size={48} className="text-indigo-600" />
+                    </motion.div>
+                    <h3 className="text-xl font-semibold text-gray-700">Loading Quiz...</h3>
+                    <p className="text-gray-500 mt-2">Please wait while we prepare your questions</p>
+                </div>
+            </div>
+        );
+    }
+
+    // Error state
+    if (error) {
+        return (
+            <div className="max-w-4xl mx-auto px-4 py-8">
+                <div className="bg-white rounded-2xl shadow-lg p-8 text-center">
+                    <FiAlertCircle size={48} className="text-red-500 mx-auto mb-4" />
+                    <h3 className="text-xl font-semibold text-red-700 mb-2">Quiz Not Available</h3>
+                    <p className="text-gray-600 mb-4">{error}</p>
+                    <button
+                        onClick={() => window.history.back()}
+                        className="px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors"
+                    >
+                        Go Back
+                    </button>
+                </div>
+            </div>
+        );
+    }
+
+    // No questions available
+    if (questions.length === 0) {
+        return (
+            <div className="max-w-4xl mx-auto px-4 py-8">
+                <div className="bg-white rounded-2xl shadow-lg p-8 text-center">
+                    <h3 className="text-xl font-semibold text-gray-700">No Questions Available</h3>
+                    <p className="text-gray-500 mt-2">This quiz doesn't have any questions yet.</p>
+                </div>
+            </div>
+        );
+    }
+
     return (
         <div className="max-w-4xl mx-auto px-4 py-8">
-            {/* Quiz Title */}
-            <h2 className="text-3xl font-bold text-center mb-6 text-indigo-600">
-                🧠 Chapter 1 Quiz
-            </h2>
-
-            {/* Display quiz only if questions are loaded */}
-            {questions.length > 0 && (
-                <div className="bg-white rounded-2xl shadow-lg p-6 transition-all duration-300">
-                    {/* Question Tracker */}
-                    <div className="mb-4 text-gray-700 font-semibold">
-                        Question {current + 1} of {questions.length}
+            {/* Quiz Header */}
+            <motion.div
+                initial={{ opacity: 0, y: -20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="text-center mb-8"
+            >
+                <h2 className="text-4xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent mb-2">
+                    🧠 {quizTitle} Quiz
+                </h2>
+                <div className="flex justify-center items-center gap-6 text-gray-600">
+                    <div className="flex items-center gap-2">
+                        <FiClock size={18} />
+                        <span>{formatTime(timeElapsed)}</span>
                     </div>
-
-                    {/* Current Question */}
-                    <h3 className="text-xl font-semibold mb-6 text-gray-900">
-                        {questions[current].question}
-                    </h3>
-
-                    {/* Answer Options */}
-                    <div className="space-y-3">
-                        {questions[current].options.map((option, idx) => {
-                            const selectedAnswer = userAnswers[current];
-                            const isSelected = selectedAnswer === option;
-                            const isCorrect = option === questions[current].answer;
-                            const isUnanswered = selectedAnswer === undefined;
-
-                            // Style the answer buttons based on their state
-                            let optionClass = "bg-gray-50 hover:bg-gray-100 border-gray-300";
-
-                            if (isSubmitted) {
-                                // After submission
-                                if (isCorrect) {
-                                    optionClass =
-                                        "bg-green-100 border-green-400 text-green-800"; // Correct answer
-                                } else if (isSelected || isUnanswered) {
-                                    optionClass =
-                                        "bg-red-100 border-red-400 text-red-800"; // Wrong or unanswered
-                                } else {
-                                    optionClass = "bg-gray-100 border-gray-300"; // Neutral
-                                }
-                            } else if (isSelected) {
-                                // While answering
-                                optionClass =
-                                    "bg-blue-100 border-blue-400 text-blue-800";
-                            }
-
-                            return (
-                                <button
-                                    key={idx}
-                                    onClick={() => handleAnswer(option)}
-                                    className={`w-full text-left px-4 py-3 rounded-lg border text-black transition-colors ${optionClass}`}
-                                    disabled={isSubmitted} // Disable buttons after submit
-                                >
-                                    {option}
-                                </button>
-                            );
-                        })}
-                    </div>
-
-                    {/* Navigation Buttons */}
-                    <div className="mt-6 flex justify-between items-center">
-                        <button
-                            className="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300 text-gray-700"
-                            onClick={handlePrev}
-                            disabled={current === 0} // Disable Prev on first question
-                        >
-                            ← Previous
-                        </button>
-
-                        {isSubmitted ? (
-                            // After submission, show the final score
-                            <div className="text-lg font-bold text-indigo-700">
-                                ✅ Score: {getScore()} / {questions.length}
-                            </div>
-                        ) : current === questions.length - 1 ? (
-                            // If on last question, show submit button
-                            <button
-                                className="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700"
-                                onClick={submitQuiz}
-                            >
-                                Submit Quiz
-                            </button>
-                        ) : (
-                            // Otherwise show Next button
-                            <button
-                                className="px-4 py-2 bg-indigo-500 text-white rounded hover:bg-indigo-600"
-                                onClick={handleNext}
-                            >
-                                Next →
-                            </button>
-                        )}
+                    <div className="text-sm">
+                        {questions.length} Questions
                     </div>
                 </div>
-            )}
+            </motion.div>
+
+            {/* Progress Bar */}
+            <div className="mb-6">
+                <div className="flex justify-between text-sm text-gray-600 mb-2">
+                    <span>Progress</span>
+                    <span>{Math.round(getProgress())}%</span>
+                </div>
+                <div className="w-full bg-gray-200 rounded-full h-2">
+                    <motion.div
+                        className="bg-gradient-to-r from-indigo-500 to-purple-500 h-2 rounded-full transition-all duration-500"
+                        initial={{ width: 0 }}
+                        animate={{ width: `${getProgress()}%` }}
+                    />
+                </div>
+            </div>
+
+            {/* Quiz Card */}
+            <motion.div
+                layout
+                className="bg-white rounded-2xl shadow-xl p-8 border border-gray-100"
+            >
+                {!isSubmitted ? (
+                    <>
+                        {/* Question Counter */}
+                        <div className="flex justify-between items-center mb-6">
+                            <span className="text-sm font-medium text-gray-500 bg-gray-100 px-3 py-1 rounded-full">
+                                Question {current + 1} of {questions.length}
+                            </span>
+                            <div className="flex gap-2">
+                                {questions.map((_, idx) => (
+                                    <div
+                                        key={idx}
+                                        className={`w-3 h-3 rounded-full transition-colors ${idx === current
+                                                ? "bg-indigo-500"
+                                                : userAnswers[idx] !== undefined
+                                                    ? "bg-green-400"
+                                                    : "bg-gray-200"
+                                            }`}
+                                    />
+                                ))}
+                            </div>
+                        </div>
+
+                        {/* Current Question */}
+                        <AnimatePresence mode="wait">
+                            <motion.div
+                                key={current}
+                                initial={{ opacity: 0, x: 20 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                exit={{ opacity: 0, x: -20 }}
+                                transition={{ duration: 0.3 }}
+                            >
+                                <h3 className="text-2xl font-semibold mb-8 text-gray-800 leading-relaxed">
+                                    {questions[current].question}
+                                </h3>
+
+                                {/* Answer Options */}
+                                <div className="space-y-4">
+                                    {questions[current].options.map((option, idx) => {
+                                        const selectedAnswer = userAnswers[current];
+                                        const isSelected = selectedAnswer === option;
+
+                                        return (
+                                            <motion.button
+                                                key={idx}
+                                                whileHover={{ scale: 1.02 }}
+                                                whileTap={{ scale: 0.98 }}
+                                                onClick={() => handleAnswer(option)}
+                                                className={`w-full text-left px-6 py-4 rounded-xl border-2 transition-all duration-300 ${isSelected
+                                                        ? "bg-indigo-50 border-indigo-400 text-indigo-800 shadow-md"
+                                                        : "bg-gray-50 border-gray-200 text-gray-700 hover:bg-gray-100 hover:border-gray-300"
+                                                    }`}
+                                            >
+                                                <div className="flex items-center gap-3">
+                                                    <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${isSelected ? "border-indigo-500 bg-indigo-500" : "border-gray-300"
+                                                        }`}>
+                                                        {isSelected && <div className="w-2 h-2 bg-white rounded-full" />}
+                                                    </div>
+                                                    <span className="font-medium">{option}</span>
+                                                </div>
+                                            </motion.button>
+                                        );
+                                    })}
+                                </div>
+                            </motion.div>
+                        </AnimatePresence>
+
+                        {/* Navigation Buttons */}
+                        <div className="mt-8 flex justify-between items-center">
+                            <button
+                                className="flex items-center gap-2 px-6 py-3 bg-gray-100 text-gray-700 rounded-xl hover:bg-gray-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                                onClick={handlePrev}
+                                disabled={current === 0}
+                            >
+                                <FiArrowLeft size={18} />
+                                Previous
+                            </button>
+
+                            {current === questions.length - 1 ? (
+                                <motion.button
+                                    whileHover={{ scale: 1.05 }}
+                                    whileTap={{ scale: 0.95 }}
+                                    className="flex items-center gap-2 px-8 py-3 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-xl hover:shadow-lg transition-all disabled:opacity-50"
+                                    onClick={submitQuiz}
+                                    disabled={isSubmitting}
+                                >
+                                    {isSubmitting ? <FiLoader className="animate-spin" size={18} /> : <FiSend size={18} />}
+                                    {isSubmitting ? "Submitting..." : "Submit Quiz"}
+                                </motion.button>
+                            ) : (
+                                <button
+                                    className="flex items-center gap-2 px-6 py-3 bg-indigo-500 text-white rounded-xl hover:bg-indigo-600 transition-colors"
+                                    onClick={handleNext}
+                                >
+                                    Next
+                                    <FiArrowRight size={18} />
+                                </button>
+                            )}
+                        </div>
+                    </>
+                ) : (
+                    // Results View
+                    <motion.div
+                        initial={{ opacity: 0, scale: 0.9 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        className="text-center"
+                    >
+                        <div className="mb-8">
+                            <div className={`inline-flex items-center justify-center w-20 h-20 rounded-full mb-4 ${getPercentage() >= 70 ? "bg-green-100" : getPercentage() >= 50 ? "bg-yellow-100" : "bg-red-100"
+                                }`}>
+                                {getPercentage() >= 70 ? (
+                                    <FiCheckCircle size={40} className="text-green-600" />
+                                ) : (
+                                    <FiXCircle size={40} className={getPercentage() >= 50 ? "text-yellow-600" : "text-red-600"} />
+                                )}
+                            </div>
+
+                            <h3 className="text-3xl font-bold text-gray-800 mb-2">Quiz Complete!</h3>
+                            <p className="text-gray-600">Here are your results for {quizTitle}</p>
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                            <div className="bg-gradient-to-br from-blue-50 to-indigo-50 p-6 rounded-xl border border-blue-200">
+                                <div className="text-3xl font-bold text-indigo-600">{getScore()}</div>
+                                <div className="text-sm text-gray-600">Correct Answers</div>
+                                <div className="text-xs text-gray-500">out of {questions.length}</div>
+                            </div>
+
+                            <div className="bg-gradient-to-br from-purple-50 to-pink-50 p-6 rounded-xl border border-purple-200">
+                                <div className="text-3xl font-bold text-purple-600">{getPercentage()}%</div>
+                                <div className="text-sm text-gray-600">Score</div>
+                                <div className="text-xs text-gray-500">
+                                    {getPercentage() >= 70 ? "Excellent!" : getPercentage() >= 50 ? "Good job!" : "Keep practicing!"}
+                                </div>
+                            </div>
+
+                            <div className="bg-gradient-to-br from-green-50 to-teal-50 p-6 rounded-xl border border-green-200">
+                                <div className="text-3xl font-bold text-green-600">{formatTime(timeElapsed)}</div>
+                                <div className="text-sm text-gray-600">Time Taken</div>
+                                <div className="text-xs text-gray-500">Total duration</div>
+                            </div>
+                        </div>
+
+                        <div className="flex justify-center gap-4">
+                            <button
+                                onClick={() => window.location.reload()}
+                                className="px-6 py-3 bg-indigo-500 text-white rounded-xl hover:bg-indigo-600 transition-colors"
+                            >
+                                Retake Quiz
+                            </button>
+                            <button
+                                onClick={() => window.history.back()}
+                                className="px-6 py-3 bg-gray-100 text-gray-700 rounded-xl hover:bg-gray-200 transition-colors"
+                            >
+                                Back to Quizzes
+                            </button>
+                        </div>
+                    </motion.div>
+                )}
+            </motion.div>
         </div>
     );
 };

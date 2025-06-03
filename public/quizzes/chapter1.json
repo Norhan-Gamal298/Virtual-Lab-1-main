@@ -1,246 +1,76 @@
 [
     {
-        "question": "What is the primary goal of image processing?",
+        "question": "What is Image Processing?",
         "options": [
-            "Enhance images",
-            "Destroy images",
-            "Blur images",
-            "Shrink images"
+            "Converting text to images",
+            "Applying algorithms to analyze or modify images",
+            "Creating 3D models from 2D images",
+            "Compressing video files"
         ],
-        "answer": "Enhance images"
+        "answer": "Applying algorithms to analyze or modify images"
     },
     {
-        "question": "Which of the following is a common application of image processing?",
+        "question": "Which of the following is a primary goal of Image Processing?",
         "options": [
-            "Video compression",
-            "Image compression",
-            "All of the above",
-            "Only image enhancement"
+            "Generating random images",
+            "Enhancing or extracting information from images",
+            "Converting images to audio signals",
+            "Reducing image resolution"
         ],
-        "answer": "All of the above"
+        "answer": "Enhancing or extracting information from images"
     },
     {
-        "question": "Which domain involves modifying pixel values directly?",
+        "question": "Which field does NOT typically use Image Processing?",
         "options": [
-            "Frequency domain",
-            "Spatial domain",
-            "Time domain",
-            "None"
-        ],
-        "answer": "Spatial domain"
-    },
-    {
-        "question": "Which spectrum range is most commonly used in digital image processing?",
-        "options": [
-            "Gamma rays",
-            "Ultraviolet",
-            "Visible light",
-            "X-rays"
-        ],
-        "answer": "Visible light"
-    },
-    {
-        "question": "MRI is an example of which imaging modality?",
-        "options": [
-            "Ultrasound imaging",
-            "Magnetic Resonance Imaging",
-            "X-ray imaging",
-            "Nuclear imaging"
-        ],
-        "answer": "Magnetic Resonance Imaging"
-    },
-    {
-        "question": "Which is NOT a type of image processing?",
-        "options": [
-            "Analog",
-            "Digital",
-            "Manual",
-            "None of the above"
-        ],
-        "answer": "Manual"
-    },
-    {
-        "question": "In image acquisition, what is the role of a sensor?",
-        "options": [
-            "Display image",
-            "Capture image",
-            "Store image",
-            "Edit image"
-        ],
-        "answer": "Capture image"
-    },
-    {
-        "question": "In electromagnetic spectrum, which wave has the shortest wavelength?",
-        "options": [
-            "Radio waves",
-            "X-rays",
-            "Microwaves",
-            "Infrared"
-        ],
-        "answer": "X-rays"
-    },
-    {
-        "question": "Which imaging modality uses sound waves?",
-        "options": [
-            "MRI",
-            "Ultrasound",
-            "X-ray",
-            "CT Scan"
-        ],
-        "answer": "Ultrasound"
-    },
-    {
-        "question": "Digital images are represented by:",
-        "options": [
-            "Continuous signals",
-            "Discrete signals",
-            "Analog signals",
-            "Random signals"
-        ],
-        "answer": "Discrete signals"
-    },
-    {
-        "question": "What is an image histogram?",
-        "options": [
-            "A plot of pixel intensity frequency",
-            "A plot of image size",
-            "A 3D model of image",
-            "A Fourier transform"
-        ],
-        "answer": "A plot of pixel intensity frequency"
-    },
-    {
-        "question": "Which device converts light into electronic signals?",
-        "options": [
-            "Monitor",
-            "Camera Sensor",
-            "Printer",
-            "Speaker"
-        ],
-        "answer": "Camera Sensor"
-    },
-    {
-        "question": "CT scans use which type of radiation?",
-        "options": [
-            "Ultrasound",
-            "X-ray",
-            "Infrared",
-            "Microwave"
-        ],
-        "answer": "X-ray"
-    },
-    {
-        "question": "The process of converting an analog image into digital form is called?",
-        "options": [
-            "Quantization",
-            "Sampling",
-            "Scanning",
-            "Acquisition"
-        ],
-        "answer": "Sampling"
-    },
-    {
-        "question": "Which application is most related to medical imaging?",
-        "options": [
-            "Photo editing",
-            "MRI",
-            "Image compression",
-            "3D modeling"
-        ],
-        "answer": "MRI"
-    },
-    {
-        "question": "Which is an example of a linear operation?",
-        "options": [
-            "Median filtering",
-            "Histogram equalization",
-            "Low-pass filtering",
-            "Morphological operations"
-        ],
-        "answer": "Low-pass filtering"
-    },
-    {
-        "question": "What determines the spatial resolution of an image?",
-        "options": [
-            "Number of bits per pixel",
-            "Number of pixels per unit area",
-            "Color depth",
-            "File size"
-        ],
-        "answer": "Number of pixels per unit area"
-    },
-    {
-        "question": "Which type of imaging is used to see inside the human body without surgery?",
-        "options": [
-            "Photography",
             "Medical imaging",
-            "Microscopy",
-            "Astronomy"
+            "Astronomy",
+            "Database management",
+            "Autonomous vehicles"
         ],
-        "answer": "Medical imaging"
+        "answer": "Database management"
     },
     {
-        "question": "Higher sampling rate results in?",
+        "question": "What is a real-life application of Image Processing?",
         "options": [
-            "Higher resolution",
-            "Lower resolution",
-            "No change",
-            "Pixelation"
+            "Speech recognition",
+            "Facial recognition in security systems",
+            "Text editing in word processors",
+            "File compression"
         ],
-        "answer": "Higher resolution"
+        "answer": "Facial recognition in security systems"
     },
     {
-        "question": "An image can be described as a function of two variables. Which are they?",
+        "question": "Which of the following is an example of Image Processing in healthcare?",
         "options": [
-            "x and y",
-            "length and width",
-            "height and weight",
-            "amplitude and time"
+            "Developing new medicines",
+            "Analyzing MRI scans",
+            "Managing hospital records",
+            "Measuring blood pressure"
         ],
-        "answer": "x and y"
+        "answer": "Analyzing MRI scans"
     },
     {
-        "question": "Which of these is an imaging sensor?",
+        "question": "In which industry is Image Processing used for quality control?",
         "options": [
-            "Laser",
-            "Scanner",
-            "Printer",
-            "Solar panel"
+            "Manufacturing",
+            "Education",
+            "Finance",
+            "Tourism"
         ],
-        "answer": "Scanner"
+        "answer": "Manufacturing"
     },
     {
-        "question": "In image processing, noise is considered:",
+        "question": "What type of image consists of only two values, typically black and white?",
         "options": [
-            "Desirable",
-            "Undesirable",
-            "Mandatory",
-            "Essential"
+            "Grayscale",
+            "RGB",
+            "Binary",
+            "CMYK"
         ],
-        "answer": "Undesirable"
+        "answer": "Binary"
     },
     {
-        "question": "The visible spectrum ranges between:",
-        "options": [
-            "400nm to 700nm",
-            "100nm to 200nm",
-            "900nm to 1200nm",
-            "10nm to 20nm"
-        ],
-        "answer": "400nm to 700nm"
-    },
-    {
-        "question": "An 8-bit image has how many gray levels?",
-        "options": [
-            "64",
-            "128",
-            "256",
-            "512"
-        ],
-        "answer": "256"
-    },
-    {
-        "question": "In a color image, each pixel typically has how many components?",
+        "question": "How many color channels does an RGB image have?",
         "options": [
             "1",
             "2",
@@ -250,63 +80,223 @@
         "answer": "3"
     },
     {
-        "question": "Compression is used to:",
+        "question": "What does a grayscale image represent?",
         "options": [
-            "Increase file size",
-            "Reduce file size",
-            "Enhance color",
-            "Increase pixel size"
+            "A single intensity value for each pixel",
+            "Three color channels",
+            "Binary values only",
+            "A 3D depth map"
         ],
-        "answer": "Reduce file size"
+        "answer": "A single intensity value for each pixel"
     },
     {
-        "question": "JPEG compression is mainly based on:",
+        "question": "Which type of image is best suited for simple thresholding operations?",
+        "options": [
+            "RGB",
+            "Grayscale",
+            "Binary",
+            "Indexed"
+        ],
+        "answer": "Binary"
+    },
+    {
+        "question": "An RGB image is composed of which colors?",
+        "options": [
+            "Red, Green, Blue",
+            "Cyan, Magenta, Yellow",
+            "Red, Gray, Black",
+            "Blue, Yellow, Green"
+        ],
+        "answer": "Red, Green, Blue"
+    },
+    {
+        "question": "What is the range of pixel values in a typical 8-bit grayscale image?",
+        "options": [
+            "0 to 1",
+            "0 to 255",
+            "-128 to 127",
+            "0 to 100"
+        ],
+        "answer": "0 to 255"
+    },
+    {
+        "question": "Which image type is most suitable for representing complex photographs?",
+        "options": [
+            "Binary",
+            "Grayscale",
+            "RGB",
+            "Indexed"
+        ],
+        "answer": "RGB"
+    },
+    {
+        "question": "In a binary image, what do the pixel values typically represent?",
+        "options": [
+            "Intensity levels",
+            "Foreground and background",
+            "Color channels",
+            "Depth information"
+        ],
+        "answer": "Foreground and background"
+    },
+    {
+        "question": "What is the main difference between spatial and frequency domains?",
+        "options": [
+            "Spatial domain works with pixel intensities, frequency domain with signal frequencies",
+            "Frequency domain is used for binary images only",
+            "Spatial domain is used for color images only",
+            "Frequency domain works with pixel positions"
+        ],
+        "answer": "Spatial domain works with pixel intensities, frequency domain with signal frequencies"
+    },
+    {
+        "question": "Which domain is used for operations like blurring or sharpening an image?",
+        "options": [
+            "Frequency domain",
+            "Spatial domain",
+            "Time domain",
+            "Color domain"
+        ],
+        "answer": "Spatial domain"
+    },
+    {
+        "question": "In which domain is the Fourier Transform commonly applied?",
+        "options": [
+            "Spatial domain",
+            "Frequency domain",
+            "Color domain",
+            "Binary domain"
+        ],
+        "answer": "Frequency domain"
+    },
+    {
+        "question": "Which of the following is a frequency domain operation?",
+        "options": [
+            "Image cropping",
+            "Histogram equalization",
+            "Low-pass filtering",
+            "Pixel intensity adjustment"
+        ],
+        "answer": "Low-pass filtering"
+    },
+    {
+        "question": "What does the spatial domain directly manipulate?",
+        "options": [
+            "Pixel values in the image",
+            "Frequency components",
+            "Color histograms",
+            "Image metadata"
+        ],
+        "answer": "Pixel values in the image"
+    },
+    {
+        "question": "Which domain is more computationally intensive for certain transformations?",
+        "options": [
+            "Spatial domain",
+            "Frequency domain",
+            "Color domain",
+            "Binary domain"
+        ],
+        "answer": "Frequency domain"
+    },
+    {
+        "question": "What is a common application of frequency domain processing?",
+        "options": [
+            "Image compression",
+            "Image rotation",
+            "Image cropping",
+            "Color correction"
+        ],
+        "answer": "Image compression"
+    },
+    {
+        "question": "Which of the following is NOT a type of digital image?",
+        "options": [
+            "Grayscale",
+            "RGB",
+            "Binary",
+            "Vector"
+        ],
+        "answer": "Vector"
+    },
+    {
+        "question": "In Image Processing, what does the term 'pixel' refer to?",
+        "options": [
+            "A small block of color in an image",
+            "A type of image filter",
+            "A compression algorithm",
+            "A hardware component"
+        ],
+        "answer": "A small block of color in an image"
+    },
+    {
+        "question": "Which type of image is most suitable for edge detection algorithms?",
+        "options": [
+            "Binary",
+            "Grayscale",
+            "RGB",
+            "Indexed"
+        ],
+        "answer": "Grayscale"
+    },
+    {
+        "question": "What is a real-life application of Image Processing in autonomous vehicles?",
+        "options": [
+            "Route planning",
+            "Object detection",
+            "Fuel efficiency analysis",
+            "Audio processing"
+        ],
+        "answer": "Object detection"
+    },
+    {
+        "question": "Which domain is used to analyze the texture of an image?",
+        "options": [
+            "Spatial domain",
+            "Frequency domain",
+            "Color domain",
+            "Binary domain"
+        ],
+        "answer": "Frequency domain"
+    },
+    {
+        "question": "What is the purpose of Image Processing in astronomy?",
+        "options": [
+            "Enhancing telescope images",
+            "Calculating star distances",
+            "Generating star maps",
+            "Measuring telescope lens size"
+        ],
+        "answer": "Enhancing telescope images"
+    },
+    {
+        "question": "Which image type requires the least storage space?",
+        "options": [
+            "Binary",
+            "Grayscale",
+            "RGB",
+            "Indexed"
+        ],
+        "answer": "Binary"
+    },
+    {
+        "question": "Which of the following is a spatial domain operation?",
         "options": [
             "Fourier Transform",
-            "Histogram Equalization",
-            "Discrete Cosine Transform",
-            "Median Filtering"
+            "Image sharpening",
+            "Frequency filtering",
+            "Wavelet Transform"
         ],
-        "answer": "Discrete Cosine Transform"
+        "answer": "Image sharpening"
     },
     {
-        "question": "Infrared imaging is mostly used for:",
+        "question": "What is the benefit of using Image Processing in security systems?",
         "options": [
-            "Medical imaging",
-            "Thermal imaging",
-            "Astronomical imaging",
-            "Microscopy"
+            "Faster data encryption",
+            "Improved facial recognition",
+            "Enhanced audio surveillance",
+            "Reduced network latency"
         ],
-        "answer": "Thermal imaging"
-    },
-    {
-        "question": "What kind of images are X-rays?",
-        "options": [
-            "Visible light images",
-            "Thermal images",
-            "Radiographic images",
-            "Microscopic images"
-        ],
-        "answer": "Radiographic images"
-    },
-    {
-        "question": "Which one of these is a source of electromagnetic radiation?",
-        "options": [
-            "Fire",
-            "Radio transmitter",
-            "Battery",
-            "Magnet"
-        ],
-        "answer": "Radio transmitter"
-    },
-    {
-        "question": "Which technology uses gamma rays for imaging?",
-        "options": [
-            "PET scan",
-            "MRI",
-            "CT scan",
-            "Ultrasound"
-        ],
-        "answer": "PET scan"
+        "answer": "Improved facial recognition"
     }
 ]

@@ -1,0 +1,302 @@
+[
+    {
+        "question": "What is the process of converting a continuous signal into a discrete signal called?",
+        "options": [
+            "Quantization",
+            "Sampling",
+            "Compression",
+            "Filtering"
+        ],
+        "answer": "Sampling"
+    },
+    {
+        "question": "What does quantization determine in digital imaging?",
+        "options": [
+            "Spatial resolution",
+            "Number of intensity levels",
+            "Image size",
+            "Sampling rate"
+        ],
+        "answer": "Number of intensity levels"
+    },
+    {
+        "question": "How many intensity levels are possible in an 8-bit grayscale image?",
+        "options": [
+            "128",
+            "256",
+            "512",
+            "64"
+        ],
+        "answer": "256"
+    },
+    {
+        "question": "What is the main purpose of sampling in digital imaging?",
+        "options": [
+            "To reduce noise",
+            "To discretize spatial coordinates",
+            "To compress the image",
+            "To enhance contrast"
+        ],
+        "answer": "To discretize spatial coordinates"
+    },
+    {
+        "question": "Which of the following affects the spatial resolution of a digital image?",
+        "options": [
+            "Quantization levels",
+            "Sampling rate",
+            "Bit depth",
+            "Image histogram"
+        ],
+        "answer": "Sampling rate"
+    },
+    {
+        "question": "In image representation, what does a pixel represent?",
+        "options": [
+            "A single intensity value",
+            "A color channel",
+            "A spatial coordinate",
+            "A compression ratio"
+        ],
+        "answer": "A single intensity value"
+    },
+    {
+        "question": "What is the bit depth of a 24-bit RGB image?",
+        "options": [
+            "8 bits per channel",
+            "24 bits per channel",
+            "12 bits per channel",
+            "6 bits per channel"
+        ],
+        "answer": "8 bits per channel"
+    },
+    {
+        "question": "Which of the following is a linear intensity transformation?",
+        "options": [
+            "Log transformation",
+            "Power-law transformation",
+            "Contrast stretching",
+            "Thresholding"
+        ],
+        "answer": "Contrast stretching"
+    },
+    {
+        "question": "What does bit-plane slicing do?",
+        "options": [
+            "Compresses the image",
+            "Separates an image into binary planes",
+            "Enhances image contrast",
+            "Reduces noise"
+        ],
+        "answer": "Separates an image into binary planes"
+    },
+    {
+        "question": "Which bit-plane contains the most significant visual information in an 8-bit image?",
+        "options": [
+            "Bit-plane 0",
+            "Bit-plane 4",
+            "Bit-plane 7",
+            "Bit-plane 1"
+        ],
+        "answer": "Bit-plane 7"
+    },
+    {
+        "question": "What happens if the sampling rate is too low?",
+        "options": [
+            "Image becomes blurry",
+            "Aliasing occurs",
+            "Image size increases",
+            "Noise is reduced"
+        ],
+        "answer": "Aliasing occurs"
+    },
+    {
+        "question": "What is the role of quantization in image processing?",
+        "options": [
+            "To reduce spatial resolution",
+            "To discretize intensity values",
+            "To increase image size",
+            "To remove aliasing"
+        ],
+        "answer": "To discretize intensity values"
+    },
+    {
+        "question": "In a grayscale image, how is pixel intensity typically represented?",
+        "options": [
+            "As RGB values",
+            "As a single value between 0 and 255",
+            "As a binary value",
+            "As a vector"
+        ],
+        "answer": "As a single value between 0 and 255"
+    },
+    {
+        "question": "Which transformation is used to enhance dark regions of an image?",
+        "options": [
+            "Negative transformation",
+            "Log transformation",
+            "Linear transformation",
+            "Thresholding"
+        ],
+        "answer": "Log transformation"
+    },
+    {
+        "question": "What is the effect of increasing the number of quantization levels?",
+        "options": [
+            "Increased spatial resolution",
+            "Smoother intensity transitions",
+            "Larger image size",
+            "Reduced noise"
+        ],
+        "answer": "Smoother intensity transitions"
+    },
+    {
+        "question": "What does the term 'bit-plane' refer to in bit-plane slicing?",
+        "options": [
+            "A single bit of each pixel’s intensity value",
+            "A compressed image layer",
+            "A color channel",
+            "A spatial coordinate"
+        ],
+        "answer": "A single bit of each pixel’s intensity value"
+    },
+    {
+        "question": "Which of the following is NOT an intensity transformation?",
+        "options": [
+            "Log transformation",
+            "Power-law transformation",
+            "Bit-plane slicing",
+            "Negative transformation"
+        ],
+        "answer": "Bit-plane slicing"
+    },
+    {
+        "question": "What is the result of applying a negative transformation to an 8-bit grayscale image?",
+        "options": [
+            "Pixel values are inverted",
+            "Image becomes binary",
+            "Contrast is reduced",
+            "Image is compressed"
+        ],
+        "answer": "Pixel values are inverted"
+    },
+    {
+        "question": "How many bit-planes are there in an 8-bit grayscale image?",
+        "options": [
+            "4",
+            "6",
+            "8",
+            "10"
+        ],
+        "answer": "8"
+    },
+    {
+        "question": "What is aliasing in the context of image sampling?",
+        "options": [
+            "Loss of image details due to insufficient sampling",
+            "Increase in image noise",
+            "Compression of image data",
+            "Enhancement of image contrast"
+        ],
+        "answer": "Loss of image details due to insufficient sampling"
+    },
+    {
+        "question": "Which intensity transformation is used to compress high-intensity values?",
+        "options": [
+            "Log transformation",
+            "Linear transformation",
+            "Negative transformation",
+            "Contrast stretching"
+        ],
+        "answer": "Log transformation"
+    },
+    {
+        "question": "What does the least significant bit-plane (bit-plane 0) contribute to an image?",
+        "options": [
+            "Major visual details",
+            "Fine details and noise",
+            "Color information",
+            "Spatial resolution"
+        ],
+        "answer": "Fine details and noise"
+    },
+    {
+        "question": "What is the primary advantage of bit-plane slicing?",
+        "options": [
+            "Image compression",
+            "Noise reduction",
+            "Analysis of image contribution per bit",
+            "Contrast enhancement"
+        ],
+        "answer": "Analysis of image contribution per bit"
+    },
+    {
+        "question": "In an RGB image, how many bits are used to represent each pixel?",
+        "options": [
+            "8 bits",
+            "16 bits",
+            "24 bits",
+            "32 bits"
+        ],
+        "answer": "24 bits"
+    },
+    {
+        "question": "Which of the following transformations is non-linear?",
+        "options": [
+            "Contrast stretching",
+            "Negative transformation",
+            "Power-law transformation",
+            "Linear scaling"
+        ],
+        "answer": "Power-law transformation"
+    },
+    {
+        "question": "What is the effect of reducing the bit depth of an image?",
+        "options": [
+            "Increased spatial resolution",
+            "Reduced number of intensity levels",
+            "Enhanced contrast",
+            "Larger image size"
+        ],
+        "answer": "Reduced number of intensity levels"
+    },
+    {
+        "question": "What is the purpose of contrast stretching?",
+        "options": [
+            "To compress the image",
+            "To enhance the visibility of intensity differences",
+            "To reduce noise",
+            "To invert pixel values"
+        ],
+        "answer": "To enhance the visibility of intensity differences"
+    },
+    {
+        "question": "Which bit-plane would contribute the least to the visual quality of an image?",
+        "options": [
+            "Bit-plane 7",
+            "Bit-plane 0",
+            "Bit-plane 4",
+            "Bit-plane 6"
+        ],
+        "answer": "Bit-plane 0"
+    },
+    {
+        "question": "What is the relationship between sampling and aliasing?",
+        "options": [
+            "Higher sampling reduces aliasing",
+            "Lower sampling reduces aliasing",
+            "Sampling has no effect on aliasing",
+            "Aliasing increases with more quantization"
+        ],
+        "answer": "Higher sampling reduces aliasing"
+    },
+    {
+        "question": "Which of the following is true about power-law transformation?",
+        "options": [
+            "It is used to reduce noise",
+            "It adjusts image intensity non-linearly",
+            "It inverts pixel values",
+            "It discretizes spatial coordinates"
+        ],
+        "answer": "It adjusts image intensity non-linearly"
+    }
+]

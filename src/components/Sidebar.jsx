@@ -10,6 +10,7 @@ export default function Sidebar() {
     const [chapters, setChapters] = useState([]);
     const [expanded, setExpanded] = useState({});
     const [sidebarCollapsed, setSidebarCollapsed] = useState(true);
+    const [activeTab, setActiveTab] = useState("chapters"); // 'chapters' or 'quiz'
     const { user } = useSelector((state) => state.auth);
     const { topicProgress } = useSelector((state) => state.auth);
     const location = useLocation();
@@ -59,16 +60,15 @@ export default function Sidebar() {
     return (
         <aside
             className={`markdownSidebar transition-all duration-900 ease-in-out
-    ${sidebarCollapsed ? "w-[50px]" : "w-[380px] bg-neutral-surface"} 
-    pb-[3rem] text-neutral-text-primary dark:text-neutral-text-primary sticky z-40`}
+                ${sidebarCollapsed ? "w-[50px]" : "w-[380px] bg-neutral-surface"} 
+                pb-[3rem] text-neutral-text-primary dark:text-neutral-text-primary sticky z-40`}
         >
-            <div className="sidebarViewport">
+            <div className="sidebarViewport overflow-auto">
                 <div className="sidebarContainer">
                     <div className="flex p-2">
                         <button
                             onClick={() => setSidebarCollapsed(prev => !prev)}
                             className="p-1 bg-neutral-surface hover:bg-neutral-surface border-2 border-neutral-border rounded-lg transition"
-
                             title={sidebarCollapsed ? "Expand Sidebar" : "Collapse Sidebar"}
                         >
                             {sidebarCollapsed ? <TbLayoutSidebarRightCollapse size={30} /> : <TbLayoutSidebarLeftCollapse size={30} />}
@@ -76,93 +76,115 @@ export default function Sidebar() {
                     </div>
 
                     {!sidebarCollapsed && (
-                        <nav className="transition">
-                            <ul className="space-y-2 pr-2 pl-[12px] ">
-                                {chapters.map((chapter, index) => (
-                                    <li key={chapter.chapter}>
-                                        <div
-                                            onClick={() => toggleChapter(chapter, index)}
-                                            className="cursor-pointer font-semibold hover:bg-neutral-background p-2 rounded-lg flex justify-between items-center"
+                        <div className="transition">
+                            {/* Tab Navigation */}
+                            <div className="flex border-b border-neutral-border mb-4 px-2">
+                                <button
+                                    onClick={() => setActiveTab("chapters")}
+                                    className={`py-2 px-4 font-medium ${activeTab === "chapters" ? "text-primary border-b-2 border-primary" : "text-neutral-text-secondary hover:text-neutral-text-primary"}`}
+                                >
+                                    Chapters
+                                </button>
+                                <button
+                                    onClick={() => {
+                                        setActiveTab("quiz");
+                                        navigate("/quizzes");
+                                    }}
+                                    className={`py-2 px-4 font-medium ${activeTab === "quiz" ? "text-primary border-b-2 border-primary" : "text-neutral-text-secondary hover:text-neutral-text-primary"}`}
+                                >
+                                    Quiz
+                                </button>
+                            </div>
 
-                                        >
-                                            <motion.span
-                                                className="select-none overflow-hidden text-ellipsis w-full "
-                                                initial={{ opacity: 0, x: 0 }}
-                                                animate={{ opacity: 1, x: 0 }}
-                                                exit={{ opacity: 0, x: -10 }}
-                                                transition={{ duration: 0.25 }}
-                                            >
-                                                {chapter.chapter}
-                                            </motion.span>
-                                            <span>
-                                                {expanded[chapter.chapter]
-                                                    ? <FiChevronDown size={18} />
-                                                    : <FiChevronRight size={18} />}
-                                            </span>
-                                        </div>
-
-                                        <AnimatePresence initial={false}>
-                                            {expanded[chapter.chapter] && (
-                                                <motion.div
-                                                    key={chapter.chapter}
-                                                    initial={{ height: 0, opacity: 0 }}
-                                                    animate={{ height: "auto", opacity: 0.9 }}
-                                                    exit={{ height: 0, opacity: 0 }}
-                                                    transition={{ duration: 0.2, ease: "easeInOut" }}
-                                                    className="overflow-hidden"
+                            {/* Chapters Content */}
+                            {activeTab === "chapters" && (
+                                <nav>
+                                    <ul className="space-y-2 pr-2 pl-[12px]">
+                                        {chapters.map((chapter, index) => (
+                                            <li key={chapter.chapter}>
+                                                <div
+                                                    onClick={() => toggleChapter(chapter, index)}
+                                                    className="cursor-pointer font-semibold hover:bg-neutral-background p-2 rounded-lg flex justify-between items-center"
                                                 >
-                                                    <motion.ul
-                                                        className="ml-4 mt-2 space-y-1"
-                                                        initial="hidden"
-                                                        animate="visible"
-                                                        exit="exit"
-                                                        variants={{
-                                                            visible: {
-                                                                transition: {
-                                                                    staggerChildren: 0.10,
-                                                                    when: "beforeChildren"
-                                                                }
-                                                            },
-                                                            exit: {
-                                                                transition: {
-                                                                    staggerChildren: 0.03,
-                                                                    staggerDirection: -1
-                                                                }
-                                                            }
-                                                        }}
+                                                    <motion.span
+                                                        className="select-none overflow-hidden text-ellipsis w-full"
+                                                        initial={{ opacity: 0, x: 0 }}
+                                                        animate={{ opacity: 1, x: 0 }}
+                                                        exit={{ opacity: 0, x: -10 }}
+                                                        transition={{ duration: 0.25 }}
                                                     >
-                                                        {chapter.topics.map((topic) => {
-                                                            const isActive = location.pathname === `/docs/${topic.id}`;
-                                                            return (
-                                                                <motion.li
-                                                                    key={topic.id}
-                                                                    variants={{
-                                                                        hidden: { opacity: 0, x: -20 },
-                                                                        visible: { opacity: 1, x: 0 },
-                                                                        exit: { opacity: 0, x: -20 }
-                                                                    }}
-                                                                    transition={{ duration: 0.2 }}
-                                                                >
-                                                                    <Link
-                                                                        to={`/docs/${topic.id}`}
-                                                                        className={`block px-2 py-1 rounded-lg transition ${isActive ? "bg-neutral-background" : "hover:bg-neutral-background"} flex items-center`}
+                                                        {chapter.chapter}
+                                                    </motion.span>
+                                                    <span>
+                                                        {expanded[chapter.chapter]
+                                                            ? <FiChevronDown size={18} />
+                                                            : <FiChevronRight size={18} />}
+                                                    </span>
+                                                </div>
 
-                                                                        style={{ whiteSpace: "normal", overflow: "visible", textOverflow: "unset" }}
-                                                                    >
-                                                                        {getTopicStatusIcon(topic.id)}
-                                                                        <span>{topic.title}</span>
-                                                                    </Link>
-                                                                </motion.li>
-                                                            );
-                                                        })}
-                                                    </motion.ul>
-                                                </motion.div>
-                                            )}
-                                        </AnimatePresence>
-                                    </li>
-                                ))}
-                            </ul>
-                        </nav>
+                                                <AnimatePresence initial={false}>
+                                                    {expanded[chapter.chapter] && (
+                                                        <motion.div
+                                                            key={chapter.chapter}
+                                                            initial={{ height: 0, opacity: 0 }}
+                                                            animate={{ height: "auto", opacity: 0.9 }}
+                                                            exit={{ height: 0, opacity: 0 }}
+                                                            transition={{ duration: 0.2, ease: "easeInOut" }}
+                                                            className="overflow-hidden"
+                                                        >
+                                                            <motion.ul
+                                                                className="ml-4 mt-2 space-y-1"
+                                                                initial="hidden"
+                                                                animate="visible"
+                                                                exit="exit"
+                                                                variants={{
+                                                                    visible: {
+                                                                        transition: {
+                                                                            staggerChildren: 0.10,
+                                                                            when: "beforeChildren"
+                                                                        }
+                                                                    },
+                                                                    exit: {
+                                                                        transition: {
+                                                                            staggerChildren: 0.03,
+                                                                            staggerDirection: -1
+                                                                        }
+                                                                    }
+                                                                }}
+                                                            >
+                                                                {chapter.topics.map((topic) => {
+                                                                    const isActive = location.pathname === `/docs/${topic.id}`;
+                                                                    return (
+                                                                        <motion.li
+                                                                            key={topic.id}
+                                                                            variants={{
+                                                                                hidden: { opacity: 0, x: -20 },
+                                                                                visible: { opacity: 1, x: 0 },
+                                                                                exit: { opacity: 0, x: -20 }
+                                                                            }}
+                                                                            transition={{ duration: 0.2 }}
+                                                                        >
+                                                                            <Link
+                                                                                to={`/docs/${topic.id}`}
+                                                                                className={`block px-2 py-1 rounded-lg transition ${isActive ? "bg-neutral-background" : "hover:bg-neutral-background"} flex items-center`}
+                                                                                style={{ whiteSpace: "normal", overflow: "visible", textOverflow: "unset" }}
+                                                                            >
+                                                                                {getTopicStatusIcon(topic.id)}
+                                                                                <span>{topic.title}</span>
+                                                                            </Link>
+                                                                        </motion.li>
+                                                                    );
+                                                                })}
+                                                            </motion.ul>
+                                                        </motion.div>
+                                                    )}
+                                                </AnimatePresence>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </nav>
+                            )}
+                        </div>
                     )}
                 </div>
             </div>
