@@ -50,6 +50,7 @@ const Quiz = ({ chapterId }) => {
                         const topicsData = await topicsResponse.json();
                         const chapter = topicsData.find((_, index) => index + 1 === parseInt(chapterId));
                         if (chapter) {
+
                             chapterTitle = chapter.chapter;
                         }
                     }
@@ -290,10 +291,10 @@ const Quiz = ({ chapterId }) => {
                                     <div
                                         key={idx}
                                         className={`w-3 h-3 rounded-full transition-colors ${idx === current
-                                                ? "bg-indigo-500"
-                                                : userAnswers[idx] !== undefined
-                                                    ? "bg-green-400"
-                                                    : "bg-gray-200"
+                                            ? "bg-indigo-500"
+                                            : userAnswers[idx] !== undefined
+                                                ? "bg-green-400"
+                                                : "bg-gray-200"
                                             }`}
                                     />
                                 ))}
@@ -326,8 +327,8 @@ const Quiz = ({ chapterId }) => {
                                                 whileTap={{ scale: 0.98 }}
                                                 onClick={() => handleAnswer(option)}
                                                 className={`w-full text-left px-6 py-4 rounded-xl border-2 transition-all duration-300 ${isSelected
-                                                        ? "bg-indigo-50 border-indigo-400 text-indigo-800 shadow-md"
-                                                        : "bg-gray-50 border-gray-200 text-gray-700 hover:bg-gray-100 hover:border-gray-300"
+                                                    ? "bg-indigo-50 border-indigo-400 text-indigo-800 shadow-md"
+                                                    : "bg-gray-50 border-gray-200 text-gray-700 hover:bg-gray-100 hover:border-gray-300"
                                                     }`}
                                             >
                                                 <div className="flex items-center gap-3">
