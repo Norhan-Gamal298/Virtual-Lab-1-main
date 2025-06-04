@@ -50,13 +50,13 @@ const teamMembers = [
 
 const About = () => {
     return (
-        <div className="backgroundPatterns relative bg-dark text-black px-32 py-12 mx-auto">
+        <div className="backgroundPatterns relative px-32 py-12 mx-auto">
 
             {/* Hero Section */}
             <div className="flex items-center justify-between gap-12 mb-24">
                 <div className="flex-1">
-                    <h1 className="text-5xl text-white font-bold mb-4">Who We Are at Virtual Lab</h1>
-                    <p className="text-lg text-white mb-6">
+                    <h1 className="text-5xl font-bold mb-4">Who We Are at Virtual Lab</h1>
+                    <p className="text-lg mb-6">
                         Empowering learners to explore the world of Image Processing & Computer Vision.
                     </p>
                     <div className="flex gap-4 items-end">
@@ -84,7 +84,7 @@ const About = () => {
 
             {/* What Makes Us Unique */}
             <div className="mb-24">
-                <h2 className="text-3xl text-white font-bold mb-8">What Makes Virtual Lab Unique</h2>
+                <h2 className="text-3xl font-bold mb-8">What Makes Virtual Lab Unique</h2>
                 <div className="grid grid-cols-4 gap-6">
                     {[
                         { icon: (<RxCode size={42} />), title: "Hands-on Labs", desc: "With OpenCV/MATLAB" },
@@ -105,13 +105,13 @@ const About = () => {
             </div>
 
             {/* Team Section */}
-            <div id="team" className="mb-24 text-white">
+            <div id="team" className="mb-24">
                 <h2 className="text-3xl font-bold mb-8">Meet the Team</h2>
                 <div className="grid grid-cols-4 gap-6">
                     {teamMembers.map((member, idx) => (
                         <div key={idx} className="bg-[#1e1f22] p-6 rounded-xl text-center">
 
-                            <h3 className="text-lg font-semibold">{member.name}</h3>
+                            <h3 className="text-lg text-white font-semibold">{member.name}</h3>
                             <p className="text-gray-500">{member.role}</p>
                         </div>
                     ))}

@@ -158,39 +158,34 @@
         "chapter": "Image Compression",
         "topics": [
             {
-                "id": "chapter_7_1_introduction_redundancy_types",
+                "id": "chapter_7_0_image_compression",
+                "title": "Image Compression",
+                "path": "Chapter 7 - Image Compression/7.0 Image Compression.md"
+            },
+            {
+                "id": "chapter_7_1_introduction_and_redundancy_types",
                 "title": "Introduction & Redundancy Types",
                 "path": "Chapter 7 - Image Compression/7.1 Introduction & Redundancy Types.md"
             },
             {
-                "id": "chapter_7_2_entropy_and_information_theory",
-                "title": "Entropy and Information Theory",
-                "path": "Chapter 7 - Image Compression/7.2 Entropy and Information Theory.md"
-            },
-            {
-                "id": "chapter_7_3_fidelity_criteria",
+                "id": "chapter_7_2_fidelity_criteria",
                 "title": "Fidelity Criteria",
-                "path": "Chapter 7 - Image Compression/7.3 Fidelity Criteria.md"
+                "path": "Chapter 7 - Image Compression/7.2 Fidelity Criteria.md"
             },
             {
-                "id": "chapter_7_4_huffman_coding",
+                "id": "chapter_7_3_huffman_coding",
                 "title": "Huffman Coding",
-                "path": "Chapter 7 - Image Compression/7.4 Huffman Coding.md"
+                "path": "Chapter 7 - Image Compression/7.3 Huffman Coding.md"
             },
             {
-                "id": "chapter_7_5_run_length_encoding",
+                "id": "chapter_7_4_run_length_encoding",
                 "title": "Run-Length Encoding (RLE)",
-                "path": "Chapter 7 - Image Compression/7.5 Run-Length Encoding (RLE).md"
+                "path": "Chapter 7 - Image Compression/7.4 Run-Length Encoding (RLE).md"
             },
             {
-                "id": "chapter_7_6_dct_jpeg_compression",
+                "id": "chapter_7_5_dct_jpeg_compression",
                 "title": "DCT & JPEG Compression",
-                "path": "Chapter 7 - Image Compression/7.6 DCT & JPEG Compression.md"
-            },
-            {
-                "id": "chapter_7_7_comparison_of_compression_techniques",
-                "title": "Comparison of Compression Techniques",
-                "path": "Chapter 7 - Image Compression/7.7 Comparison of Compression Techniques.md"
+                "path": "Chapter 7 - Image Compression/7.5 DCT & JPEG Compression.md"
             }
         ]
     },

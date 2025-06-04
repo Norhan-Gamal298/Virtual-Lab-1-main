@@ -4,9 +4,9 @@ import { ThemeProvider } from "../ThemeProvider";
 
 export default function Layout() {
     return (
-        <div className="flex flex-col h-screen overflow-hidden bg-[var(--color-neutral-surface)] text-[var(--color-neutral-text-primary)] transition-colors duration-300">
+        <div className="flex flex-col h-screen overflow-hidden bg-brand-background dark:bg-dark-brand-background text-neutral-text-primary transition-colors duration-300 dark:bg-dark-neutral-surface dark:text-dark-text-primary duration-300 transition-all">
             <Navbar />
-            <main className="flex-1 overflow-auto">
+            <main className="flex-1 overflow-auto ">
                 <Outlet />
             </main>
         </div>

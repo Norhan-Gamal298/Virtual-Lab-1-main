@@ -4,27 +4,33 @@ import { createContext, useState, useEffect, useContext } from 'react';
 const ThemeContext = createContext();
 
 export function ThemeProvider({ children }) {
-    const [theme, setTheme] = useState(() => {
-        // Check localStorage for saved theme
+    const [theme, setTheme] = useState('light'); // default is light
+
+    // Load saved or preferred theme on mount
+    useEffect(() => {
         const savedTheme = localStorage.getItem('theme');
-        if (savedTheme) return savedTheme;
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
 
-        // Fallback to system preference
-        return window.matchMedia('(prefers-color-scheme: dark)').matches
-            ? 'dark'
-            : 'light';
-    });
+        if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
+            setTheme('dark');
+        }
+    }, []);
 
-    // Apply theme class to document element
+    // Only toggle "dark" class
     useEffect(() => {
         const root = document.documentElement;
-        root.classList.remove('light', 'dark');
-        root.classList.add(theme);
+
+        if (theme === 'dark') {
+            root.classList.add('dark');
+        } else {
+            root.classList.remove('dark');
+        }
+
         localStorage.setItem('theme', theme);
     }, [theme]);
 
     const toggleTheme = () => {
-        setTheme(prev => prev === 'light' ? 'dark' : 'light');
+        setTheme(prev => (prev === 'light' ? 'dark' : 'light'));
     };
 
     return (
@@ -34,7 +40,6 @@ export function ThemeProvider({ children }) {
     );
 }
 
-// Custom hook
 export function useTheme() {
     return useContext(ThemeContext);
 }

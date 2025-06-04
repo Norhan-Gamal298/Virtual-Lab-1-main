@@ -1,4 +1,4 @@
-import {  useState } from 'react'
+import { useState } from 'react'
 import ProfileHeader from './ProfileHeader';
 import ProfileSidebar from './ProfileSidebar';
 import PersonalInfo from './PersonalInfo';
@@ -15,7 +15,7 @@ const Profile = () => {
     if (!user) {
         return (
             <div className="flex justify-center items-center h-screen">
-                <p className="text-white text-xl">Loading user profile...</p>
+                <p className="text-xl">Loading user profile...</p>
             </div>
         )
     }
