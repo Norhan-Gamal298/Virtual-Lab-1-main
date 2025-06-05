@@ -1,16 +1,30 @@
 import React, { useState, useEffect, useRef } from "react";
+import axios from "axios";
 
-const VideoNote = React.memo(({ videoPath, topicId }) => {
+const VideoNote = React.memo(({ videoPath, topicId, userEmail }) => {
     const [currentNote, setCurrentNote] = useState("");
     const [notes, setNotes] = useState([]);
     const videoRef = useRef(null);
 
-    useEffect(() => {
-        const saved = JSON.parse(localStorage.getItem("videoNotes") || "{}");
-        if (saved[topicId]) setNotes(saved[topicId]);
-    }, [topicId]);
+    // to fixed backend URL for API requests
+    const API_BASE = "http://localhost:8080";
 
-    const handleAddNote = () => {
+    useEffect(() => {
+        const fetchNotes = async () => {
+            try {
+                const response = await axios.get(`${API_BASE}/api/notes`, {
+                    params: { userEmail, topicId },
+                });
+                setNotes(response.data.notes || []);
+            } catch (error) {
+                console.error("Error fetching notes:", error);
+                setNotes([]);
+            }
+        };
+        fetchNotes();
+    }, [topicId, userEmail]);
+
+    const handleAddNote = async () => {
         if (!videoRef.current || !currentNote.trim()) return;
 
         const timestamp = Math.floor(videoRef.current.currentTime);
@@ -19,20 +33,43 @@ const VideoNote = React.memo(({ videoPath, topicId }) => {
         const updatedNotes = [...notes, newNote];
         setNotes(updatedNotes);
 
-        const allNotes = JSON.parse(localStorage.getItem("videoNotes") || "{}");
-        allNotes[topicId] = updatedNotes;
-        localStorage.setItem("videoNotes", JSON.stringify(allNotes));
+        console.log({
+            userEmail,
+            topicId,
+            videoSrc: videoPath,
+            notes: updatedNotes,
+        });
+
+        try {
+            // Save notes to the backend
+            await axios.post(`${API_BASE}/api/notes`, {
+                userEmail,
+                topicId,
+                videoSrc: videoPath,
+                notes: updatedNotes,
+            });
+        } catch (error) {
+            console.error("Error saving notes:", error);
+        }
 
         setCurrentNote("");
     };
 
-    const handleDeleteNote = (indexToDelete) => {
+    const handleDeleteNote = async (indexToDelete) => {
         const updatedNotes = notes.filter((_, index) => index !== indexToDelete);
         setNotes(updatedNotes);
 
-        const allNotes = JSON.parse(localStorage.getItem("videoNotes") || "{}");
-        allNotes[topicId] = updatedNotes;
-        localStorage.setItem("videoNotes", JSON.stringify(allNotes));
+        try {
+            // Update notes in the backend
+            await axios.post(`${API_BASE}/api/notes`, {
+                userEmail,
+                topicId,
+                videoSrc: videoPath,
+                notes: updatedNotes,
+            });
+        } catch (error) {
+            console.error("Error deleting note:", error);
+        }
     };
 
     return (
@@ -66,7 +103,9 @@ const VideoNote = React.memo(({ videoPath, topicId }) => {
                         className="p-2 text-sm group flex justify-between items-center bg-neutral-surface rounded-[12px] border border-neutral-border"
                     >
                         <div className="flex items-center w-full justify-between">
-                            <p className="m-0 text-md text-neutral-text-primary">{note.text}</p>
+                            <p className="m-0 text-md text-neutral-text-primary">
+                                {note.text}
+                            </p>
                             <strong className="mr-5 text-neutral-text-secondary">
                                 {new Date(note.time * 1000).toISOString().substr(14, 5)}
                             </strong>

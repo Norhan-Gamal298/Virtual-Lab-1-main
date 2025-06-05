@@ -5,14 +5,11 @@ import bcrypt from "bcrypt";
 import cors from "cors";
 import dotenv from "dotenv";
 import bodyParser from "body-parser";
-import jwt from 'jsonwebtoken';
-import fs from 'fs';
-import path from 'path';
+import jwt from "jsonwebtoken";
+
 // Initialize Express App
 const app = express();
 const PORT = 8080;
-
-
 
 // Middleware Setup
 app.use(cors()); // Enable Cross-Origin Resource Sharing
@@ -39,9 +36,9 @@ const userSchema = new mongoose.Schema({
   lastName: { type: String, required: true },
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
-  role: { type: String, enum: ['user', 'admin', 'root'], default: 'user' },
+  role: { type: String, enum: ["user", "admin", "root"], default: "user" },
   isBlocked: { type: Boolean, default: false },
-  createdAt: { type: Date, default: Date.now }
+  createdAt: { type: Date, default: Date.now },
 });
 
 // Pre-save Hook: Hash password before saving to DB
@@ -54,18 +51,35 @@ userSchema.pre("save", async function (next) {
 // Create User Model
 const User = mongoose.model("User", userSchema);
 
+// Define Note Schema
+const noteSchema = new mongoose.Schema({
+  userEmail: { type: String, required: true },
+  topicId: { type: String, required: true },
+  videoSrc: { type: String, required: true },
+  notes: [
+    {
+      time: { type: Number, required: true },
+      text: { type: String, required: true },
+    },
+  ],
+  createdAt: { type: Date, default: Date.now },
+  updatedAt: { type: Date, default: Date.now },
+});
+
+// Create Note Model
+const Note = mongoose.model("Note", noteSchema);
+
 // ---------------- Routes ---------------- //
 
-
 const adminAuth = async (req, res, next) => {
-  const token = req.headers.authorization?.split(' ')[1];
+  const token = req.headers.authorization?.split(" ")[1];
   if (!token) return res.status(401).json({ error: "Unauthorized" });
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     const user = await User.findById(decoded.id);
 
-    if (!user || !['admin', 'root'].includes(user.role)) {
+    if (!user || !["admin", "root"].includes(user.role)) {
       return res.status(403).json({ error: "Access denied" });
     }
 
@@ -76,37 +90,31 @@ const adminAuth = async (req, res, next) => {
   }
 };
 
-
-
-
-
-
 // Temporary admin creation route (remove after use!)
 // Add this with your other routes in server.js
 
-
 // TEST ROUTE - TEMPORARY
 // Add this right before app.listen()
-app.get('/api/test-users', async (req, res) => {
+app.get("/api/test-users", async (req, res) => {
   try {
     console.log("Attempting to create test users...");
 
     // Test users data
     const testUsers = [
       {
-        firstName: 'Admin',
-        lastName: 'User',
-        email: 'admin@test.com',
-        password: 'password123',
-        role: 'admin'
+        firstName: "Admin",
+        lastName: "User",
+        email: "admin@test.com",
+        password: "password123",
+        role: "admin",
       },
       {
-        firstName: 'Regular',
-        lastName: 'User',
-        email: 'user@test.com',
-        password: 'password123',
-        role: 'user'
-      }
+        firstName: "Regular",
+        lastName: "User",
+        email: "user@test.com",
+        password: "password123",
+        role: "user",
+      },
     ];
 
     // Create users if they don't exist
@@ -125,44 +133,39 @@ app.get('/api/test-users', async (req, res) => {
     const users = await User.find({});
     console.log(`Found ${users.length} users in database`);
     res.json(users);
-
   } catch (error) {
-    console.error('Test route error:', error);
+    console.error("Test route error:", error);
     res.status(500).json({
       error: error.message,
-      stack: error.stack
+      stack: error.stack,
     });
   }
 });
 
-// Then start your server
-app.listen(PORT, () => {
-  console.log(`Server started on http://localhost:${PORT}`);
-});
+// // Then start your server
+// app.listen(PORT, () => {
+//   console.log(`Server started on http://localhost:${PORT}`);
+// });
 
-
-
-
-
-app.get('/api/admin/users', adminAuth, async (req, res) => {
+app.get("/api/admin/users", adminAuth, async (req, res) => {
   try {
     const { role } = req.query;
     let filter = {};
 
-    if (role === 'admin') {
-      filter.role = { $in: ['admin', 'root'] };
-    } else if (role === 'user') {
-      filter.role = 'user';
+    if (role === "admin") {
+      filter.role = { $in: ["admin", "root"] };
+    } else if (role === "user") {
+      filter.role = "user";
     }
 
-    const users = await User.find(filter).select('-password');
+    const users = await User.find(filter).select("-password");
     res.json(users);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 });
 
-app.post('/api/admin/login', async (req, res) => {
+app.post("/api/admin/login", async (req, res) => {
   const { email, password } = req.body;
 
   try {
@@ -179,7 +182,7 @@ app.post('/api/admin/login', async (req, res) => {
     }
 
     // 3. Verify admin role
-    if (!['admin', 'root'].includes(user.role)) {
+    if (!["admin", "root"].includes(user.role)) {
       return res.status(403).json({ error: "Admin privileges required" });
     }
 
@@ -188,10 +191,10 @@ app.post('/api/admin/login', async (req, res) => {
       {
         id: user._id,
         email: user.email,
-        role: user.role
+        role: user.role,
       },
       process.env.JWT_SECRET,
-      { expiresIn: '1h' }
+      { expiresIn: "1h" }
     );
 
     // 5. Send response
@@ -201,18 +204,17 @@ app.post('/api/admin/login', async (req, res) => {
         firstName: user.firstName,
         lastName: user.lastName,
         email: user.email,
-        role: user.role
+        role: user.role,
       },
-      token
+      token,
     });
-
   } catch (error) {
-    console.error('Admin login error:', error);
+    console.error("Admin login error:", error);
     res.status(500).json({ error: "Internal server error" });
   }
 });
 // Block/unblock user
-app.patch('/api/admin/users/:id/block', adminAuth, async (req, res) => {
+app.patch("/api/admin/users/:id/block", adminAuth, async (req, res) => {
   try {
     const user = await User.findById(req.params.id);
     user.isBlocked = !user.isBlocked;
@@ -275,7 +277,6 @@ app.patch('/api/admin/users/:id/block', adminAuth, async (req, res) => {
   }
 }); */
 
-
 // Sign-Up Route
 app.post("/api/register", async (req, res) => {
   const { firstName, lastName, email, password } = req.body;
@@ -327,10 +328,10 @@ app.post("/api/signin", async (req, res) => {
       {
         id: user._id,
         email: user.email,
-        role: user.role
+        role: user.role,
       },
       process.env.JWT_SECRET,
-      { expiresIn: '1h' }
+      { expiresIn: "1h" }
     );
 
     res.status(200).json({
@@ -339,9 +340,9 @@ app.post("/api/signin", async (req, res) => {
         firstName: user.firstName,
         lastName: user.lastName,
         email: user.email,
-        role: user.role
+        role: user.role,
       },
-      token
+      token,
     });
   } catch (error) {
     console.error("Error during signin:", error);
@@ -534,6 +535,54 @@ app.post("/api/update-password", async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 });
+
+// ---------------- Notes Management ---------------- //
+app.get("/api/notes", async (req, res) => {
+  const { userEmail, topicId } = req.query;
+
+  if (!userEmail || !topicId) {
+    return res
+      .status(400)
+      .json({ error: "userEmail and topicId are required" });
+  }
+
+  try {
+    const note = await Note.findOne({ userEmail, topicId });
+    if (!note) {
+      return res.status(404).json({ error: "No notes found for this topic" });
+    }
+    res.status(200).json(note);
+  } catch (error) {
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+app.post("/api/notes", async (req, res) => {
+  const { userEmail, topicId, videoSrc, notes } = req.body;
+
+  if (!userEmail || !topicId || !videoSrc || !notes) {
+    return res.status(400).json({ error: "All fields are required" });
+  }
+
+  try {
+    let note = await Note.findOne({ userEmail, topicId });
+
+    if (note) {
+      note.notes = notes;
+      note.updatedAt = Date.now();
+      await note.save();
+      res.status(200).json({ message: "Notes updated successfully", note });
+    } else {
+      note = new Note({ userEmail, topicId, videoSrc, notes });
+      await note.save();
+      res.status(201).json({ message: "Notes created successfully", note });
+    }
+  } catch (error) {
+    console.error("Error saving notes:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
 // Start Express Server
 app.listen(PORT, () => {
   console.log(`Server started on http://localhost:${PORT}`);

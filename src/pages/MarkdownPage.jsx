@@ -24,7 +24,8 @@ export default function MarkdownPage() {
     const videoRef = useRef(null);
 
     const { user } = useSelector((state) => state.auth);
-
+    const userEmail =
+        user?.email || JSON.parse(localStorage.getItem("user"))?.email;
     useEffect(() => {
         const fetchChapters = async () => {
             try {
@@ -50,15 +51,16 @@ export default function MarkdownPage() {
         const fetchMarkdown = async () => {
             try {
                 setLoading(true);
-                const allTopics = chapters.flatMap(chapter => chapter.topics);
-                const topic = allTopics.find(t => t.id === topicId);
+                const allTopics = chapters.flatMap((chapter) => chapter.topics);
+                const topic = allTopics.find((t) => t.id === topicId);
 
                 if (!topic) {
                     throw new Error("Topic not found");
                 }
 
                 const response = await fetch(`/docs/${topic.path}`);
-                if (!response.ok) throw new Error(`Failed to fetch: ${response.status}`);
+                if (!response.ok)
+                    throw new Error(`Failed to fetch: ${response.status}`);
                 const text = await response.text();
 
                 if (text.toLowerCase().includes("<!doctype html>")) {
@@ -81,10 +83,11 @@ export default function MarkdownPage() {
         }
     }, [topicId, chapters]);
 
-    const allTopics = chapters.flatMap(chapter => chapter.topics);
-    const currentIndex = allTopics.findIndex(topic => topic.id === topicId);
+    const allTopics = chapters.flatMap((chapter) => chapter.topics);
+    const currentIndex = allTopics.findIndex((topic) => topic.id === topicId);
     const prevTopic = currentIndex > 0 ? allTopics[currentIndex - 1] : null;
-    const nextTopic = currentIndex < allTopics.length - 1 ? allTopics[currentIndex + 1] : null;
+    const nextTopic =
+        currentIndex < allTopics.length - 1 ? allTopics[currentIndex + 1] : null;
 
     const extractHeadings = (markdown) => {
         const lines = markdown.split("\n");
@@ -99,7 +102,10 @@ export default function MarkdownPage() {
 
             if (!insideCodeBlock && /^#{1,2}\s/.test(line)) {
                 const text = line.replace(/^#+\s/, "").trim();
-                const id = text.toLowerCase().replace(/[^a-z0-9\s]/g, "").replace(/\s+/g, "-");
+                const id = text
+                    .toLowerCase()
+                    .replace(/[^a-z0-9\s]/g, "")
+                    .replace(/\s+/g, "-");
                 extractedHeadings.push({
                     id,
                     text,
@@ -120,23 +126,23 @@ export default function MarkdownPage() {
 
     const handleNextTopicClick = () => {
         if (user) {
-            fetch('http://localhost:8080/api/update-progress', {
-                method: 'POST',
+            fetch("http://localhost:8080/api/update-progress", {
+                method: "POST",
                 headers: {
-                    'Content-Type': 'application/json',
+                    "Content-Type": "application/json",
                 },
                 body: JSON.stringify({
                     email: user.email,
-                    topicId: topicId
+                    topicId: topicId,
                 }),
             })
-                .then(response => response.json())
-                .then(data => {
-                    console.log('Progress updated:', data);
+                .then((response) => response.json())
+                .then((data) => {
+                    console.log("Progress updated:", data);
                     navigate(`/docs/${nextTopic.id}`);
                 })
-                .catch(error => {
-                    console.error('Error updating progress:', error);
+                .catch((error) => {
+                    console.error("Error updating progress:", error);
                     navigate(`/docs/${nextTopic.id}`);
                 });
         } else {
@@ -164,7 +170,10 @@ export default function MarkdownPage() {
                                     components={{
                                         h1: ({ children }) => {
                                             const text = String(children).trim();
-                                            const id = text.toLowerCase().replace(/[^a-z0-9\s]/g, "").replace(/\s+/g, "-");
+                                            const id = text
+                                                .toLowerCase()
+                                                .replace(/[^a-z0-9\s]/g, "")
+                                                .replace(/\s+/g, "-");
                                             return (
                                                 <h1
                                                     id={id}
@@ -176,7 +185,10 @@ export default function MarkdownPage() {
                                         },
                                         h2: ({ children }) => {
                                             const text = String(children).trim();
-                                            const id = text.toLowerCase().replace(/[^a-z0-9\s]/g, "").replace(/\s+/g, "-");
+                                            const id = text
+                                                .toLowerCase()
+                                                .replace(/[^a-z0-9\s]/g, "")
+                                                .replace(/\s+/g, "-");
                                             return (
                                                 <h2
                                                     id={id}
@@ -188,7 +200,10 @@ export default function MarkdownPage() {
                                         },
                                         h3: ({ children }) => {
                                             const text = String(children).trim();
-                                            const id = text.toLowerCase().replace(/[^a-z0-9\s]/g, "").replace(/\s+/g, "-");
+                                            const id = text
+                                                .toLowerCase()
+                                                .replace(/[^a-z0-9\s]/g, "")
+                                                .replace(/\s+/g, "-");
                                             return (
                                                 <h3
                                                     id={id}
@@ -206,15 +221,24 @@ export default function MarkdownPage() {
                                         img: ({ src, alt }) => {
                                             if (!src) return null;
 
-                                            if (src.startsWith("photos/") || src.startsWith("photo/") || src.startsWith("photows/") || src.startsWith("phhotos/")
-                                                || src.startsWith("phOotos/") || src.startsWith("photows/")) {
+                                            if (
+                                                src.startsWith("photos/") ||
+                                                src.startsWith("photo/") ||
+                                                src.startsWith("photows/") ||
+                                                src.startsWith("phhotos/") ||
+                                                src.startsWith("phOotos/") ||
+                                                src.startsWith("photows/")
+                                            ) {
                                                 const currentTopic = chapters
-                                                    .flatMap(ch => ch.topics)
-                                                    .find(t => t.id === topicId);
+                                                    .flatMap((ch) => ch.topics)
+                                                    .find((t) => t.id === topicId);
 
                                                 if (currentTopic) {
-                                                    const chapterFolder = currentTopic.path.split('/')[0];
-                                                    const encodedPath = chapterFolder.replace(/ /g, '%20');
+                                                    const chapterFolder = currentTopic.path.split("/")[0];
+                                                    const encodedPath = chapterFolder.replace(
+                                                        / /g,
+                                                        "%20"
+                                                    );
                                                     return (
                                                         <img
                                                             src={`/docs/${encodedPath}/${src}`}
@@ -239,17 +263,18 @@ export default function MarkdownPage() {
                                             if (!src) return null;
 
                                             const currentTopic = chapters
-                                                .flatMap(ch => ch.topics)
-                                                .find(t => t.id === topicId);
+                                                .flatMap((ch) => ch.topics)
+                                                .find((t) => t.id === topicId);
 
                                             if (currentTopic) {
-                                                const chapterFolder = currentTopic.path.split('/')[0];
-                                                const encodedPath = chapterFolder.replace(/ /g, '%20');
+                                                const chapterFolder = currentTopic.path.split("/")[0];
+                                                const encodedPath = chapterFolder.replace(/ /g, "%20");
                                                 return (
                                                     <div className="my-6">
                                                         <VideoNote
                                                             videoPath={`/docs/${encodedPath}/${src}`}
                                                             topicId={topicId}
+                                                            userEmail={userEmail}
                                                         />
                                                     </div>
                                                 );
@@ -266,7 +291,11 @@ export default function MarkdownPage() {
                                         },
                                         iframe: ({ ...props }) => (
                                             <div className="my-6 aspect-video max-w-full rounded-lg overflow-hidden border border-neutral-border shadow-sm">
-                                                <iframe {...props} className="w-full h-full" allowFullScreen />
+                                                <iframe
+                                                    {...props}
+                                                    className="w-full h-full"
+                                                    allowFullScreen
+                                                />
                                             </div>
                                         ),
                                         code({ className, children }) {
@@ -279,19 +308,27 @@ export default function MarkdownPage() {
                                                 return (
                                                     <div className="relative mb-6">
                                                         <pre className="bg-neutral-surface border border-neutral-border rounded-lg p-4 overflow-x-auto">
-                                                            <code className={`${className} text-neutral-text-primary text-sm`}>
+                                                            <code
+                                                                className={`${className} text-neutral-text-primary text-sm`}
+                                                            >
                                                                 {children}
                                                             </code>
                                                         </pre>
                                                         <div className="mt-3">
                                                             <button
                                                                 className="bg-primary hover:bg-primary-hover text-primary-on px-4 py-2 rounded-lg transition-colors duration-200 font-medium"
-                                                                onClick={() => navigate(`/terminal-page?code=${encodedCode}`, { state: { fromLesson: true } })}
+                                                                onClick={() =>
+                                                                    navigate(
+                                                                        `/terminal-page?code=${encodedCode}`,
+                                                                        { state: { fromLesson: true } }
+                                                                    )
+                                                                }
                                                             >
                                                                 Try it yourself
                                                             </button>
                                                             <div className="text-sm mt-2 text-neutral-text-secondary">
-                                                                Note: You'll be able to upload required files in the terminal
+                                                                Note: You'll be able to upload required files in
+                                                                the terminal
                                                             </div>
                                                         </div>
                                                     </div>
@@ -301,7 +338,9 @@ export default function MarkdownPage() {
                                                 return (
                                                     <div className="relative mb-6">
                                                         <pre className="bg-neutral-surface border border-neutral-border rounded-lg p-4 overflow-x-auto">
-                                                            <code className={`${className} text-neutral-text-primary text-sm`}>
+                                                            <code
+                                                                className={`${className} text-neutral-text-primary text-sm`}
+                                                            >
                                                                 {children}
                                                             </code>
                                                         </pre>
@@ -321,7 +360,9 @@ export default function MarkdownPage() {
 
                                             return (
                                                 <pre className="bg-neutral-surface border border-neutral-border rounded-lg p-4 overflow-x-auto my-4">
-                                                    <code className={`${className} text-neutral-text-primary text-sm`}>
+                                                    <code
+                                                        className={`${className} text-neutral-text-primary text-sm`}
+                                                    >
                                                         {children}
                                                     </code>
                                                 </pre>
@@ -359,15 +400,11 @@ export default function MarkdownPage() {
                                         ),
                                         table: ({ children }) => (
                                             <div className="overflow-x-auto my-6 rounded-lg border border-neutral-border">
-                                                <table className="min-w-full">
-                                                    {children}
-                                                </table>
+                                                <table className="min-w-full">{children}</table>
                                             </div>
                                         ),
                                         thead: ({ children }) => (
-                                            <thead className="bg-neutral-surface">
-                                                {children}
-                                            </thead>
+                                            <thead className="bg-neutral-surface">{children}</thead>
                                         ),
                                         tbody: ({ children }) => (
                                             <tbody className="bg-neutral-background">
@@ -408,24 +445,32 @@ export default function MarkdownPage() {
                                         onClick={() => navigate(`/docs/${prevTopic.id}`)}
                                         className="border border-neutral-border hover:border-primary bg-neutral-background hover:bg-neutral-surface rounded-lg cursor-pointer paginationNavLink paginationNavLinkPrev p-4 text-left transition-all duration-200"
                                     >
-                                        <div className="text-neutral-text-secondary text-sm">Previous</div>
+                                        <div className="text-neutral-text-secondary text-sm">
+                                            Previous
+                                        </div>
                                         <div className="paginationLabel break-normal text-primary font-medium mt-1">
                                             {prevTopic.title}
                                         </div>
                                     </button>
-                                ) : <div />}
+                                ) : (
+                                    <div />
+                                )}
 
                                 {nextTopic ? (
                                     <button
                                         onClick={handleNextTopicClick}
                                         className="border border-neutral-border hover:border-primary bg-neutral-background hover:bg-neutral-surface rounded-lg text-right cursor-pointer paginationNavLink paginationNavLinkNext p-4 transition-all duration-200"
                                     >
-                                        <div className="text-neutral-text-secondary text-sm">Next</div>
+                                        <div className="text-neutral-text-secondary text-sm">
+                                            Next
+                                        </div>
                                         <div className="paginationLabel break-normal text-primary font-medium mt-1">
                                             {nextTopic.title}
                                         </div>
                                     </button>
-                                ) : <div />}
+                                ) : (
+                                    <div />
+                                )}
                             </nav>
                         )}
                     </div>
