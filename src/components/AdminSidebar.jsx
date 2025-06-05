@@ -43,7 +43,7 @@ const AdminSidebar = () => {
         {
             label: 'Course Management',
             icon: <TbBook size={28} />,
-            path: '/admin/courses'
+            path: '/admin/content'
         },
         {
             label: 'Blogs Management',

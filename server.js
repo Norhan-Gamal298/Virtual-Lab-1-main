@@ -6,10 +6,13 @@ import cors from "cors";
 import dotenv from "dotenv";
 import bodyParser from "body-parser";
 import jwt from 'jsonwebtoken';
-
+import fs from 'fs';
+import path from 'path';
 // Initialize Express App
 const app = express();
 const PORT = 8080;
+
+
 
 // Middleware Setup
 app.use(cors()); // Enable Cross-Origin Resource Sharing
