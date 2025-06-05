@@ -131,7 +131,7 @@ const Navbar = () => {
                                 <img
                                     src={`${user.image || defaultAvatar}?v=${Date.now()}`}
                                     alt="User"
-                                    className="w-12 h-12 rounded-lg bg-[#F5F7FA] dark:bg-[#1f1f1f] dark:border-[#3b3b3b] object-cover border border-neutral-border "
+                                    className="w-12 h-12 rounded-lg bg-[#F5F7FA] dark:bg-[#1f1f1f] dark:border-[#3b3b3b] object-cover border border-neutral-border"
                                 />
                                 <span className="font-medium hidden md:inline ">
                                     {user.name}
@@ -159,7 +159,7 @@ const Navbar = () => {
                         </div>
                     ) : (
                         <button
-                            className="px-5 py-2.5 rounded-lg bg-primary-base hover:bg-primary-hover text-primary-text transition-colors font-medium dark:bg-primary-base dark:hover:bg-primary-hover"
+                            className="px-5 py-2.5 rounded-lg bg-[#F5F7FA] dark:bg-[#1f1f1f] border border-neutral-border dark:border-[#3b3b3b] text-primary-text transition-colors font-medium"
                             onClick={() => setActiveModal('signup')}
                         >
                             Sign Up
