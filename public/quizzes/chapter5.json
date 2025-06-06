@@ -1,0 +1,302 @@
+[
+    {
+        "question": "What does the Fourier Transform convert a signal into?",
+        "options": [
+            "Time domain to spatial domain",
+            "Time domain to frequency domain",
+            "Frequency domain to spatial domain",
+            "Spatial domain to time domain"
+        ],
+        "answer": "Time domain to frequency domain"
+    },
+    {
+        "question": "What is the primary purpose of a low-pass filter in frequency domain processing?",
+        "options": [
+            "Remove high-frequency components",
+            "Remove low-frequency components",
+            "Enhance sharp edges",
+            "Amplify noise"
+        ],
+        "answer": "Remove high-frequency components"
+    },
+    {
+        "question": "Which filter is commonly used to smooth an image?",
+        "options": [
+            "High-pass filter",
+            "Low-pass filter",
+            "Band-pass filter",
+            "Notch filter"
+        ],
+        "answer": "Low-pass filter"
+    },
+    {
+        "question": "What does a high-pass filter emphasize in an image?",
+        "options": [
+            "Smooth regions",
+            "Edges and sharp transitions",
+            "Low-frequency components",
+            "Uniform intensity areas"
+        ],
+        "answer": "Edges and sharp transitions"
+    },
+    {
+        "question": "The Fourier Transform represents a signal as a sum of:",
+        "options": [
+            "Polynomial functions",
+            "Sinusoidal functions",
+            "Exponential functions",
+            "Linear functions"
+        ],
+        "answer": "Sinusoidal functions"
+    },
+    {
+        "question": "Which domain is best suited for convolution operations?",
+        "options": [
+            "Frequency domain",
+            "Spatial domain",
+            "Time domain",
+            "Wavelet domain"
+        ],
+        "answer": "Frequency domain"
+    },
+    {
+        "question": "What is a key characteristic of the Butterworth filter?",
+        "options": [
+            "Sharp cutoff between passband and stopband",
+            "Smooth transition between passband and stopband",
+            "No ripple in the passband",
+            "Non-linear phase response"
+        ],
+        "answer": "Smooth transition between passband and stopband"
+    },
+    {
+        "question": "The Gaussian filter in the frequency domain is known for:",
+        "options": [
+            "Sharp cutoff",
+            "No ringing artifacts",
+            "High computational complexity",
+            "Amplifying noise"
+        ],
+        "answer": "No ringing artifacts"
+    },
+    {
+        "question": "What happens to an image when a low-pass filter is applied?",
+        "options": [
+            "It becomes sharper",
+            "It becomes blurred",
+            "It enhances edges",
+            "It increases noise"
+        ],
+        "answer": "It becomes blurred"
+    },
+    {
+        "question": "In the frequency domain, multiplication corresponds to what operation in the spatial domain?",
+        "options": [
+            "Convolution",
+            "Correlation",
+            "Subtraction",
+            "Addition"
+        ],
+        "answer": "Convolution"
+    },
+    {
+        "question": "Which filter would you use to enhance fine details in an image?",
+        "options": [
+            "Low-pass filter",
+            "High-pass filter",
+            "Gaussian filter",
+            "Median filter"
+        ],
+        "answer": "High-pass filter"
+    },
+    {
+        "question": "The Fourier Transform of a real-valued signal is:",
+        "options": [
+            "Always real",
+            "Always imaginary",
+            "Complex conjugate symmetric",
+            "Always zero"
+        ],
+        "answer": "Complex conjugate symmetric"
+    },
+    {
+        "question": "What is a disadvantage of applying filters in the spatial domain compared to the frequency domain?",
+        "options": [
+            "Higher computational efficiency",
+            "Larger filter kernels increase computation",
+            "Inability to handle noise",
+            "Loss of frequency information"
+        ],
+        "answer": "Larger filter kernels increase computation"
+    },
+    {
+        "question": "The Butterworth low-pass filter is defined by:",
+        "options": [
+            "Order and cutoff frequency",
+            "Mean and variance",
+            "Kernel size and shape",
+            "Threshold and gain"
+        ],
+        "answer": "Order and cutoff frequency"
+    },
+    {
+        "question": "What is the effect of increasing the order of a Butterworth filter?",
+        "options": [
+            "Smoother transition",
+            "Sharper cutoff",
+            "Increased ringing",
+            "Reduced frequency response"
+        ],
+        "answer": "Sharper cutoff"
+    },
+    {
+        "question": "Which filter produces less ringing compared to a Butterworth filter?",
+        "options": [
+            "Ideal filter",
+            "Gaussian filter",
+            "High-pass filter",
+            "Band-stop filter"
+        ],
+        "answer": "Gaussian filter"
+    },
+    {
+        "question": "The inverse Fourier Transform converts:",
+        "options": [
+            "Frequency domain to time domain",
+            "Spatial domain to frequency domain",
+            "Time domain to spatial domain",
+            "Frequency domain to wavelet domain"
+        ],
+        "answer": "Frequency domain to time domain"
+    },
+    {
+        "question": "What is a common application of high-pass filtering?",
+        "options": [
+            "Noise reduction",
+            "Edge detection",
+            "Image smoothing",
+            "Color enhancement"
+        ],
+        "answer": "Edge detection"
+    },
+    {
+        "question": "In frequency domain filtering, the filter function is multiplied with:",
+        "options": [
+            "The image intensity values",
+            "The Fourier Transform of the image",
+            "The spatial domain kernel",
+            "The histogram of the image"
+        ],
+        "answer": "The Fourier Transform of the image"
+    },
+    {
+        "question": "What is a key advantage of frequency domain processing over spatial domain?",
+        "options": [
+            "Simpler implementation",
+            "Faster computation for large filters",
+            "Better handling of non-linear filters",
+            "Direct visualization of results"
+        ],
+        "answer": "Faster computation for large filters"
+    },
+    {
+        "question": "Which filter has a circularly symmetric frequency response?",
+        "options": [
+            "Butterworth filter",
+            "Gaussian filter",
+            "Ideal filter",
+            "All of the above"
+        ],
+        "answer": "Gaussian filter"
+    },
+    {
+        "question": "The ideal low-pass filter has:",
+        "options": [
+            "Smooth transition",
+            "Sharp cutoff with ringing artifacts",
+            "No effect on edges",
+            "Gaussian-like response"
+        ],
+        "answer": "Sharp cutoff with ringing artifacts"
+    },
+    {
+        "question": "What is the primary difference between spatial and frequency domain filtering?",
+        "options": [
+            "Spatial domain uses multiplication",
+            "Frequency domain uses convolution",
+            "Spatial domain operates directly on pixel values",
+            "Frequency domain is always slower"
+        ],
+        "answer": "Spatial domain operates directly on pixel values"
+    },
+    {
+        "question": "The Gaussian filter in the frequency domain is derived from:",
+        "options": [
+            "A step function",
+            "A Gaussian function",
+            "A polynomial function",
+            "A sinusoidal function"
+        ],
+        "answer": "A Gaussian function"
+    },
+    {
+        "question": "Which filter is more prone to ringing artifacts?",
+        "options": [
+            "Gaussian filter",
+            "Butterworth filter",
+            "Median filter",
+            "Bilateral filter"
+        ],
+        "answer": "Butterworth filter"
+    },
+    {
+        "question": "The Fourier Transform is computationally efficient when implemented using:",
+        "options": [
+            "DFT (Discrete Fourier Transform)",
+            "FFT (Fast Fourier Transform)",
+            "DCT (Discrete Cosine Transform)",
+            "DWT (Discrete Wavelet Transform)"
+        ],
+        "answer": "FFT (Fast Fourier Transform)"
+    },
+    {
+        "question": "What is the effect of applying a high-pass filter to an image with uniform intensity?",
+        "options": [
+            "No change",
+            "Blurring",
+            "Edge enhancement",
+            "Noise amplification"
+        ],
+        "answer": "No change"
+    },
+    {
+        "question": "The frequency domain is particularly useful for analyzing:",
+        "options": [
+            "Local pixel relationships",
+            "Global signal characteristics",
+            "Color distributions",
+            "Texture gradients"
+        ],
+        "answer": "Global signal characteristics"
+    },
+    {
+        "question": "Which filter would you use to remove high-frequency noise?",
+        "options": [
+            "High-pass filter",
+            "Low-pass filter",
+            "Band-pass filter",
+            "Notch filter"
+        ],
+        "answer": "Low-pass filter"
+    },
+    {
+        "question": "What is the primary limitation of the ideal low-pass filter?",
+        "options": [
+            "Smooth transition",
+            "Ringing artifacts in the spatial domain",
+            "High computational cost",
+            "Inability to remove noise"
+        ],
+        "answer": "Ringing artifacts in the spatial domain"
+    }
+]

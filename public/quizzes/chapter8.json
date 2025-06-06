@@ -1,0 +1,302 @@
+[
+    {
+        "question": "What is the primary purpose of morphological image processing?",
+        "options": [
+            "Enhance image contrast",
+            "Modify image shapes and structures",
+            "Remove noise from images",
+            "Convert images to grayscale"
+        ],
+        "answer": "Modify image shapes and structures"
+    },
+    {
+        "question": "Which operation expands the boundaries of foreground objects in a binary image?",
+        "options": [
+            "Erosion",
+            "Dilation",
+            "Opening",
+            "Closing"
+        ],
+        "answer": "Dilation"
+    },
+    {
+        "question": "What is the effect of erosion on a binary image?",
+        "options": [
+            "Shrinks foreground objects",
+            "Expands foreground objects",
+            "Smooths object boundaries",
+            "Removes small holes"
+        ],
+        "answer": "Shrinks foreground objects"
+    },
+    {
+        "question": "In morphological operations, what is a structuring element?",
+        "options": [
+            "A filter to remove noise",
+            "A small shape used to probe the image",
+            "A mask to enhance contrast",
+            "A tool for edge detection"
+        ],
+        "answer": "A small shape used to probe the image"
+    },
+    {
+        "question": "Which operation is defined as dilation followed by erosion?",
+        "options": [
+            "Opening",
+            "Closing",
+            "Hit-or-miss",
+            "Boundary extraction"
+        ],
+        "answer": "Closing"
+    },
+    {
+        "question": "What does the opening operation do to small objects in a binary image?",
+        "options": [
+            "Enlarges them",
+            "Removes them",
+            "Smooths their boundaries",
+            "Fills their holes"
+        ],
+        "answer": "Removes them"
+    },
+    {
+        "question": "Which operation is useful for filling small holes in foreground objects?",
+        "options": [
+            "Erosion",
+            "Dilation",
+            "Opening",
+            "Closing"
+        ],
+        "answer": "Closing"
+    },
+    {
+        "question": "The hit-or-miss transform is primarily used for:",
+        "options": [
+            "Smoothing object boundaries",
+            "Detecting specific patterns in binary images",
+            "Removing noise",
+            "Enhancing image contrast"
+        ],
+        "answer": "Detecting specific patterns in binary images"
+    },
+    {
+        "question": "What is the result of applying boundary extraction to a binary image?",
+        "options": [
+            "The interior of objects",
+            "The edges of objects",
+            "The entire foreground",
+            "The background only"
+        ],
+        "answer": "The edges of objects"
+    },
+    {
+        "question": "Which morphological operation is idempotent?",
+        "options": [
+            "Dilation",
+            "Erosion",
+            "Opening",
+            "None of the above"
+        ],
+        "answer": "Opening"
+    },
+    {
+        "question": "In dilation, the structuring element is typically:",
+        "options": [
+            "Smaller than the image",
+            "Larger than the image",
+            "Equal to the image size",
+            "A random shape"
+        ],
+        "answer": "Smaller than the image"
+    },
+    {
+        "question": "What happens to thin connections between objects during erosion?",
+        "options": [
+            "They are strengthened",
+            "They are broken",
+            "They remain unchanged",
+            "They are smoothed"
+        ],
+        "answer": "They are broken"
+    },
+    {
+        "question": "The closing operation is useful for:",
+        "options": [
+            "Removing small objects",
+            "Connecting nearby objects",
+            "Detecting corners",
+            "Extracting boundaries"
+        ],
+        "answer": "Connecting nearby objects"
+    },
+    {
+        "question": "Which operation can be used to remove salt-and-pepper noise from binary images?",
+        "options": [
+            "Dilation",
+            "Erosion",
+            "Opening",
+            "Hit-or-miss"
+        ],
+        "answer": "Opening"
+    },
+    {
+        "question": "The hit-or-miss transform requires:",
+        "options": [
+            "A single structuring element",
+            "Two structuring elements",
+            "No structuring element",
+            "A grayscale image"
+        ],
+        "answer": "Two structuring elements"
+    },
+    {
+        "question": "Boundary extraction can be mathematically expressed as:",
+        "options": [
+            "A - (A ⊕ B)",
+            "A - (A ⊖ B)",
+            "(A ⊕ B) - A",
+            "(A ⊖ B) - A"
+        ],
+        "answer": "A - (A ⊖ B)"
+    },
+    {
+        "question": "Which operation is the dual of dilation in morphological processing?",
+        "options": [
+            "Erosion",
+            "Opening",
+            "Closing",
+            "Hit-or-miss"
+        ],
+        "answer": "Erosion"
+    },
+    {
+        "question": "What is the main application of morphological operations in binary images?",
+        "options": [
+            "Color correction",
+            "Shape analysis and feature extraction",
+            "Image compression",
+            "Texture enhancement"
+        ],
+        "answer": "Shape analysis and feature extraction"
+    },
+    {
+        "question": "The opening operation is anti-extensive, meaning:",
+        "options": [
+            "The output is larger than the input",
+            "The output is smaller than or equal to the input",
+            "The output is unrelated to the input",
+            "The output is always empty"
+        ],
+        "answer": "The output is smaller than or equal to the input"
+    },
+    {
+        "question": "Which operation can be used to thin objects in a binary image?",
+        "options": [
+            "Dilation",
+            "Erosion",
+            "Opening",
+            "Closing"
+        ],
+        "answer": "Erosion"
+    },
+    {
+        "question": "In the context of morphological operations, what does translation invariance mean?",
+        "options": [
+            "The operation depends on the image position",
+            "The operation produces the same result regardless of image position",
+            "The operation only works on centered images",
+            "The operation changes the image size"
+        ],
+        "answer": "The operation produces the same result regardless of image position"
+    },
+    {
+        "question": "Which operation preserves the shape of large objects while removing small ones?",
+        "options": [
+            "Erosion",
+            "Dilation",
+            "Opening",
+            "Closing"
+        ],
+        "answer": "Opening"
+    },
+    {
+        "question": "The hit-or-miss transform can be used to detect:",
+        "options": [
+            "Corners of objects",
+            "Entire objects",
+            "Background regions",
+            "Grayscale patterns"
+        ],
+        "answer": "Corners of objects"
+    },
+    {
+        "question": "What is a common structuring element shape used in morphological operations?",
+        "options": [
+            "Circle",
+            "Triangle",
+            "Hexagon",
+            "All of the above"
+        ],
+        "answer": "All of the above"
+    },
+    {
+        "question": "Which operation is extensive, meaning the output contains the input?",
+        "options": [
+            "Erosion",
+            "Dilation",
+            "Opening",
+            "Hit-or-miss"
+        ],
+        "answer": "Dilation"
+    },
+    {
+        "question": "Morphological operations are primarily applied to:",
+        "options": [
+            "Grayscale images only",
+            "Binary images and grayscale images",
+            "Color images only",
+            "Vector images"
+        ],
+        "answer": "Binary images and grayscale images"
+    },
+    {
+        "question": "The closing operation is idempotent, meaning:",
+        "options": [
+            "Applying it multiple times changes the result",
+            "Applying it multiple times yields the same result",
+            "It cannot be applied multiple times",
+            "It reverses the image"
+        ],
+        "answer": "Applying it multiple times yields the same result"
+    },
+    {
+        "question": "Which operation can be used to extract the skeleton of an object?",
+        "options": [
+            "Dilation",
+            "Erosion",
+            "Hit-or-miss",
+            "Repeated erosion"
+        ],
+        "answer": "Repeated erosion"
+    },
+    {
+        "question": "In binary image processing, what does the term 'foreground' refer to?",
+        "options": [
+            "The background pixels",
+            "The object pixels",
+            "The edge pixels",
+            "The grayscale pixels"
+        ],
+        "answer": "The object pixels"
+    },
+    {
+        "question": "Which morphological operation is used to smooth the contours of objects?",
+        "options": [
+            "Erosion",
+            "Dilation",
+            "Opening",
+            "Hit-or-miss"
+        ],
+        "answer": "Opening"
+    }
+]

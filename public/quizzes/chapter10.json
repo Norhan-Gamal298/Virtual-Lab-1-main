@@ -1,0 +1,302 @@
+[
+    {
+        "question": "What does the RGB color model primarily represent?",
+        "options": [
+            "Hue, Saturation, Value",
+            "Red, Green, Blue",
+            "Luminance, Chrominance, Brightness",
+            "Cyan, Magenta, Yellow"
+        ],
+        "answer": "Red, Green, Blue"
+    },
+    {
+        "question": "In the HSV color model, what does the 'H' stand for?",
+        "options": [
+            "Hue",
+            "High intensity",
+            "Histogram",
+            "Harmony"
+        ],
+        "answer": "Hue"
+    },
+    {
+        "question": "Which color model is commonly used for television broadcasting?",
+        "options": [
+            "RGB",
+            "HSV",
+            "YCbCr",
+            "CMYK"
+        ],
+        "answer": "YCbCr"
+    },
+    {
+        "question": "What is the range of values for each component in an 8-bit RGB color model?",
+        "options": [
+            "0 to 100",
+            "0 to 255",
+            "0 to 1",
+            "-128 to 127"
+        ],
+        "answer": "0 to 255"
+    },
+    {
+        "question": "Which color model separates luminance from chrominance?",
+        "options": [
+            "RGB",
+            "HSV",
+            "YCbCr",
+            "CMYK"
+        ],
+        "answer": "YCbCr"
+    },
+    {
+        "question": "In the HSV model, what does the 'S' represent?",
+        "options": [
+            "Saturation",
+            "Scale",
+            "Shade",
+            "Spectrum"
+        ],
+        "answer": "Saturation"
+    },
+    {
+        "question": "What is the purpose of color transformation in image processing?",
+        "options": [
+            "To reduce image size",
+            "To convert between color models",
+            "To remove noise",
+            "To increase resolution"
+        ],
+        "answer": "To convert between color models"
+    },
+    {
+        "question": "Which component in the YCbCr model represents luminance?",
+        "options": [
+            "Y",
+            "Cb",
+            "Cr",
+            "None of the above"
+        ],
+        "answer": "Y"
+    },
+    {
+        "question": "What does color enhancement aim to improve in an image?",
+        "options": [
+            "File size",
+            "Visual quality",
+            "Compression ratio",
+            "Pixel density"
+        ],
+        "answer": "Visual quality"
+    },
+    {
+        "question": "Which color model is most intuitive for human perception?",
+        "options": [
+            "RGB",
+            "HSV",
+            "YCbCr",
+            "CMYK"
+        ],
+        "answer": "HSV"
+    },
+    {
+        "question": "In color segmentation, what is the primary goal?",
+        "options": [
+            "To merge colors",
+            "To isolate regions based on color",
+            "To reduce image contrast",
+            "To increase brightness"
+        ],
+        "answer": "To isolate regions based on color"
+    },
+    {
+        "question": "Which of the following is NOT a color model?",
+        "options": [
+            "RGB",
+            "HSV",
+            "JPEG",
+            "YCbCr"
+        ],
+        "answer": "JPEG"
+    },
+    {
+        "question": "What is a common technique for color enhancement?",
+        "options": [
+            "Histogram equalization",
+            "Edge detection",
+            "Fourier transform",
+            "Morphological filtering"
+        ],
+        "answer": "Histogram equalization"
+    },
+    {
+        "question": "In the RGB model, what color is represented by (255, 0, 0)?",
+        "options": [
+            "Blue",
+            "Green",
+            "Red",
+            "White"
+        ],
+        "answer": "Red"
+    },
+    {
+        "question": "Which color model is used primarily for printing?",
+        "options": [
+            "RGB",
+            "HSV",
+            "YCbCr",
+            "CMYK"
+        ],
+        "answer": "CMYK"
+    },
+    {
+        "question": "What does the 'V' in HSV stand for?",
+        "options": [
+            "Value",
+            "Vibrance",
+            "Volume",
+            "Velocity"
+        ],
+        "answer": "Value"
+    },
+    {
+        "question": "Which component in YCbCr represents blue chrominance?",
+        "options": [
+            "Y",
+            "Cb",
+            "Cr",
+            "None of the above"
+        ],
+        "answer": "Cb"
+    },
+    {
+        "question": "What is a key advantage of using the HSV model for color segmentation?",
+        "options": [
+            "It separates color from intensity",
+            "It reduces image size",
+            "It eliminates noise",
+            "It increases resolution"
+        ],
+        "answer": "It separates color from intensity"
+    },
+    {
+        "question": "Which of the following is a color transformation?",
+        "options": [
+            "Converting RGB to grayscale",
+            "Applying a Gaussian blur",
+            "Edge detection",
+            "Image resizing"
+        ],
+        "answer": "Converting RGB to grayscale"
+    },
+    {
+        "question": "What does color segmentation rely on to group pixels?",
+        "options": [
+            "Texture",
+            "Color similarity",
+            "Image size",
+            "Brightness only"
+        ],
+        "answer": "Color similarity"
+    },
+    {
+        "question": "In RGB, what color is represented by (255, 255, 255)?",
+        "options": [
+            "Black",
+            "White",
+            "Red",
+            "Blue"
+        ],
+        "answer": "White"
+    },
+    {
+        "question": "Which color model is best suited for adjusting brightness and contrast?",
+        "options": [
+            "RGB",
+            "HSV",
+            "YCbCr",
+            "CMYK"
+        ],
+        "answer": "HSV"
+    },
+    {
+        "question": "What is a common application of color segmentation?",
+        "options": [
+            "Image compression",
+            "Object detection",
+            "Noise reduction",
+            "Resolution enhancement"
+        ],
+        "answer": "Object detection"
+    },
+    {
+        "question": "Which component in YCbCr represents red chrominance?",
+        "options": [
+            "Y",
+            "Cb",
+            "Cr",
+            "None of the above"
+        ],
+        "answer": "Cr"
+    },
+    {
+        "question": "What is the effect of increasing saturation in the HSV model?",
+        "options": [
+            "Colors become more vivid",
+            "Colors become darker",
+            "Colors become lighter",
+            "Colors remain unchanged"
+        ],
+        "answer": "Colors become more vivid"
+    },
+    {
+        "question": "Which of the following is a color enhancement technique?",
+        "options": [
+            "Contrast stretching",
+            "Edge sharpening",
+            "Image cropping",
+            "Noise addition"
+        ],
+        "answer": "Contrast stretching"
+    },
+    {
+        "question": "In the RGB model, what color is (0, 0, 255)?",
+        "options": [
+            "Red",
+            "Green",
+            "Blue",
+            "Black"
+        ],
+        "answer": "Blue"
+    },
+    {
+        "question": "What is a challenge in color segmentation?",
+        "options": [
+            "High computational cost",
+            "Low image resolution",
+            "Limited color models",
+            "Small image size"
+        ],
+        "answer": "High computational cost"
+    },
+    {
+        "question": "Which color model is additive?",
+        "options": [
+            "RGB",
+            "CMYK",
+            "YCbCr",
+            "HSV"
+        ],
+        "answer": "RGB"
+    },
+    {
+        "question": "What is the purpose of converting an image from RGB to YCbCr?",
+        "options": [
+            "To enhance colors",
+            "To separate luminance and chrominance",
+            "To reduce file size",
+            "To increase resolution"
+        ],
+        "answer": "To separate luminance and chrominance"
+    }
+]

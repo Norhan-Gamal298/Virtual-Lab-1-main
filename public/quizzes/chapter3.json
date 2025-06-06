@@ -1,0 +1,302 @@
+[
+    {
+        "question": "What is the primary goal of image enhancement techniques?",
+        "options": [
+            "To compress the image size",
+            "To improve the visual quality of an image",
+            "To encrypt the image data",
+            "To remove all noise from the image"
+        ],
+        "answer": "To improve the visual quality of an image"
+    },
+    {
+        "question": "Which technique redistributes pixel intensities to improve contrast?",
+        "options": [
+            "Histogram Equalization",
+            "Contrast Stretching",
+            "Log Transform",
+            "Power-law Transform"
+        ],
+        "answer": "Histogram Equalization"
+    },
+    {
+        "question": "Histogram equalization is most effective for images with:",
+        "options": [
+            "Uniform contrast",
+            "Low contrast",
+            "High noise",
+            "High resolution"
+        ],
+        "answer": "Low contrast"
+    },
+    {
+        "question": "What does contrast stretching do to an image?",
+        "options": [
+            "Compresses the dynamic range",
+            "Expands the range of intensity values",
+            "Inverts the pixel values",
+            "Applies a logarithmic transformation"
+        ],
+        "answer": "Expands the range of intensity values"
+    },
+    {
+        "question": "Which transform is used to expand the dark regions of an image?",
+        "options": [
+            "Log Transform",
+            "Power-law Transform",
+            "Histogram Equalization",
+            "Arithmetic Addition"
+        ],
+        "answer": "Log Transform"
+    },
+    {
+        "question": "The power-law transform is also known as:",
+        "options": [
+            "Gamma Correction",
+            "Linear Transformation",
+            "Histogram Matching",
+            "Contrast Inversion"
+        ],
+        "answer": "Gamma Correction"
+    },
+    {
+        "question": "What is the effect of a gamma value less than 1 in power-law transform?",
+        "options": [
+            "Brightens the image",
+            "Darkens the image",
+            "Enhances dark regions",
+            "Reduces contrast"
+        ],
+        "answer": "Enhances dark regions"
+    },
+    {
+        "question": "Which arithmetic operation can be used to brighten an image?",
+        "options": [
+            "Subtraction",
+            "Addition",
+            "Multiplication",
+            "Division"
+        ],
+        "answer": "Addition"
+    },
+    {
+        "question": "What does histogram equalization rely on?",
+        "options": [
+            "Cumulative Distribution Function (CDF)",
+            "Mean pixel intensity",
+            "Standard deviation of pixels",
+            "Maximum pixel value"
+        ],
+        "answer": "Cumulative Distribution Function (CDF)"
+    },
+    {
+        "question": "Contrast stretching is a:",
+        "options": [
+            "Non-linear transformation",
+            "Linear transformation",
+            "Frequency-domain technique",
+            "Lossy compression method"
+        ],
+        "answer": "Linear transformation"
+    },
+    {
+        "question": "Log transform is particularly useful for:",
+        "options": [
+            "Images with a narrow range of intensities",
+            "Images with a wide range of intensities",
+            "Binary images",
+            "High-resolution images"
+        ],
+        "answer": "Images with a wide range of intensities"
+    },
+    {
+        "question": "Which operation can be used to blend two images?",
+        "options": [
+            "Addition",
+            "Subtraction",
+            "Division",
+            "Multiplication"
+        ],
+        "answer": "Addition"
+    },
+    {
+        "question": "What is a key limitation of histogram equalization?",
+        "options": [
+            "It increases noise in the image",
+            "It only works on color images",
+            "It reduces image resolution",
+            "It requires manual parameter tuning"
+        ],
+        "answer": "It increases noise in the image"
+    },
+    {
+        "question": "Which technique maps input pixel values to output values using a linear function?",
+        "options": [
+            "Histogram Equalization",
+            "Contrast Stretching",
+            "Log Transform",
+            "Power-law Transform"
+        ],
+        "answer": "Contrast Stretching"
+    },
+    {
+        "question": "The formula for log transform is:",
+        "options": [
+            "s = c * log(1 + r)",
+            "s = c * r^γ",
+            "s = r + c",
+            "s = r / c"
+        ],
+        "answer": "s = c * log(1 + r)"
+    },
+    {
+        "question": "What happens when you apply subtraction as an arithmetic operation on two images?",
+        "options": [
+            "It highlights differences between them",
+            "It blends the images",
+            "It darkens both images",
+            "It increases contrast"
+        ],
+        "answer": "It highlights differences between them"
+    },
+    {
+        "question": "Power-law transform with gamma > 1 will:",
+        "options": [
+            "Enhance dark regions",
+            "Enhance bright regions",
+            "Reduce overall contrast",
+            "Invert the image"
+        ],
+        "answer": "Enhance bright regions"
+    },
+    {
+        "question": "Which technique is NOT spatial domain based?",
+        "options": [
+            "Histogram Equalization",
+            "Contrast Stretching",
+            "Log Transform",
+            "Fourier Transform"
+        ],
+        "answer": "Fourier Transform"
+    },
+    {
+        "question": "What is the purpose of adding a constant in arithmetic operations?",
+        "options": [
+            "To shift the intensity range",
+            "To reduce noise",
+            "To compress the image",
+            "To invert the colors"
+        ],
+        "answer": "To shift the intensity range"
+    },
+    {
+        "question": "Histogram equalization ensures:",
+        "options": [
+            "Uniform pixel distribution",
+            "Maximum brightness",
+            "Minimum contrast",
+            "Color preservation"
+        ],
+        "answer": "Uniform pixel distribution"
+    },
+    {
+        "question": "Which transform can handle both bright and dark regions effectively?",
+        "options": [
+            "Log Transform",
+            "Power-law Transform",
+            "Contrast Stretching",
+            "Histogram Equalization"
+        ],
+        "answer": "Power-law Transform"
+    },
+    {
+        "question": "What is the effect of multiplying an image by a constant > 1?",
+        "options": [
+            "Increases brightness",
+            "Decreases brightness",
+            "Inverts the image",
+            "Reduces contrast"
+        ],
+        "answer": "Increases brightness"
+    },
+    {
+        "question": "Which technique is sensitive to outliers in pixel intensities?",
+        "options": [
+            "Histogram Equalization",
+            "Contrast Stretching",
+            "Log Transform",
+            "Arithmetic Subtraction"
+        ],
+        "answer": "Contrast Stretching"
+    },
+    {
+        "question": "Log transform compresses:",
+        "options": [
+            "Low-intensity values",
+            "High-intensity values",
+            "Mid-range values",
+            "All intensity values equally"
+        ],
+        "answer": "High-intensity values"
+    },
+    {
+        "question": "Which operation is used to remove a constant background from an image?",
+        "options": [
+            "Addition",
+            "Subtraction",
+            "Multiplication",
+            "Division"
+        ],
+        "answer": "Subtraction"
+    },
+    {
+        "question": "What is the role of the constant 'c' in log transform?",
+        "options": [
+            "Controls contrast",
+            "Scales the output intensity",
+            "Inverts the image",
+            "Shifts the histogram"
+        ],
+        "answer": "Scales the output intensity"
+    },
+    {
+        "question": "Histogram equalization may fail to improve:",
+        "options": [
+            "Low-contrast images",
+            "High-contrast images",
+            "Noisy images",
+            "Grayscale images"
+        ],
+        "answer": "High-contrast images"
+    },
+    {
+        "question": "Which transform is best for enhancing details in bright regions?",
+        "options": [
+            "Log Transform",
+            "Power-law Transform (γ < 1)",
+            "Power-law Transform (γ > 1)",
+            "Contrast Stretching"
+        ],
+        "answer": "Power-law Transform (γ > 1)"
+    },
+    {
+        "question": "Arithmetic division of an image by a constant will:",
+        "options": [
+            "Increase brightness",
+            "Decrease brightness",
+            "Invert the image",
+            "Enhance contrast"
+        ],
+        "answer": "Decrease brightness"
+    },
+    {
+        "question": "Which technique is most likely to preserve the original image structure?",
+        "options": [
+            "Histogram Equalization",
+            "Contrast Stretching",
+            "Log Transform",
+            "Power-law Transform"
+        ],
+        "answer": "Contrast Stretching"
+    }
+]

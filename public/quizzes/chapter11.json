@@ -1,0 +1,302 @@
+[
+    {
+        "question": "What is the primary purpose of feature extraction in computer vision?",
+        "options": [
+            "To reduce image noise",
+            "To identify key points or patterns for recognition",
+            "To compress images for storage",
+            "To enhance image brightness"
+        ],
+        "answer": "To identify key points or patterns for recognition"
+    },
+    {
+        "question": "Which of the following is a common application of corner detection?",
+        "options": [
+            "Image smoothing",
+            "Motion tracking",
+            "Color correction",
+            "Image compression"
+        ],
+        "answer": "Motion tracking"
+    },
+    {
+        "question": "The Harris corner detector relies on which mathematical concept?",
+        "options": [
+            "Gradient magnitude",
+            "Eigenvalues of a second-moment matrix",
+            "Fourier transform",
+            "Histogram equalization"
+        ],
+        "answer": "Eigenvalues of a second-moment matrix"
+    },
+    {
+        "question": "What does the Shi-Tomasi corner detector improve over the Harris detector?",
+        "options": [
+            "Noise reduction",
+            "Corner selection criteria",
+            "Computational speed",
+            "Edge detection accuracy"
+        ],
+        "answer": "Corner selection criteria"
+    },
+    {
+        "question": "In corner detection, a point is considered a corner if:",
+        "options": [
+            "It has low intensity variation in all directions",
+            "It has high intensity variation in multiple directions",
+            "It lies on a straight edge",
+            "It is part of a smooth region"
+        ],
+        "answer": "It has high intensity variation in multiple directions"
+    },
+    {
+        "question": "What is a key characteristic of a blob in blob detection?",
+        "options": [
+            "It is a sharp edge",
+            "It is a region with distinct intensity or color",
+            "It is a single pixel",
+            "It is a straight line"
+        ],
+        "answer": "It is a region with distinct intensity or color"
+    },
+    {
+        "question": "Which algorithm is commonly used for blob detection?",
+        "options": [
+            "Canny edge detector",
+            "Laplacian of Gaussian (LoG)",
+            "Hough transform",
+            "Harris corner detector"
+        ],
+        "answer": "Laplacian of Gaussian (LoG)"
+    },
+    {
+        "question": "Blob detection is particularly useful for identifying:",
+        "options": [
+            "Linear structures",
+            "Circular or blob-like regions",
+            "Corners and edges",
+            "Gradients"
+        ],
+        "answer": "Circular or blob-like regions"
+    },
+    {
+        "question": "What does the scale-space pyramid in blob detection help achieve?",
+        "options": [
+            "Noise reduction",
+            "Detection of blobs at different scales",
+            "Edge sharpening",
+            "Color normalization"
+        ],
+        "answer": "Detection of blobs at different scales"
+    },
+    {
+        "question": "HOG features stand for:",
+        "options": [
+            "Histogram of Oriented Gradients",
+            "High-Order Gradients",
+            "Histogram of Objects",
+            "Homogeneous Orientation Grouping"
+        ],
+        "answer": "Histogram of Oriented Gradients"
+    },
+    {
+        "question": "HOG features are primarily used for:",
+        "options": [
+            "Image compression",
+            "Object detection",
+            "Image segmentation",
+            "Color enhancement"
+        ],
+        "answer": "Object detection"
+    },
+    {
+        "question": "In HOG feature extraction, the image is divided into:",
+        "options": [
+            "Pixels",
+            "Cells and blocks",
+            "Edges and corners",
+            "Blobs"
+        ],
+        "answer": "Cells and blocks"
+    },
+    {
+        "question": "What does the gradient orientation in HOG represent?",
+        "options": [
+            "Color intensity",
+            "Direction of intensity change",
+            "Pixel size",
+            "Image resolution"
+        ],
+        "answer": "Direction of intensity change"
+    },
+    {
+        "question": "HOG features are robust to:",
+        "options": [
+            "Illumination changes",
+            "Color variations",
+            "Noise amplification",
+            "Blurry images"
+        ],
+        "answer": "Illumination changes"
+    },
+    {
+        "question": "Template matching is best suited for:",
+        "options": [
+            "Detecting objects in cluttered scenes",
+            "Finding exact matches of a template in an image",
+            "Identifying corners",
+            "Segmenting large regions"
+        ],
+        "answer": "Finding exact matches of a template in an image"
+    },
+    {
+        "question": "Which method is commonly used for template matching?",
+        "options": [
+            "Normalized Cross-Correlation",
+            "Laplacian of Gaussian",
+            "Histogram equalization",
+            "Hough transform"
+        ],
+        "answer": "Normalized Cross-Correlation"
+    },
+    {
+        "question": "A limitation of template matching is:",
+        "options": [
+            "It is computationally inexpensive",
+            "It is sensitive to scale and rotation",
+            "It works well with low-resolution images",
+            "It is robust to noise"
+        ],
+        "answer": "It is sensitive to scale and rotation"
+    },
+    {
+        "question": "What does the Harris corner detector use to determine corner strength?",
+        "options": [
+            "Corner response function",
+            "Blob scale",
+            "Gradient histogram",
+            "Template correlation"
+        ],
+        "answer": "Corner response function"
+    },
+    {
+        "question": "In blob detection, the Difference of Gaussians (DoG) approximates:",
+        "options": [
+            "Canny edge detector",
+            "Laplacian of Gaussian",
+            "Harris corner detector",
+            "HOG features"
+        ],
+        "answer": "Laplacian of Gaussian"
+    },
+    {
+        "question": "Which of the following is NOT a step in HOG feature extraction?",
+        "options": [
+            "Gradient computation",
+            "Histogram normalization",
+            "Blob detection",
+            "Block normalization"
+        ],
+        "answer": "Blob detection"
+    },
+    {
+        "question": "Template matching assumes that the template and target image have:",
+        "options": [
+            "Different lighting conditions",
+            "Similar appearance and orientation",
+            "Unrelated content",
+            "Significant noise"
+        ],
+        "answer": "Similar appearance and orientation"
+    },
+    {
+        "question": "The Shi-Tomasi detector is often used in:",
+        "options": [
+            "Image compression",
+            "Feature tracking",
+            "Color segmentation",
+            "Noise filtering"
+        ],
+        "answer": "Feature tracking"
+    },
+    {
+        "question": "In HOG, what is the purpose of block normalization?",
+        "options": [
+            "To reduce illumination variations",
+            "To detect corners",
+            "To smooth the image",
+            "To increase image resolution"
+        ],
+        "answer": "To reduce illumination variations"
+    },
+    {
+        "question": "Which detector is more robust to noise: Harris or Shi-Tomasi?",
+        "options": [
+            "Harris",
+            "Shi-Tomasi",
+            "Both are equally robust",
+            "Neither is robust"
+        ],
+        "answer": "Shi-Tomasi"
+    },
+    {
+        "question": "Blob detection is often used in:",
+        "options": [
+            "Fingerprint recognition",
+            "Edge detection",
+            "Color correction",
+            "Image sharpening"
+        ],
+        "answer": "Fingerprint recognition"
+    },
+    {
+        "question": "What is a disadvantage of template matching?",
+        "options": [
+            "It is fast for large images",
+            "It fails with occlusion",
+            "It is robust to scale changes",
+            "It works well in low-light conditions"
+        ],
+        "answer": "It fails with occlusion"
+    },
+    {
+        "question": "The Harris detector classifies a point as a corner based on:",
+        "options": [
+            "High eigenvalues in the second-moment matrix",
+            "Low gradient magnitude",
+            "Uniform intensity",
+            "Blob-like structure"
+        ],
+        "answer": "High eigenvalues in the second-moment matrix"
+    },
+    {
+        "question": "Which feature is NOT typically detected by blob detection?",
+        "options": [
+            "Circular regions",
+            "Keypoints at different scales",
+            "Straight edges",
+            "Regions with distinct intensity"
+        ],
+        "answer": "Straight edges"
+    },
+    {
+        "question": "HOG features are commonly used in:",
+        "options": [
+            "Pedestrian detection",
+            "Image denoising",
+            "Corner detection",
+            "Template matching"
+        ],
+        "answer": "Pedestrian detection"
+    },
+    {
+        "question": "Template matching performs poorly when:",
+        "options": [
+            "The template is identical to the target",
+            "The target is rotated or scaled",
+            "The image is noise-free",
+            "The template is small"
+        ],
+        "answer": "The target is rotated or scaled"
+    }
+]

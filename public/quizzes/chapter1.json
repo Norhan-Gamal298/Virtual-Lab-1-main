@@ -1,0 +1,302 @@
+[
+    {
+        "question": "What is Image Processing?",
+        "options": [
+            "Converting text to images",
+            "Applying algorithms to analyze or modify images",
+            "Creating 3D models from 2D images",
+            "Compressing video files"
+        ],
+        "answer": "Applying algorithms to analyze or modify images"
+    },
+    {
+        "question": "Which of the following is a primary goal of Image Processing?",
+        "options": [
+            "Generating random images",
+            "Enhancing or extracting information from images",
+            "Converting images to audio signals",
+            "Reducing image resolution"
+        ],
+        "answer": "Enhancing or extracting information from images"
+    },
+    {
+        "question": "Which field does NOT typically use Image Processing?",
+        "options": [
+            "Medical imaging",
+            "Astronomy",
+            "Database management",
+            "Autonomous vehicles"
+        ],
+        "answer": "Database management"
+    },
+    {
+        "question": "What is a real-life application of Image Processing?",
+        "options": [
+            "Speech recognition",
+            "Facial recognition in security systems",
+            "Text editing in word processors",
+            "File compression"
+        ],
+        "answer": "Facial recognition in security systems"
+    },
+    {
+        "question": "Which of the following is an example of Image Processing in healthcare?",
+        "options": [
+            "Developing new medicines",
+            "Analyzing MRI scans",
+            "Managing hospital records",
+            "Measuring blood pressure"
+        ],
+        "answer": "Analyzing MRI scans"
+    },
+    {
+        "question": "In which industry is Image Processing used for quality control?",
+        "options": [
+            "Manufacturing",
+            "Education",
+            "Finance",
+            "Tourism"
+        ],
+        "answer": "Manufacturing"
+    },
+    {
+        "question": "What type of image consists of only two values, typically black and white?",
+        "options": [
+            "Grayscale",
+            "RGB",
+            "Binary",
+            "CMYK"
+        ],
+        "answer": "Binary"
+    },
+    {
+        "question": "How many color channels does an RGB image have?",
+        "options": [
+            "1",
+            "2",
+            "3",
+            "4"
+        ],
+        "answer": "3"
+    },
+    {
+        "question": "What does a grayscale image represent?",
+        "options": [
+            "A single intensity value for each pixel",
+            "Three color channels",
+            "Binary values only",
+            "A 3D depth map"
+        ],
+        "answer": "A single intensity value for each pixel"
+    },
+    {
+        "question": "Which type of image is best suited for simple thresholding operations?",
+        "options": [
+            "RGB",
+            "Grayscale",
+            "Binary",
+            "Indexed"
+        ],
+        "answer": "Binary"
+    },
+    {
+        "question": "An RGB image is composed of which colors?",
+        "options": [
+            "Red, Green, Blue",
+            "Cyan, Magenta, Yellow",
+            "Red, Gray, Black",
+            "Blue, Yellow, Green"
+        ],
+        "answer": "Red, Green, Blue"
+    },
+    {
+        "question": "What is the range of pixel values in a typical 8-bit grayscale image?",
+        "options": [
+            "0 to 1",
+            "0 to 255",
+            "-128 to 127",
+            "0 to 100"
+        ],
+        "answer": "0 to 255"
+    },
+    {
+        "question": "Which image type is most suitable for representing complex photographs?",
+        "options": [
+            "Binary",
+            "Grayscale",
+            "RGB",
+            "Indexed"
+        ],
+        "answer": "RGB"
+    },
+    {
+        "question": "In a binary image, what do the pixel values typically represent?",
+        "options": [
+            "Intensity levels",
+            "Foreground and background",
+            "Color channels",
+            "Depth information"
+        ],
+        "answer": "Foreground and background"
+    },
+    {
+        "question": "What is the main difference between spatial and frequency domains?",
+        "options": [
+            "Spatial domain works with pixel intensities, frequency domain with signal frequencies",
+            "Frequency domain is used for binary images only",
+            "Spatial domain is used for color images only",
+            "Frequency domain works with pixel positions"
+        ],
+        "answer": "Spatial domain works with pixel intensities, frequency domain with signal frequencies"
+    },
+    {
+        "question": "Which domain is used for operations like blurring or sharpening an image?",
+        "options": [
+            "Frequency domain",
+            "Spatial domain",
+            "Time domain",
+            "Color domain"
+        ],
+        "answer": "Spatial domain"
+    },
+    {
+        "question": "In which domain is the Fourier Transform commonly applied?",
+        "options": [
+            "Spatial domain",
+            "Frequency domain",
+            "Color domain",
+            "Binary domain"
+        ],
+        "answer": "Frequency domain"
+    },
+    {
+        "question": "Which of the following is a frequency domain operation?",
+        "options": [
+            "Image cropping",
+            "Histogram equalization",
+            "Low-pass filtering",
+            "Pixel intensity adjustment"
+        ],
+        "answer": "Low-pass filtering"
+    },
+    {
+        "question": "What does the spatial domain directly manipulate?",
+        "options": [
+            "Pixel values in the image",
+            "Frequency components",
+            "Color histograms",
+            "Image metadata"
+        ],
+        "answer": "Pixel values in the image"
+    },
+    {
+        "question": "Which domain is more computationally intensive for certain transformations?",
+        "options": [
+            "Spatial domain",
+            "Frequency domain",
+            "Color domain",
+            "Binary domain"
+        ],
+        "answer": "Frequency domain"
+    },
+    {
+        "question": "What is a common application of frequency domain processing?",
+        "options": [
+            "Image compression",
+            "Image rotation",
+            "Image cropping",
+            "Color correction"
+        ],
+        "answer": "Image compression"
+    },
+    {
+        "question": "Which of the following is NOT a type of digital image?",
+        "options": [
+            "Grayscale",
+            "RGB",
+            "Binary",
+            "Vector"
+        ],
+        "answer": "Vector"
+    },
+    {
+        "question": "In Image Processing, what does the term 'pixel' refer to?",
+        "options": [
+            "A small block of color in an image",
+            "A type of image filter",
+            "A compression algorithm",
+            "A hardware component"
+        ],
+        "answer": "A small block of color in an image"
+    },
+    {
+        "question": "Which type of image is most suitable for edge detection algorithms?",
+        "options": [
+            "Binary",
+            "Grayscale",
+            "RGB",
+            "Indexed"
+        ],
+        "answer": "Grayscale"
+    },
+    {
+        "question": "What is a real-life application of Image Processing in autonomous vehicles?",
+        "options": [
+            "Route planning",
+            "Object detection",
+            "Fuel efficiency analysis",
+            "Audio processing"
+        ],
+        "answer": "Object detection"
+    },
+    {
+        "question": "Which domain is used to analyze the texture of an image?",
+        "options": [
+            "Spatial domain",
+            "Frequency domain",
+            "Color domain",
+            "Binary domain"
+        ],
+        "answer": "Frequency domain"
+    },
+    {
+        "question": "What is the purpose of Image Processing in astronomy?",
+        "options": [
+            "Enhancing telescope images",
+            "Calculating star distances",
+            "Generating star maps",
+            "Measuring telescope lens size"
+        ],
+        "answer": "Enhancing telescope images"
+    },
+    {
+        "question": "Which image type requires the least storage space?",
+        "options": [
+            "Binary",
+            "Grayscale",
+            "RGB",
+            "Indexed"
+        ],
+        "answer": "Binary"
+    },
+    {
+        "question": "Which of the following is a spatial domain operation?",
+        "options": [
+            "Fourier Transform",
+            "Image sharpening",
+            "Frequency filtering",
+            "Wavelet Transform"
+        ],
+        "answer": "Image sharpening"
+    },
+    {
+        "question": "What is the benefit of using Image Processing in security systems?",
+        "options": [
+            "Faster data encryption",
+            "Improved facial recognition",
+            "Enhanced audio surveillance",
+            "Reduced network latency"
+        ],
+        "answer": "Improved facial recognition"
+    }
+]
