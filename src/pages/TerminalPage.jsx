@@ -95,7 +95,17 @@ export default function TerminalPage() {
                 >
                     Back to Lesson
                 </button>
+
                 <div className="flex gap-2">
+                    <label className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 cursor-pointer">
+                        Upload Files
+                        <input
+                            type="file"
+                            onChange={handleFileUpload}
+                            className="hidden"
+                            multiple
+                        />
+                    </label>
                     <button
                         onClick={clearTerminal}
                         className="bg-yellow-600 text-white px-4 py-2 rounded hover:bg-yellow-700"
