@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+/* import mongoose from "mongoose";
 import dotenv from "dotenv";
 import fs from "fs";
 import path from "path";
@@ -89,3 +89,4 @@ for (let chapterIndex = 0; chapterIndex < topicsData.length; chapterIndex++) {
     process.exit(1);
   }
 })();
+ */

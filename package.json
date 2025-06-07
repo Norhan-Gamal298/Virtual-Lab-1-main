@@ -51,6 +51,7 @@
     "react-redux": "^9.2.0",
     "react-router-dom": "^7.3.0",
     "react-syntax-highlighter": "^5.8.0",
+    "react-tabs": "^6.1.0",
     "react-toastify": "^11.0.5",
     "rehype-katex": "^7.0.1",
     "rehype-raw": "^7.0.0",
