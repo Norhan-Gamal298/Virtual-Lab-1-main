@@ -1,302 +1,292 @@
 [
     {
-        "question": "What is the primary goal of image enhancement techniques?",
+        "question": "What is the main goal of histogram equalization in image processing?",
         "options": [
-            "To compress the image size",
-            "To improve the visual quality of an image",
-            "To encrypt the image data",
-            "To remove all noise from the image"
-        ],
-        "answer": "To improve the visual quality of an image"
-    },
-    {
-        "question": "Which technique redistributes pixel intensities to improve contrast?",
-        "options": [
-            "Histogram Equalization",
-            "Contrast Stretching",
-            "Log Transform",
-            "Power-law Transform"
-        ],
-        "answer": "Histogram Equalization"
-    },
-    {
-        "question": "Histogram equalization is most effective for images with:",
-        "options": [
-            "Uniform contrast",
-            "Low contrast",
-            "High noise",
-            "High resolution"
-        ],
-        "answer": "Low contrast"
-    },
-    {
-        "question": "What does contrast stretching do to an image?",
-        "options": [
-            "Compresses the dynamic range",
-            "Expands the range of intensity values",
-            "Inverts the pixel values",
-            "Applies a logarithmic transformation"
-        ],
-        "answer": "Expands the range of intensity values"
-    },
-    {
-        "question": "Which transform is used to expand the dark regions of an image?",
-        "options": [
-            "Log Transform",
-            "Power-law Transform",
-            "Histogram Equalization",
-            "Arithmetic Addition"
-        ],
-        "answer": "Log Transform"
-    },
-    {
-        "question": "The power-law transform is also known as:",
-        "options": [
-            "Gamma Correction",
-            "Linear Transformation",
-            "Histogram Matching",
-            "Contrast Inversion"
-        ],
-        "answer": "Gamma Correction"
-    },
-    {
-        "question": "What is the effect of a gamma value less than 1 in power-law transform?",
-        "options": [
-            "Brightens the image",
-            "Darkens the image",
-            "Enhances dark regions",
-            "Reduces contrast"
-        ],
-        "answer": "Enhances dark regions"
-    },
-    {
-        "question": "Which arithmetic operation can be used to brighten an image?",
-        "options": [
-            "Subtraction",
-            "Addition",
-            "Multiplication",
-            "Division"
-        ],
-        "answer": "Addition"
-    },
-    {
-        "question": "What does histogram equalization rely on?",
-        "options": [
-            "Cumulative Distribution Function (CDF)",
-            "Mean pixel intensity",
-            "Standard deviation of pixels",
-            "Maximum pixel value"
-        ],
-        "answer": "Cumulative Distribution Function (CDF)"
-    },
-    {
-        "question": "Contrast stretching is a:",
-        "options": [
-            "Non-linear transformation",
-            "Linear transformation",
-            "Frequency-domain technique",
-            "Lossy compression method"
-        ],
-        "answer": "Linear transformation"
-    },
-    {
-        "question": "Log transform is particularly useful for:",
-        "options": [
-            "Images with a narrow range of intensities",
-            "Images with a wide range of intensities",
-            "Binary images",
-            "High-resolution images"
-        ],
-        "answer": "Images with a wide range of intensities"
-    },
-    {
-        "question": "Which operation can be used to blend two images?",
-        "options": [
-            "Addition",
-            "Subtraction",
-            "Division",
-            "Multiplication"
-        ],
-        "answer": "Addition"
-    },
-    {
-        "question": "What is a key limitation of histogram equalization?",
-        "options": [
-            "It increases noise in the image",
-            "It only works on color images",
-            "It reduces image resolution",
-            "It requires manual parameter tuning"
-        ],
-        "answer": "It increases noise in the image"
-    },
-    {
-        "question": "Which technique maps input pixel values to output values using a linear function?",
-        "options": [
-            "Histogram Equalization",
-            "Contrast Stretching",
-            "Log Transform",
-            "Power-law Transform"
-        ],
-        "answer": "Contrast Stretching"
-    },
-    {
-        "question": "The formula for log transform is:",
-        "options": [
-            "s = c * log(1 + r)",
-            "s = c * r^γ",
-            "s = r + c",
-            "s = r / c"
-        ],
-        "answer": "s = c * log(1 + r)"
-    },
-    {
-        "question": "What happens when you apply subtraction as an arithmetic operation on two images?",
-        "options": [
-            "It highlights differences between them",
-            "It blends the images",
-            "It darkens both images",
-            "It increases contrast"
-        ],
-        "answer": "It highlights differences between them"
-    },
-    {
-        "question": "Power-law transform with gamma > 1 will:",
-        "options": [
-            "Enhance dark regions",
-            "Enhance bright regions",
-            "Reduce overall contrast",
-            "Invert the image"
-        ],
-        "answer": "Enhance bright regions"
-    },
-    {
-        "question": "Which technique is NOT spatial domain based?",
-        "options": [
-            "Histogram Equalization",
-            "Contrast Stretching",
-            "Log Transform",
-            "Fourier Transform"
-        ],
-        "answer": "Fourier Transform"
-    },
-    {
-        "question": "What is the purpose of adding a constant in arithmetic operations?",
-        "options": [
-            "To shift the intensity range",
             "To reduce noise",
+            "To enhance image contrast",
             "To compress the image",
-            "To invert the colors"
+            "To smooth the image"
         ],
-        "answer": "To shift the intensity range"
+        "answer": "To enhance image contrast"
     },
     {
-        "question": "Histogram equalization ensures:",
+        "question": "What does an intensity histogram represent in an image?",
         "options": [
-            "Uniform pixel distribution",
-            "Maximum brightness",
-            "Minimum contrast",
-            "Color preservation"
+            "Frequency of each intensity value",
+            "Spatial distribution of colors",
+            "Image compression ratio",
+            "Number of edges in the image"
         ],
-        "answer": "Uniform pixel distribution"
+        "answer": "Frequency of each intensity value"
     },
     {
-        "question": "Which transform can handle both bright and dark regions effectively?",
+        "question": "Which of the following best describes a cumulative distribution function (CDF) in histogram equalization?",
         "options": [
-            "Log Transform",
-            "Power-law Transform",
-            "Contrast Stretching",
-            "Histogram Equalization"
+            "It shows the cumulative frequency of pixel intensities",
+            "It shows the difference between intensities",
+            "It measures the noise level",
+            "It counts the number of pixels"
         ],
-        "answer": "Power-law Transform"
+        "answer": "It shows the cumulative frequency of pixel intensities"
     },
     {
-        "question": "What is the effect of multiplying an image by a constant > 1?",
+        "question": "What happens to the pixel intensities after applying histogram equalization?",
         "options": [
-            "Increases brightness",
-            "Decreases brightness",
-            "Inverts the image",
-            "Reduces contrast"
+            "They become more uniformly distributed",
+            "They are compressed",
+            "They are blurred",
+            "They remain unchanged"
         ],
-        "answer": "Increases brightness"
+        "answer": "They become more uniformly distributed"
     },
     {
-        "question": "Which technique is sensitive to outliers in pixel intensities?",
+        "question": "What is the effect of histogram equalization on a low-contrast image?",
         "options": [
-            "Histogram Equalization",
-            "Contrast Stretching",
-            "Log Transform",
-            "Arithmetic Subtraction"
+            "Improves visibility by increasing contrast",
+            "Reduces image size",
+            "Adds noise to the image",
+            "Converts it to binary"
         ],
-        "answer": "Contrast Stretching"
+        "answer": "Improves visibility by increasing contrast"
     },
     {
-        "question": "Log transform compresses:",
+        "question": "Which mathematical operation is used to compute the new intensity values in histogram equalization?",
         "options": [
-            "Low-intensity values",
-            "High-intensity values",
-            "Mid-range values",
-            "All intensity values equally"
+            "Cumulative sum of normalized histogram",
+            "Fourier transform",
+            "Convolution",
+            "Logarithmic scaling"
         ],
-        "answer": "High-intensity values"
+        "answer": "Cumulative sum of normalized histogram"
     },
     {
-        "question": "Which operation is used to remove a constant background from an image?",
+        "question": "What is an intensity histogram useful for in image analysis?",
         "options": [
-            "Addition",
-            "Subtraction",
-            "Multiplication",
-            "Division"
+            "Understanding the brightness distribution of an image",
+            "Measuring the color depth",
+            "Detecting edges",
+            "Reducing image noise"
         ],
-        "answer": "Subtraction"
+        "answer": "Understanding the brightness distribution of an image"
     },
     {
-        "question": "What is the role of the constant 'c' in log transform?",
+        "question": "Which of the following images would likely benefit most from histogram equalization?",
         "options": [
-            "Controls contrast",
-            "Scales the output intensity",
-            "Inverts the image",
-            "Shifts the histogram"
+            "A dark image with low contrast",
+            "A high contrast image",
+            "A binary image",
+            "A color image without grayscale components"
         ],
-        "answer": "Scales the output intensity"
+        "answer": "A dark image with low contrast"
     },
     {
-        "question": "Histogram equalization may fail to improve:",
+        "question": "What is a drawback of applying global histogram equalization?",
         "options": [
-            "Low-contrast images",
-            "High-contrast images",
-            "Noisy images",
-            "Grayscale images"
+            "It may over-enhance noise",
+            "It increases compression ratio",
+            "It always reduces contrast",
+            "It blurs the image"
         ],
-        "answer": "High-contrast images"
+        "answer": "It may over-enhance noise"
     },
     {
-        "question": "Which transform is best for enhancing details in bright regions?",
+        "question": "In an intensity histogram, what does a spike at a specific intensity value indicate?",
         "options": [
-            "Log Transform",
-            "Power-law Transform (γ < 1)",
-            "Power-law Transform (γ > 1)",
-            "Contrast Stretching"
+            "Many pixels have that intensity",
+            "Image noise",
+            "Image edges",
+            "Color variation"
         ],
-        "answer": "Power-law Transform (γ > 1)"
+        "answer": "Many pixels have that intensity"
     },
     {
-        "question": "Arithmetic division of an image by a constant will:",
+        "question": "What is the range of values in an intensity histogram for an 8-bit grayscale image?",
         "options": [
-            "Increase brightness",
-            "Decrease brightness",
-            "Invert the image",
-            "Enhance contrast"
+            "0 to 255",
+            "0 to 127",
+            "0 to 1023",
+            "0 to 63"
         ],
-        "answer": "Decrease brightness"
+        "answer": "0 to 255"
     },
     {
-        "question": "Which technique is most likely to preserve the original image structure?",
+        "question": "What is the primary input for histogram equalization?",
         "options": [
-            "Histogram Equalization",
-            "Contrast Stretching",
-            "Log Transform",
-            "Power-law Transform"
+            "Original image histogram",
+            "Fourier transform of the image",
+            "Image edges",
+            "Color channels"
         ],
-        "answer": "Contrast Stretching"
+        "answer": "Original image histogram"
+    },
+    {
+        "question": "Which step is performed after calculating the cumulative distribution function (CDF) during histogram equalization?",
+        "options": [
+            "Mapping old pixel values to new equalized values",
+            "Adding noise",
+            "Applying a filter",
+            "Compressing the image"
+        ],
+        "answer": "Mapping old pixel values to new equalized values"
+    },
+    {
+        "question": "Why might histogram equalization not be ideal for all images?",
+        "options": [
+            "It can cause unnatural appearance or noise amplification",
+            "It always reduces file size",
+            "It removes all noise",
+            "It is very slow"
+        ],
+        "answer": "It can cause unnatural appearance or noise amplification"
+    },
+    {
+        "question": "Which type of histogram equalization technique can be used to improve local contrast?",
+        "options": [
+            "Adaptive histogram equalization",
+            "Global histogram equalization",
+            "Fourier equalization",
+            "Wavelet equalization"
+        ],
+        "answer": "Adaptive histogram equalization"
+    },
+    {
+        "question": "What does a flat or uniform histogram imply about an image's contrast?",
+        "options": [
+            "Good or enhanced contrast",
+            "Low contrast",
+            "High noise level",
+            "Low resolution"
+        ],
+        "answer": "Good or enhanced contrast"
+    },
+    {
+        "question": "In histogram equalization, why is the histogram normalized before computing the CDF?",
+        "options": [
+            "To convert frequencies to probabilities",
+            "To increase pixel values",
+            "To reduce noise",
+            "To compress the image"
+        ],
+        "answer": "To convert frequencies to probabilities"
+    },
+    {
+        "question": "Which of these can be a result of poor histogram equalization?",
+        "options": [
+            "Over-enhanced edges or noise",
+            "Reduced image size",
+            "Smoother gradients",
+            "Increased color saturation"
+        ],
+        "answer": "Over-enhanced edges or noise"
+    },
+    {
+        "question": "How does histogram equalization affect an image with already good contrast?",
+        "options": [
+            "May cause distortion or loss of detail",
+            "Significantly improves quality",
+            "Converts it to grayscale",
+            "Has no effect"
+        ],
+        "answer": "May cause distortion or loss of detail"
+    },
+    {
+        "question": "What is the first step in computing an intensity histogram for an image?",
+        "options": [
+            "Counting the number of pixels at each intensity level",
+            "Applying a filter",
+            "Compressing the image",
+            "Performing edge detection"
+        ],
+        "answer": "Counting the number of pixels at each intensity level"
+    },
+    {
+        "question": "Which histogram characteristic is most useful for identifying brightness bias in an image?",
+        "options": [
+            "Skewness towards dark or bright intensities",
+            "Width of the histogram",
+            "Height of the tallest bar",
+            "Number of peaks"
+        ],
+        "answer": "Skewness towards dark or bright intensities"
+    },
+    {
+        "question": "Histogram equalization works best on images with:",
+        "options": [
+            "Low contrast and narrow intensity distribution",
+            "High contrast and uniform intensity distribution",
+            "Binary images",
+            "Color images without grayscale components"
+        ],
+        "answer": "Low contrast and narrow intensity distribution"
+    },
+    {
+        "question": "What does a histogram with all pixel intensities concentrated at one level represent?",
+        "options": [
+            "A constant or flat image",
+            "A high-contrast image",
+            "An image with noise",
+            "An image with sharp edges"
+        ],
+        "answer": "A constant or flat image"
+    },
+    {
+        "question": "In histogram equalization, what is the role of the transformation function?",
+        "options": [
+            "Maps old pixel intensities to new values based on the CDF",
+            "Removes noise from the image",
+            "Compresses the image",
+            "Filters edges"
+        ],
+        "answer": "Maps old pixel intensities to new values based on the CDF"
+    },
+    {
+        "question": "Which of the following is true about the shape of the intensity histogram for a well-contrasted image?",
+        "options": [
+            "It is spread out evenly across intensity levels",
+            "It is concentrated at low intensities",
+            "It is concentrated at high intensities",
+            "It has a single peak at mid-level intensities"
+        ],
+        "answer": "It is spread out evenly across intensity levels"
+    },
+    {
+        "question": "What is the effect of histogram equalization on the dynamic range of pixel intensities?",
+        "options": [
+            "Expands the dynamic range",
+            "Reduces the dynamic range",
+            "Keeps it unchanged",
+            "Compresses the dynamic range"
+        ],
+        "answer": "Expands the dynamic range"
+    },
+    {
+        "question": "What does the term 'global histogram equalization' imply?",
+        "options": [
+            "Applying equalization over the entire image",
+            "Applying equalization to small regions",
+            "Using wavelet transforms",
+            "Performing histogram equalization on color channels separately"
+        ],
+        "answer": "Applying equalization over the entire image"
+    },
+    {
+        "question": "Which step is NOT involved in the basic histogram equalization process?",
+        "options": [
+            "Edge detection",
+            "Histogram calculation",
+            "CDF computation",
+            "Mapping pixel intensities"
+        ],
+        "answer": "Edge detection"
+    },
+    {
+        "question": "Why is histogram equalization not typically applied directly to color images?",
+        "options": [
+            "It can distort colors when applied independently to each channel",
+            "It does not work on color images",
+            "Color images have no histograms",
+            "Color images have fewer intensity levels"
+        ],
+        "answer": "It can distort colors when applied independently to each channel"
     }
 ]

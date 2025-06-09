@@ -1,302 +1,302 @@
 [
     {
-        "question": "What is the primary goal of image segmentation?",
+        "question": "What is the main goal of image compression?",
         "options": [
+            "To reduce image size without losing important information",
             "To enhance image contrast",
-            "To divide an image into meaningful regions",
-            "To compress the image",
-            "To remove noise"
+            "To convert images to grayscale",
+            "To increase image resolution"
         ],
-        "answer": "To divide an image into meaningful regions"
+        "answer": "To reduce image size without losing important information"
     },
     {
-        "question": "Which of the following is a type of thresholding technique?",
+        "question": "Which of the following is a lossless image compression method?",
         "options": [
-            "Sobel",
-            "Otsu",
-            "Watershed",
-            "Canny"
+            "JPEG",
+            "PNG",
+            "JPEG2000",
+            "MPEG"
         ],
-        "answer": "Otsu"
+        "answer": "PNG"
     },
     {
-        "question": "Global thresholding applies:",
+        "question": "What does lossy compression do?",
         "options": [
-            "A single threshold value across the entire image",
-            "Different thresholds for different regions",
-            "A threshold based on edge detection",
-            "A threshold based on region growing"
+            "Removes some image data permanently",
+            "Preserves all image data",
+            "Only changes color format",
+            "Increases image size"
         ],
-        "answer": "A single threshold value across the entire image"
+        "answer": "Removes some image data permanently"
     },
     {
-        "question": "Adaptive thresholding is useful when:",
+        "question": "Which image compression standard uses discrete cosine transform (DCT)?",
         "options": [
-            "The image has uniform lighting",
-            "The image has varying illumination",
-            "The image is noise-free",
-            "The image is grayscale only"
+            "JPEG",
+            "JPEG2000",
+            "PNG",
+            "GIF"
         ],
-        "answer": "The image has varying illumination"
+        "answer": "JPEG"
     },
     {
-        "question": "Otsu’s method is used to:",
+        "question": "What is a key advantage of JPEG2000 over JPEG?",
         "options": [
-            "Detect edges in an image",
-            "Automatically determine an optimal threshold",
-            "Grow regions based on seed points",
-            "Apply a watershed transform"
+            "Better compression efficiency and scalability",
+            "Faster compression",
+            "Supports only grayscale images",
+            "Uses DCT only"
         ],
-        "answer": "Automatically determine an optimal threshold"
+        "answer": "Better compression efficiency and scalability"
     },
     {
-        "question": "Which thresholding technique minimizes the variance between two classes of pixels?",
+        "question": "In image compression, what is quantization?",
         "options": [
-            "Global thresholding",
-            "Adaptive thresholding",
-            "Otsu’s thresholding",
-            "Manual thresholding"
+            "Reducing the number of distinct intensity levels",
+            "Increasing image resolution",
+            "Changing color space",
+            "Filtering noise"
         ],
-        "answer": "Otsu’s thresholding"
+        "answer": "Reducing the number of distinct intensity levels"
     },
     {
-        "question": "Edge-based segmentation relies on:",
+        "question": "Which compression technique is typically used for medical images requiring high fidelity?",
         "options": [
-            "Intensity discontinuities",
-            "Region homogeneity",
-            "Seed point selection",
-            "Watershed markers"
+            "Lossless compression",
+            "Lossy compression",
+            "JPEG",
+            "GIF"
         ],
-        "answer": "Intensity discontinuities"
+        "answer": "Lossless compression"
     },
     {
-        "question": "The Sobel operator is primarily used for:",
+        "question": "What is the main transform used in JPEG2000 compression?",
         "options": [
-            "Region growing",
-            "Edge detection",
-            "Thresholding",
-            "Watershed segmentation"
+            "Discrete Wavelet Transform (DWT)",
+            "Discrete Cosine Transform (DCT)",
+            "Fourier Transform",
+            "Radon Transform"
         ],
-        "answer": "Edge detection"
+        "answer": "Discrete Wavelet Transform (DWT)"
     },
     {
-        "question": "Which of the following is a key feature of the Canny edge detector?",
+        "question": "What is entropy coding in image compression?",
         "options": [
-            "Single threshold application",
-            "Noise reduction via Gaussian smoothing",
-            "Region merging",
-            "Seed-based growth"
+            "Lossless coding of quantized data based on probability",
+            "Filtering image noise",
+            "Increasing color depth",
+            "Enhancing contrast"
         ],
-        "answer": "Noise reduction via Gaussian smoothing"
+        "answer": "Lossless coding of quantized data based on probability"
     },
     {
-        "question": "Canny edge detection involves:",
+        "question": "Which of the following is NOT a part of JPEG compression process?",
         "options": [
-            "Only gradient computation",
-            "Hysteresis thresholding",
-            "Region splitting",
-            "Manual seed selection"
+            "Wavelet transform",
+            "DCT transform",
+            "Quantization",
+            "Entropy coding"
         ],
-        "answer": "Hysteresis thresholding"
+        "answer": "Wavelet transform"
     },
     {
-        "question": "Region-based segmentation focuses on:",
+        "question": "Which parameter directly affects the compression ratio in lossy compression?",
         "options": [
-            "Detecting edges",
-            "Grouping similar pixels into regions",
-            "Applying global thresholds",
-            "Computing gradients"
+            "Quantization level",
+            "Image size",
+            "Bit depth",
+            "Color space"
         ],
-        "answer": "Grouping similar pixels into regions"
+        "answer": "Quantization level"
     },
     {
-        "question": "Region growing segmentation requires:",
+        "question": "Which of these is a lossless compression algorithm?",
         "options": [
-            "A global threshold",
-            "Seed points",
-            "Edge detection",
-            "A watershed transform"
+            "Huffman coding",
+            "JPEG",
+            "JPEG2000 lossy mode",
+            "MPEG"
         ],
-        "answer": "Seed points"
+        "answer": "Huffman coding"
     },
     {
-        "question": "The watershed algorithm is based on:",
+        "question": "What is the purpose of block-based processing in JPEG?",
         "options": [
-            "Edge detection",
-            "Topological interpretation of image intensity",
-            "Global thresholding",
-            "Sobel gradients"
+            "To apply DCT on small image blocks for compression",
+            "To segment image colors",
+            "To reduce noise",
+            "To increase spatial resolution"
         ],
-        "answer": "Topological interpretation of image intensity"
+        "answer": "To apply DCT on small image blocks for compression"
     },
     {
-        "question": "A common issue with the watershed algorithm is:",
+        "question": "In JPEG compression, what size are the blocks typically used for DCT?",
         "options": [
-            "Under-segmentation",
-            "Over-segmentation",
-            "Noise amplification",
-            "Edge blurring"
+            "8x8 pixels",
+            "4x4 pixels",
+            "16x16 pixels",
+            "32x32 pixels"
         ],
-        "answer": "Over-segmentation"
+        "answer": "8x8 pixels"
     },
     {
-        "question": "Which method is most sensitive to noise in edge detection?",
+        "question": "Which compression type would be preferred for web images to save bandwidth?",
         "options": [
-            "Sobel",
-            "Canny",
-            "Otsu",
-            "Watershed"
+            "Lossy compression",
+            "Lossless compression",
+            "Uncompressed",
+            "Raw format"
         ],
-        "answer": "Sobel"
+        "answer": "Lossy compression"
     },
     {
-        "question": "Adaptive thresholding divides the image into:",
+        "question": "What is the primary drawback of lossy compression?",
         "options": [
-            "Uniform regions",
-            "Sub-regions with local thresholds",
-            "Edges and non-edges",
-            "Seed points"
+            "Loss of some image quality",
+            "Large file size",
+            "Slow processing",
+            "Incompatibility with color images"
         ],
-        "answer": "Sub-regions with local thresholds"
+        "answer": "Loss of some image quality"
     },
     {
-        "question": "In region growing, pixels are grouped based on:",
+        "question": "Which compression algorithm is better for high compression ratios with minimal loss?",
         "options": [
-            "Edge strength",
-            "Similarity criteria",
-            "Global intensity",
-            "Gradient direction"
+            "JPEG2000",
+            "JPEG",
+            "GIF",
+            "BMP"
         ],
-        "answer": "Similarity criteria"
+        "answer": "JPEG2000"
     },
     {
-        "question": "Which technique is best suited for images with complex textures?",
+        "question": "What is the purpose of the zig-zag scan in JPEG compression?",
         "options": [
-            "Global thresholding",
-            "Adaptive thresholding",
-            "Sobel edge detection",
-            "Region growing"
+            "To order DCT coefficients for run-length encoding",
+            "To segment colors",
+            "To threshold coefficients",
+            "To convert image to grayscale"
         ],
-        "answer": "Adaptive thresholding"
+        "answer": "To order DCT coefficients for run-length encoding"
     },
     {
-        "question": "The Canny edge detector uses:",
+        "question": "In JPEG compression, which coefficients typically contain most of the image's energy?",
         "options": [
-            "A single threshold",
-            "Two thresholds (high and low)",
-            "No thresholds",
-            "Adaptive thresholds"
+            "Low-frequency coefficients",
+            "High-frequency coefficients",
+            "Random coefficients",
+            "Color coefficients"
         ],
-        "answer": "Two thresholds (high and low)"
+        "answer": "Low-frequency coefficients"
     },
     {
-        "question": "Watershed segmentation treats the image as:",
+        "question": "What does run-length encoding compress?",
         "options": [
-            "A gradient map",
-            "A topographic surface",
-            "A binary mask",
-            "A histogram"
+            "Sequences of repeated values",
+            "Color channels",
+            "Image edges",
+            "Image noise"
         ],
-        "answer": "A topographic surface"
+        "answer": "Sequences of repeated values"
     },
     {
-        "question": "Which method is computationally simplest?",
+        "question": "Which image compression format supports animation?",
         "options": [
-            "Global thresholding",
-            "Adaptive thresholding",
-            "Canny edge detection",
-            "Watershed"
+            "GIF",
+            "JPEG",
+            "PNG",
+            "BMP"
         ],
-        "answer": "Global thresholding"
+        "answer": "GIF"
     },
     {
-        "question": "Otsu’s method assumes the image histogram is:",
+        "question": "Why is color space conversion used in image compression?",
         "options": [
-            "Uniform",
-            "Bimodal",
-            "Skewed",
-            "Monomodal"
+            "To separate luminance from chrominance for better compression",
+            "To increase image brightness",
+            "To reduce noise",
+            "To segment textures"
         ],
-        "answer": "Bimodal"
+        "answer": "To separate luminance from chrominance for better compression"
     },
     {
-        "question": "Which technique is most likely to fail in low-contrast images?",
+        "question": "Which component in color images often undergoes more aggressive compression?",
         "options": [
-            "Global thresholding",
-            "Adaptive thresholding",
-            "Region growing",
-            "Watershed"
+            "Chrominance components",
+            "Luminance components",
+            "All equally",
+            "Alpha channel"
         ],
-        "answer": "Global thresholding"
+        "answer": "Chrominance components"
     },
     {
-        "question": "The Sobel operator computes:",
+        "question": "Which of the following is a disadvantage of JPEG compression?",
         "options": [
-            "Image intensity",
-            "Image gradients",
-            "Region boundaries",
-            "Seed points"
+            "Block artifacts at high compression",
+            "Large file size",
+            "Slow decompression",
+            "Lossless compression"
         ],
-        "answer": "Image gradients"
+        "answer": "Block artifacts at high compression"
     },
     {
-        "question": "Region growing stops when:",
+        "question": "Which compression method is preferred for archival of images without quality loss?",
         "options": [
-            "All pixels are processed",
-            "No more pixels meet the similarity criteria",
-            "Edges are detected",
-            "A threshold is reached"
+            "Lossless compression",
+            "Lossy compression",
+            "JPEG",
+            "MPEG"
         ],
-        "answer": "No more pixels meet the similarity criteria"
+        "answer": "Lossless compression"
     },
     {
-        "question": "Watershed segmentation requires:",
+        "question": "What is a common use of image compression?",
         "options": [
-            "A single threshold",
-            "Markers or seed points",
-            "Edge gradients",
-            "A global histogram"
+            "Reducing storage and transmission bandwidth",
+            "Increasing image resolution",
+            "Changing color spaces",
+            "Filtering noise"
         ],
-        "answer": "Markers or seed points"
+        "answer": "Reducing storage and transmission bandwidth"
     },
     {
-        "question": "Which method is best for detecting fine edges in noisy images?",
+        "question": "Which image format typically uses lossless compression?",
         "options": [
-            "Sobel",
-            "Canny",
-            "Otsu",
-            "Region growing"
+            "PNG",
+            "JPEG",
+            "GIF",
+            "TIFF with lossy mode"
         ],
-        "answer": "Canny"
+        "answer": "PNG"
     },
     {
-        "question": "In adaptive thresholding, the threshold is calculated:",
+        "question": "In JPEG2000, what allows progressive transmission?",
         "options": [
-            "Globally",
-            "Locally for each pixel or region",
-            "Based on edge strength",
-            "Using a fixed value"
+            "Wavelet-based multiresolution coding",
+            "Block-based DCT",
+            "Run-length encoding",
+            "Huffman coding"
         ],
-        "answer": "Locally for each pixel or region"
+        "answer": "Wavelet-based multiresolution coding"
     },
     {
-        "question": "Which segmentation method is most dependent on user input?",
+        "question": "Which factor affects the quality of compressed images most directly?",
         "options": [
-            "Otsu’s thresholding",
-            "Canny edge detection",
-            "Region growing",
-            "Global thresholding"
+            "Compression ratio",
+            "Image bit depth",
+            "Color model",
+            "Image resolution"
         ],
-        "answer": "Region growing"
+        "answer": "Compression ratio"
     },
     {
-        "question": "The main advantage of Otsu’s method is:",
+        "question": "What is the first step in most image compression algorithms?",
         "options": [
-            "Its computational complexity",
-            "Its ability to automatically select a threshold",
-            "Its noise robustness",
-            "Its edge detection accuracy"
+            "Transform (e.g., DCT or wavelet)",
+            "Quantization",
+            "Entropy coding",
+            "Color space conversion"
         ],
-        "answer": "Its ability to automatically select a threshold"
+        "answer": "Transform (e.g., DCT or wavelet)"
     }
 ]

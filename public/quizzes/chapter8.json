@@ -1,302 +1,282 @@
 [
     {
-        "question": "What is the primary purpose of morphological image processing?",
+        "question": "What is the main advantage of wavelet transform over Fourier transform in image processing?",
         "options": [
-            "Enhance image contrast",
-            "Modify image shapes and structures",
-            "Remove noise from images",
-            "Convert images to grayscale"
+            "Better localization in both time and frequency domains",
+            "Faster computation",
+            "Works only on grayscale images",
+            "Requires less memory"
         ],
-        "answer": "Modify image shapes and structures"
+        "answer": "Better localization in both time and frequency domains"
     },
     {
-        "question": "Which operation expands the boundaries of foreground objects in a binary image?",
+        "question": "Which of the following is a common wavelet used in image processing?",
         "options": [
-            "Erosion",
-            "Dilation",
-            "Opening",
-            "Closing"
+            "Haar",
+            "Fourier",
+            "Gaussian",
+            "Laplace"
         ],
-        "answer": "Dilation"
+        "answer": "Haar"
     },
     {
-        "question": "What is the effect of erosion on a binary image?",
+        "question": "What does multi-resolution analysis in wavelet transform mean?",
         "options": [
-            "Shrinks foreground objects",
-            "Expands foreground objects",
-            "Smooths object boundaries",
-            "Removes small holes"
+            "Analyzing the image at different scales",
+            "Only analyzing the low frequencies",
+            "Analyzing color channels separately",
+            "Converting image to binary"
         ],
-        "answer": "Shrinks foreground objects"
+        "answer": "Analyzing the image at different scales"
     },
     {
-        "question": "In morphological operations, what is a structuring element?",
+        "question": "In wavelet-based image compression, which components are usually discarded or quantized more aggressively?",
         "options": [
-            "A filter to remove noise",
-            "A small shape used to probe the image",
-            "A mask to enhance contrast",
-            "A tool for edge detection"
+            "High-frequency components",
+            "Low-frequency components",
+            "All components equally",
+            "Color components only"
         ],
-        "answer": "A small shape used to probe the image"
+        "answer": "High-frequency components"
     },
     {
-        "question": "Which operation is defined as dilation followed by erosion?",
+        "question": "What is a thresholding technique used for in wavelet image denoising?",
         "options": [
-            "Opening",
-            "Closing",
-            "Hit-or-miss",
-            "Boundary extraction"
+            "Removing noise coefficients by setting small coefficients to zero",
+            "Increasing image resolution",
+            "Compressing the image",
+            "Changing color model"
         ],
-        "answer": "Closing"
+        "answer": "Removing noise coefficients by setting small coefficients to zero"
     },
     {
-        "question": "What does the opening operation do to small objects in a binary image?",
+        "question": "Which is NOT a typical step in wavelet-based image denoising?",
         "options": [
-            "Enlarges them",
-            "Removes them",
-            "Smooths their boundaries",
-            "Fills their holes"
+            "Inverse Fourier transform",
+            "Wavelet decomposition",
+            "Thresholding",
+            "Wavelet reconstruction"
         ],
-        "answer": "Removes them"
+        "answer": "Inverse Fourier transform"
     },
     {
-        "question": "Which operation is useful for filling small holes in foreground objects?",
+        "question": "What is the main purpose of feature extraction in image processing?",
         "options": [
-            "Erosion",
-            "Dilation",
-            "Opening",
-            "Closing"
+            "To reduce dimensionality and represent important information",
+            "To compress the image",
+            "To convert image to grayscale",
+            "To add noise"
         ],
-        "answer": "Closing"
+        "answer": "To reduce dimensionality and represent important information"
     },
     {
-        "question": "The hit-or-miss transform is primarily used for:",
+        "question": "How does wavelet transform assist in texture analysis?",
         "options": [
-            "Smoothing object boundaries",
-            "Detecting specific patterns in binary images",
-            "Removing noise",
-            "Enhancing image contrast"
+            "By capturing frequency and spatial information at multiple scales",
+            "By smoothing the image",
+            "By color segmentation",
+            "By increasing image resolution"
         ],
-        "answer": "Detecting specific patterns in binary images"
+        "answer": "By capturing frequency and spatial information at multiple scales"
     },
     {
-        "question": "What is the result of applying boundary extraction to a binary image?",
+        "question": "What is the result of wavelet decomposition of an image?",
         "options": [
-            "The interior of objects",
-            "The edges of objects",
-            "The entire foreground",
-            "The background only"
+            "Approximation and detail coefficients",
+            "Only high-frequency details",
+            "Color channels",
+            "Histogram equalized image"
         ],
-        "answer": "The edges of objects"
+        "answer": "Approximation and detail coefficients"
     },
     {
-        "question": "Which morphological operation is idempotent?",
+        "question": "Which property makes wavelets useful for image compression?",
         "options": [
-            "Dilation",
-            "Erosion",
-            "Opening",
-            "None of the above"
+            "Sparsity of wavelet coefficients for natural images",
+            "Invariance to rotation",
+            "Color independence",
+            "Low memory use"
         ],
-        "answer": "Opening"
+        "answer": "Sparsity of wavelet coefficients for natural images"
     },
     {
-        "question": "In dilation, the structuring element is typically:",
+        "question": "What happens to the image after inverse wavelet transform during compression?",
         "options": [
-            "Smaller than the image",
-            "Larger than the image",
-            "Equal to the image size",
-            "A random shape"
+            "Reconstruction of the approximated image",
+            "Image is converted to grayscale",
+            "Image is segmented",
+            "Noise is added"
         ],
-        "answer": "Smaller than the image"
+        "answer": "Reconstruction of the approximated image"
     },
     {
-        "question": "What happens to thin connections between objects during erosion?",
+        "question": "In wavelet thresholding, what is hard thresholding?",
         "options": [
-            "They are strengthened",
-            "They are broken",
-            "They remain unchanged",
-            "They are smoothed"
+            "Setting coefficients below a threshold to zero",
+            "Scaling coefficients",
+            "Adding noise to coefficients",
+            "Removing all coefficients"
         ],
-        "answer": "They are broken"
+        "answer": "Setting coefficients below a threshold to zero"
     },
     {
-        "question": "The closing operation is useful for:",
+        "question": "Which characteristic of wavelet transform helps in denoising images?",
         "options": [
-            "Removing small objects",
-            "Connecting nearby objects",
-            "Detecting corners",
-            "Extracting boundaries"
+            "Ability to separate noise from significant image features",
+            "Ability to blur the image",
+            "Changing color space",
+            "Reducing image size only"
         ],
-        "answer": "Connecting nearby objects"
+        "answer": "Ability to separate noise from significant image features"
     },
     {
-        "question": "Which operation can be used to remove salt-and-pepper noise from binary images?",
+        "question": "Which wavelet transform type is commonly used for image compression?",
         "options": [
-            "Dilation",
-            "Erosion",
-            "Opening",
-            "Hit-or-miss"
+            "Discrete Wavelet Transform (DWT)",
+            "Continuous Wavelet Transform (CWT)",
+            "Fast Fourier Transform (FFT)",
+            "Radon Transform"
         ],
-        "answer": "Opening"
+        "answer": "Discrete Wavelet Transform (DWT)"
     },
     {
-        "question": "The hit-or-miss transform requires:",
+        "question": "What is texture analysis useful for in image processing?",
         "options": [
-            "A single structuring element",
-            "Two structuring elements",
-            "No structuring element",
-            "A grayscale image"
-        ],
-        "answer": "Two structuring elements"
-    },
-    {
-        "question": "Boundary extraction can be mathematically expressed as:",
-        "options": [
-            "A - (A ⊕ B)",
-            "A - (A ⊖ B)",
-            "(A ⊕ B) - A",
-            "(A ⊖ B) - A"
-        ],
-        "answer": "A - (A ⊖ B)"
-    },
-    {
-        "question": "Which operation is the dual of dilation in morphological processing?",
-        "options": [
-            "Erosion",
-            "Opening",
-            "Closing",
-            "Hit-or-miss"
-        ],
-        "answer": "Erosion"
-    },
-    {
-        "question": "What is the main application of morphological operations in binary images?",
-        "options": [
+            "Classifying regions based on surface properties",
             "Color correction",
-            "Shape analysis and feature extraction",
-            "Image compression",
-            "Texture enhancement"
+            "Compression",
+            "Noise addition"
         ],
-        "answer": "Shape analysis and feature extraction"
+        "answer": "Classifying regions based on surface properties"
     },
     {
-        "question": "The opening operation is anti-extensive, meaning:",
+        "question": "Which wavelet component contains the most important image information?",
         "options": [
-            "The output is larger than the input",
-            "The output is smaller than or equal to the input",
-            "The output is unrelated to the input",
-            "The output is always empty"
+            "Approximation coefficients",
+            "Horizontal detail coefficients",
+            "Vertical detail coefficients",
+            "Diagonal detail coefficients"
         ],
-        "answer": "The output is smaller than or equal to the input"
+        "answer": "Approximation coefficients"
     },
     {
-        "question": "Which operation can be used to thin objects in a binary image?",
+        "question": "In image denoising, what does soft thresholding do?",
         "options": [
-            "Dilation",
-            "Erosion",
-            "Opening",
-            "Closing"
+            "Shrinks coefficients towards zero",
+            "Sets all coefficients to zero",
+            "Increases coefficient magnitude",
+            "Inverts coefficients"
         ],
-        "answer": "Erosion"
+        "answer": "Shrinks coefficients towards zero"
     },
     {
-        "question": "In the context of morphological operations, what does translation invariance mean?",
+        "question": "Which factor affects the choice of wavelet basis for image compression?",
         "options": [
-            "The operation depends on the image position",
-            "The operation produces the same result regardless of image position",
-            "The operation only works on centered images",
-            "The operation changes the image size"
+            "Image characteristics and compression goals",
+            "Color depth only",
+            "Image format",
+            "Compression software"
         ],
-        "answer": "The operation produces the same result regardless of image position"
+        "answer": "Image characteristics and compression goals"
     },
     {
-        "question": "Which operation preserves the shape of large objects while removing small ones?",
+        "question": "Why are high-frequency wavelet coefficients usually quantized more aggressively in compression?",
         "options": [
-            "Erosion",
-            "Dilation",
-            "Opening",
-            "Closing"
+            "Because they represent less perceptually important details",
+            "Because they have higher energy",
+            "Because they contain color information",
+            "Because they contain low noise"
         ],
-        "answer": "Opening"
+        "answer": "Because they represent less perceptually important details"
     },
     {
-        "question": "The hit-or-miss transform can be used to detect:",
+        "question": "What is a key difference between wavelet transform and Fourier transform?",
         "options": [
-            "Corners of objects",
-            "Entire objects",
-            "Background regions",
-            "Grayscale patterns"
+            "Wavelet transform provides time-frequency localization, Fourier does not",
+            "Fourier transform is faster",
+            "Wavelet transform works only on color images",
+            "Fourier transform is nonlinear"
         ],
-        "answer": "Corners of objects"
+        "answer": "Wavelet transform provides time-frequency localization, Fourier does not"
     },
     {
-        "question": "What is a common structuring element shape used in morphological operations?",
+        "question": "Which of the following is a disadvantage of wavelet-based denoising?",
         "options": [
-            "Circle",
-            "Triangle",
-            "Hexagon",
-            "All of the above"
+            "May cause loss of fine details",
+            "Cannot remove noise",
+            "Increases noise",
+            "Works only for binary images"
         ],
-        "answer": "All of the above"
+        "answer": "May cause loss of fine details"
     },
     {
-        "question": "Which operation is extensive, meaning the output contains the input?",
+        "question": "What is the purpose of feature extraction in texture analysis?",
         "options": [
-            "Erosion",
-            "Dilation",
-            "Opening",
-            "Hit-or-miss"
+            "To quantify texture characteristics for classification",
+            "To compress texture images",
+            "To smooth textures",
+            "To invert colors"
         ],
-        "answer": "Dilation"
+        "answer": "To quantify texture characteristics for classification"
     },
     {
-        "question": "Morphological operations are primarily applied to:",
+        "question": "Which domain do wavelets operate in?",
         "options": [
-            "Grayscale images only",
-            "Binary images and grayscale images",
-            "Color images only",
-            "Vector images"
+            "Time-frequency domain",
+            "Spatial domain only",
+            "Frequency domain only",
+            "Color domain"
         ],
-        "answer": "Binary images and grayscale images"
+        "answer": "Time-frequency domain"
     },
     {
-        "question": "The closing operation is idempotent, meaning:",
+        "question": "What does multi-level wavelet decomposition allow in image processing?",
         "options": [
-            "Applying it multiple times changes the result",
-            "Applying it multiple times yields the same result",
-            "It cannot be applied multiple times",
-            "It reverses the image"
+            "Analyzing image details at different scales",
+            "Reducing image bit depth",
+            "Color segmentation",
+            "Edge detection only"
         ],
-        "answer": "Applying it multiple times yields the same result"
+        "answer": "Analyzing image details at different scales"
     },
     {
-        "question": "Which operation can be used to extract the skeleton of an object?",
+        "question": "What type of wavelet transform is suitable for real-time applications due to its simplicity?",
         "options": [
-            "Dilation",
-            "Erosion",
-            "Hit-or-miss",
-            "Repeated erosion"
+            "Haar wavelet transform",
+            "Continuous wavelet transform",
+            "Fourier transform",
+            "Gabor transform"
         ],
-        "answer": "Repeated erosion"
+        "answer": "Haar wavelet transform"
     },
     {
-        "question": "In binary image processing, what does the term 'foreground' refer to?",
+        "question": "Which image property can wavelet-based texture features help to detect?",
         "options": [
-            "The background pixels",
-            "The object pixels",
-            "The edge pixels",
-            "The grayscale pixels"
+            "Patterns and surface roughness",
+            "Color histograms",
+            "Compression ratio",
+            "Bit depth"
         ],
-        "answer": "The object pixels"
+        "answer": "Patterns and surface roughness"
     },
     {
-        "question": "Which morphological operation is used to smooth the contours of objects?",
+        "question": "What is the first step in wavelet-based image compression?",
         "options": [
-            "Erosion",
-            "Dilation",
-            "Opening",
-            "Hit-or-miss"
+            "Wavelet decomposition",
+            "Quantization",
+            "Encoding",
+            "Thresholding"
         ],
-        "answer": "Opening"
+        "answer": "Wavelet decomposition"
+    },
+    {
+        "question": "Which thresholding method tends to preserve more signal while suppressing noise?",
+        "options": [
+            "Soft thresholding",
+            "Hard thresholding",
+            "No thresholding",
+            "Random thresholding"
+        ],
+        "answer": "Soft thresholding"
     }
 ]

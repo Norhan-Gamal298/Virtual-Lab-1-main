@@ -1,302 +1,292 @@
 [
     {
-        "question": "What is the primary goal of image compression?",
-        "options": [
-            "Increase image resolution",
-            "Reduce storage space and transmission time",
-            "Enhance image colors",
-            "Add noise to the image"
-        ],
-        "answer": "Reduce storage space and transmission time"
-    },
-    {
-        "question": "Which of the following is NOT a type of redundancy in image compression?",
-        "options": [
-            "Coding redundancy",
-            "Interpixel redundancy",
-            "Psychovisual redundancy",
-            "Temporal redundancy"
-        ],
-        "answer": "Temporal redundancy"
-    },
-    {
-        "question": "Coding redundancy is related to:",
-        "options": [
-            "The inefficient use of codes to represent data",
-            "Spatial correlation between pixels",
-            "Human visual perception",
-            "Frequency domain transformation"
-        ],
-        "answer": "The inefficient use of codes to represent data"
-    },
-    {
-        "question": "Interpixel redundancy refers to:",
-        "options": [
-            "Correlation between neighboring pixels",
-            "Redundant bits in the code structure",
-            "Visual information not perceived by the human eye",
-            "Lossless compression techniques"
-        ],
-        "answer": "Correlation between neighboring pixels"
-    },
-    {
-        "question": "Psychovisual redundancy is based on:",
-        "options": [
-            "Human visual system limitations",
-            "Pixel intensity differences",
-            "Code length optimization",
-            "Run-length encoding"
-        ],
-        "answer": "Human visual system limitations"
-    },
-    {
-        "question": "Which compression technique exploits coding redundancy?",
-        "options": [
-            "Run-length encoding",
-            "Huffman coding",
-            "JPEG compression",
-            "DCT transformation"
-        ],
-        "answer": "Huffman coding"
-    },
-    {
-        "question": "Huffman coding is an example of:",
-        "options": [
-            "Lossy compression",
-            "Lossless compression",
-            "Transform-based compression",
-            "Predictive compression"
-        ],
-        "answer": "Lossless compression"
-    },
-    {
-        "question": "In Huffman coding, which symbols are assigned shorter codes?",
-        "options": [
-            "Less frequent symbols",
-            "More frequent symbols",
-            "Symbols with equal frequency",
-            "Randomly selected symbols"
-        ],
-        "answer": "More frequent symbols"
-    },
-    {
-        "question": "What is the main disadvantage of Huffman coding?",
-        "options": [
-            "It is lossy",
-            "It requires a predefined code table",
-            "It is computationally expensive",
-            "It cannot compress grayscale images"
-        ],
-        "answer": "It requires a predefined code table"
-    },
-    {
-        "question": "Run-length encoding (RLE) is most effective for images with:",
-        "options": [
-            "High color variation",
-            "Large areas of uniform color",
-            "Complex textures",
-            "Random pixel values"
-        ],
-        "answer": "Large areas of uniform color"
-    },
-    {
-        "question": "RLE compresses data by:",
-        "options": [
-            "Transforming pixel values to the frequency domain",
-            "Replacing sequences of identical values with a count and value",
-            "Assigning variable-length codes to symbols",
-            "Removing psychovisual redundant data"
-        ],
-        "answer": "Replacing sequences of identical values with a count and value"
-    },
-    {
-        "question": "Which of the following is a lossless compression technique?",
-        "options": [
-            "JPEG compression",
-            "Run-length encoding",
-            "DCT transformation",
-            "Quantization"
-        ],
-        "answer": "Run-length encoding"
-    },
-    {
-        "question": "The Discrete Cosine Transform (DCT) is primarily used in:",
-        "options": [
-            "Lossless compression",
-            "Transform-based compression",
-            "Predictive coding",
-            "Entropy coding"
-        ],
-        "answer": "Transform-based compression"
-    },
-    {
-        "question": "DCT transforms an image from:",
-        "options": [
-            "Spatial domain to frequency domain",
-            "Frequency domain to spatial domain",
-            "Time domain to spatial domain",
-            "Pixel domain to code domain"
-        ],
-        "answer": "Spatial domain to frequency domain"
-    },
-    {
-        "question": "In DCT, low-frequency components represent:",
-        "options": [
-            "Fine details in the image",
-            "Overall structure and smooth areas",
-            "Noise in the image",
-            "High-contrast edges"
-        ],
-        "answer": "Overall structure and smooth areas"
-    },
-    {
-        "question": "JPEG compression is an example of:",
-        "options": [
-            "Lossless compression",
-            "Lossy compression",
-            "Predictive compression",
-            "Entropy-based compression"
-        ],
-        "answer": "Lossy compression"
-    },
-    {
-        "question": "Which step in JPEG compression is responsible for loss of data?",
-        "options": [
-            "DCT transformation",
-            "Quantization",
-            "Huffman coding",
-            "Run-length encoding"
-        ],
-        "answer": "Quantization"
-    },
-    {
-        "question": "Quantization in JPEG compression involves:",
-        "options": [
-            "Mapping DCT coefficients to a smaller set of values",
-            "Encoding pixel intensities",
-            "Transforming the image to the spatial domain",
-            "Assigning variable-length codes"
-        ],
-        "answer": "Mapping DCT coefficients to a smaller set of values"
-    },
-    {
-        "question": "Which redundancy is primarily exploited by JPEG compression?",
-        "options": [
-            "Coding redundancy",
-            "Interpixel redundancy",
-            "Psychovisual redundancy",
-            "Temporal redundancy"
-        ],
-        "answer": "Psychovisual redundancy"
-    },
-    {
-        "question": "The zigzag scanning in JPEG compression is used to:",
-        "options": [
-            "Rearrange DCT coefficients for efficient encoding",
-            "Transform the image to the frequency domain",
-            "Reduce coding redundancy",
-            "Apply quantization"
-        ],
-        "answer": "Rearrange DCT coefficients for efficient encoding"
-    },
-    {
-        "question": "Which of the following is NOT a step in JPEG compression?",
-        "options": [
-            "DCT transformation",
-            "Quantization",
-            "Run-length encoding",
-            "Color space conversion"
-        ],
-        "answer": "Run-length encoding"
-    },
-    {
-        "question": "Huffman coding in JPEG is applied to:",
-        "options": [
-            "DCT coefficients after quantization",
-            "Raw pixel values",
-            "Color space components",
-            "High-frequency components only"
-        ],
-        "answer": "DCT coefficients after quantization"
-    },
-    {
-        "question": "Which color space is typically used in JPEG compression?",
+        "question": "Which color model is commonly used in digital displays?",
         "options": [
             "RGB",
-            "YCbCr",
             "CMYK",
-            "HSV"
+            "HSV",
+            "YUV"
+        ],
+        "answer": "RGB"
+    },
+    {
+        "question": "What does the CMYK color model primarily represent?",
+        "options": [
+            "Cyan, Magenta, Yellow, Black for printing",
+            "Red, Green, Blue for displays",
+            "Hue, Saturation, Value",
+            "Luminance and chrominance"
+        ],
+        "answer": "Cyan, Magenta, Yellow, Black for printing"
+    },
+    {
+        "question": "In the HSV color model, what does 'H' stand for?",
+        "options": [
+            "Hue",
+            "Hue saturation",
+            "Hue value",
+            "High intensity"
+        ],
+        "answer": "Hue"
+    },
+    {
+        "question": "What is the main advantage of the HSV model over RGB for color segmentation?",
+        "options": [
+            "It separates color information from intensity",
+            "It compresses color data",
+            "It uses fewer bits",
+            "It works only with grayscale"
+        ],
+        "answer": "It separates color information from intensity"
+    },
+    {
+        "question": "Which transformation converts RGB to grayscale image?",
+        "options": [
+            "Weighted sum of RGB channels",
+            "Simple averaging of RGB channels",
+            "Taking the red channel only",
+            "Taking the maximum of RGB channels"
+        ],
+        "answer": "Weighted sum of RGB channels"
+    },
+    {
+        "question": "What is intensity slicing used for in color image processing?",
+        "options": [
+            "Highlighting specific intensity ranges",
+            "Compressing the image",
+            "Changing color models",
+            "Removing noise"
+        ],
+        "answer": "Highlighting specific intensity ranges"
+    },
+    {
+        "question": "Which color space is often used for color image smoothing and sharpening?",
+        "options": [
+            "RGB or YCbCr",
+            "CMYK",
+            "HSV only",
+            "Binary color space"
+        ],
+        "answer": "RGB or YCbCr"
+    },
+    {
+        "question": "Which filtering technique is commonly used to reduce noise in color images?",
+        "options": [
+            "Median filtering",
+            "Inverse filtering",
+            "Fourier filtering",
+            "Histogram equalization"
+        ],
+        "answer": "Median filtering"
+    },
+    {
+        "question": "What is a common source of noise in color images?",
+        "options": [
+            "Sensor noise during image acquisition",
+            "Lossless compression",
+            "Perfect illumination",
+            "Ideal conditions"
+        ],
+        "answer": "Sensor noise during image acquisition"
+    },
+    {
+        "question": "How is color image compression typically achieved?",
+        "options": [
+            "By exploiting spatial and spectral redundancies",
+            "By increasing bit depth",
+            "By converting to grayscale",
+            "By applying median filter"
+        ],
+        "answer": "By exploiting spatial and spectral redundancies"
+    },
+    {
+        "question": "Which color model separates luminance and chrominance components?",
+        "options": [
+            "YCbCr",
+            "RGB",
+            "HSV",
+            "CMYK"
         ],
         "answer": "YCbCr"
     },
     {
-        "question": "In JPEG, the Y component in YCbCr represents:",
+        "question": "In color segmentation, which attribute is mostly used to distinguish different regions?",
         "options": [
-            "Chrominance",
-            "Luminance",
+            "Color or hue",
+            "Brightness only",
+            "Image size",
+            "File format"
+        ],
+        "answer": "Color or hue"
+    },
+    {
+        "question": "What is the purpose of color enhancement in image processing?",
+        "options": [
+            "Improve the visual quality of colors",
+            "Convert color to grayscale",
+            "Reduce image size",
+            "Blur edges"
+        ],
+        "answer": "Improve the visual quality of colors"
+    },
+    {
+        "question": "Which color model is device-independent and used in many image processing applications?",
+        "options": [
+            "CIELAB",
+            "RGB",
+            "CMYK",
+            "HSV"
+        ],
+        "answer": "CIELAB"
+    },
+    {
+        "question": "What does intensity slicing output when applied to a color image?",
+        "options": [
+            "Binary mask highlighting pixels in a specified intensity range",
+            "Compressed image",
+            "Blurred image",
+            "Color-inverted image"
+        ],
+        "answer": "Binary mask highlighting pixels in a specified intensity range"
+    },
+    {
+        "question": "Which technique is effective for sharpening color images?",
+        "options": [
+            "High-pass filtering",
+            "Low-pass filtering",
+            "Histogram equalization",
+            "Compression"
+        ],
+        "answer": "High-pass filtering"
+    },
+    {
+        "question": "Which noise type affects all channels in a color image similarly?",
+        "options": [
+            "Gaussian noise",
+            "Impulse noise",
+            "Speckle noise",
+            "JPEG compression artifacts"
+        ],
+        "answer": "Gaussian noise"
+    },
+    {
+        "question": "What is a key challenge when smoothing color images compared to grayscale?",
+        "options": [
+            "Avoiding color bleeding between channels",
+            "Increasing resolution",
+            "Changing color model",
+            "Compressing image"
+        ],
+        "answer": "Avoiding color bleeding between channels"
+    },
+    {
+        "question": "Which method is often used to segment objects based on color in an image?",
+        "options": [
+            "Thresholding on the hue component",
+            "Edge detection",
+            "Histogram equalization",
+            "Inverse filtering"
+        ],
+        "answer": "Thresholding on the hue component"
+    },
+    {
+        "question": "Which color image compression standard supports both lossy and lossless compression?",
+        "options": [
+            "JPEG2000",
+            "JPEG",
+            "GIF",
+            "BMP"
+        ],
+        "answer": "JPEG2000"
+    },
+    {
+        "question": "What does color transformation between RGB and YCbCr allow in compression?",
+        "options": [
+            "Separating luminance from chrominance for better compression",
+            "Changing color depth",
+            "Increasing color saturation",
+            "Blurring image"
+        ],
+        "answer": "Separating luminance from chrominance for better compression"
+    },
+    {
+        "question": "Which of the following is a common approach to reduce noise in color images?",
+        "options": [
+            "Applying filtering on each channel separately",
+            "Converting to grayscale first",
+            "Ignoring noise",
+            "Using compression"
+        ],
+        "answer": "Applying filtering on each channel separately"
+    },
+    {
+        "question": "Which component in HSV represents the 'purity' or vividness of color?",
+        "options": [
             "Saturation",
-            "Hue"
+            "Hue",
+            "Value",
+            "Luminance"
         ],
-        "answer": "Luminance"
+        "answer": "Saturation"
     },
     {
-        "question": "Why is chrominance subsampling used in JPEG?",
+        "question": "In color image enhancement, what is the typical goal?",
         "options": [
-            "To reduce spatial resolution",
-            "To exploit psychovisual redundancy in color perception",
-            "To increase image sharpness",
-            "To apply lossless compression"
+            "Enhance contrast and color vividness",
+            "Convert color images to grayscale",
+            "Reduce file size",
+            "Blur edges"
         ],
-        "answer": "To exploit psychovisual redundancy in color perception"
+        "answer": "Enhance contrast and color vividness"
     },
     {
-        "question": "Which of the following is true about lossy compression?",
+        "question": "What is a key difference between JPEG and JPEG2000 in color image compression?",
         "options": [
-            "It preserves all original data",
-            "It is reversible",
-            "It discards some data to achieve higher compression",
-            "It is only used for grayscale images"
+            "JPEG2000 supports wavelet compression and lossless mode",
+            "JPEG supports lossless compression",
+            "JPEG2000 is only for grayscale images",
+            "JPEG2000 uses only block DCT"
         ],
-        "answer": "It discards some data to achieve higher compression"
+        "answer": "JPEG2000 supports wavelet compression and lossless mode"
     },
     {
-        "question": "The main advantage of lossless compression is:",
+        "question": "Which color model is most intuitive for humans to describe colors?",
         "options": [
-            "Higher compression ratios",
-            "No loss of image quality",
-            "Faster processing speed",
-            "Better handling of complex textures"
+            "HSV",
+            "RGB",
+            "YCbCr",
+            "CMYK"
         ],
-        "answer": "No loss of image quality"
+        "answer": "HSV"
     },
     {
-        "question": "Which technique is used to encode the sequence of zeros in JPEG?",
+        "question": "What is the output of color segmentation?",
         "options": [
-            "Huffman coding",
-            "Run-length encoding",
-            "DCT transformation",
-            "Quantization"
+            "Regions or masks corresponding to specific colors",
+            "Compressed image",
+            "Blurred image",
+            "Grayscale image"
         ],
-        "answer": "Run-length encoding"
+        "answer": "Regions or masks corresponding to specific colors"
     },
     {
-        "question": "DCT is applied to blocks of size:",
+        "question": "What kind of noise is typically modeled as additive in color images?",
         "options": [
-            "4x4 pixels",
-            "8x8 pixels",
-            "16x16 pixels",
-            "32x32 pixels"
+            "Gaussian noise",
+            "Speckle noise",
+            "Salt and pepper noise",
+            "Impulse noise"
         ],
-        "answer": "8x8 pixels"
+        "answer": "Gaussian noise"
     },
     {
-        "question": "Which of the following best describes JPEG compression?",
+        "question": "Which technique enhances color image details by emphasizing edges?",
         "options": [
-            "A lossless technique using only Huffman coding",
-            "A lossy technique combining DCT, quantization, and entropy coding",
-            "A predictive coding method for grayscale images",
-            "A transform-based method for lossless compression"
+            "Sharpening filters",
+            "Smoothing filters",
+            "Color compression",
+            "Histogram equalization"
         ],
-        "answer": "A lossy technique combining DCT, quantization, and entropy coding"
+        "answer": "Sharpening filters"
     }
 ]

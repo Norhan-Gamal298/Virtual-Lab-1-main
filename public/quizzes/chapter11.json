@@ -1,302 +1,292 @@
 [
     {
-        "question": "What is the primary purpose of feature extraction in computer vision?",
+        "question": "What is the primary goal of image segmentation?",
         "options": [
-            "To reduce image noise",
-            "To identify key points or patterns for recognition",
-            "To compress images for storage",
-            "To enhance image brightness"
+            "To partition an image into meaningful regions",
+            "To compress an image",
+            "To enhance image contrast",
+            "To convert an image to grayscale"
         ],
-        "answer": "To identify key points or patterns for recognition"
+        "answer": "To partition an image into meaningful regions"
     },
     {
-        "question": "Which of the following is a common application of corner detection?",
+        "question": "Which segmentation technique uses intensity thresholds to separate regions?",
         "options": [
-            "Image smoothing",
-            "Motion tracking",
-            "Color correction",
+            "Thresholding",
+            "Edge detection",
+            "Morphological operations",
+            "Fourier transform"
+        ],
+        "answer": "Thresholding"
+    },
+    {
+        "question": "What is a disadvantage of global thresholding?",
+        "options": [
+            "Fails when illumination varies across the image",
+            "Requires high computational power",
+            "Is too slow for real-time applications",
+            "Cannot handle color images"
+        ],
+        "answer": "Fails when illumination varies across the image"
+    },
+    {
+        "question": "Which of the following is an adaptive thresholding method?",
+        "options": [
+            "Otsu’s method",
+            "Fourier transform",
+            "Histogram equalization",
+            "K-means clustering"
+        ],
+        "answer": "Otsu’s method"
+    },
+    {
+        "question": "What does edge-based segmentation primarily rely on?",
+        "options": [
+            "Changes in intensity values",
+            "Color similarity",
+            "Texture patterns",
+            "Frequency components"
+        ],
+        "answer": "Changes in intensity values"
+    },
+    {
+        "question": "Which operator is commonly used for edge detection?",
+        "options": [
+            "Sobel operator",
+            "Dilation",
+            "Opening",
+            "Median filter"
+        ],
+        "answer": "Sobel operator"
+    },
+    {
+        "question": "What is region growing in image segmentation?",
+        "options": [
+            "A technique that groups pixels with similar properties",
+            "A noise reduction method",
+            "An edge enhancement technique",
+            "A compression algorithm"
+        ],
+        "answer": "A technique that groups pixels with similar properties"
+    },
+    {
+        "question": "What is the role of seed points in region growing?",
+        "options": [
+            "Starting points for region expansion",
+            "Noise removal points",
+            "Edge detection points",
+            "Compression anchors"
+        ],
+        "answer": "Starting points for region expansion"
+    },
+    {
+        "question": "Which segmentation method is based on grouping pixels using similarity and spatial proximity?",
+        "options": [
+            "Clustering",
+            "Fourier transform",
+            "Histogram equalization",
+            "Morphological filtering"
+        ],
+        "answer": "Clustering"
+    },
+    {
+        "question": "What is K-means clustering used for in segmentation?",
+        "options": [
+            "Partitioning image pixels into K clusters",
+            "Edge detection",
+            "Noise removal",
             "Image compression"
         ],
-        "answer": "Motion tracking"
+        "answer": "Partitioning image pixels into K clusters"
     },
     {
-        "question": "The Harris corner detector relies on which mathematical concept?",
+        "question": "What is a major limitation of K-means clustering in segmentation?",
         "options": [
-            "Gradient magnitude",
-            "Eigenvalues of a second-moment matrix",
-            "Fourier transform",
-            "Histogram equalization"
+            "Requires specifying the number of clusters in advance",
+            "Can only segment grayscale images",
+            "Does not work with color images",
+            "Cannot handle noisy images"
         ],
-        "answer": "Eigenvalues of a second-moment matrix"
+        "answer": "Requires specifying the number of clusters in advance"
     },
     {
-        "question": "What does the Shi-Tomasi corner detector improve over the Harris detector?",
+        "question": "What is the watershed algorithm primarily used for?",
         "options": [
-            "Noise reduction",
-            "Corner selection criteria",
-            "Computational speed",
-            "Edge detection accuracy"
-        ],
-        "answer": "Corner selection criteria"
-    },
-    {
-        "question": "In corner detection, a point is considered a corner if:",
-        "options": [
-            "It has low intensity variation in all directions",
-            "It has high intensity variation in multiple directions",
-            "It lies on a straight edge",
-            "It is part of a smooth region"
-        ],
-        "answer": "It has high intensity variation in multiple directions"
-    },
-    {
-        "question": "What is a key characteristic of a blob in blob detection?",
-        "options": [
-            "It is a sharp edge",
-            "It is a region with distinct intensity or color",
-            "It is a single pixel",
-            "It is a straight line"
-        ],
-        "answer": "It is a region with distinct intensity or color"
-    },
-    {
-        "question": "Which algorithm is commonly used for blob detection?",
-        "options": [
-            "Canny edge detector",
-            "Laplacian of Gaussian (LoG)",
-            "Hough transform",
-            "Harris corner detector"
-        ],
-        "answer": "Laplacian of Gaussian (LoG)"
-    },
-    {
-        "question": "Blob detection is particularly useful for identifying:",
-        "options": [
-            "Linear structures",
-            "Circular or blob-like regions",
-            "Corners and edges",
-            "Gradients"
-        ],
-        "answer": "Circular or blob-like regions"
-    },
-    {
-        "question": "What does the scale-space pyramid in blob detection help achieve?",
-        "options": [
-            "Noise reduction",
-            "Detection of blobs at different scales",
-            "Edge sharpening",
-            "Color normalization"
-        ],
-        "answer": "Detection of blobs at different scales"
-    },
-    {
-        "question": "HOG features stand for:",
-        "options": [
-            "Histogram of Oriented Gradients",
-            "High-Order Gradients",
-            "Histogram of Objects",
-            "Homogeneous Orientation Grouping"
-        ],
-        "answer": "Histogram of Oriented Gradients"
-    },
-    {
-        "question": "HOG features are primarily used for:",
-        "options": [
+            "Segmentation based on topographic surface modeling",
             "Image compression",
-            "Object detection",
-            "Image segmentation",
-            "Color enhancement"
+            "Color enhancement",
+            "Edge detection"
         ],
-        "answer": "Object detection"
+        "answer": "Segmentation based on topographic surface modeling"
     },
     {
-        "question": "In HOG feature extraction, the image is divided into:",
+        "question": "What is an over-segmentation problem in the watershed algorithm?",
         "options": [
-            "Pixels",
-            "Cells and blocks",
-            "Edges and corners",
-            "Blobs"
+            "Resulting in too many small regions",
+            "Loss of image details",
+            "Slow processing time",
+            "Poor edge detection"
         ],
-        "answer": "Cells and blocks"
+        "answer": "Resulting in too many small regions"
     },
     {
-        "question": "What does the gradient orientation in HOG represent?",
+        "question": "Which morphological operation can be used to reduce over-segmentation?",
         "options": [
-            "Color intensity",
-            "Direction of intensity change",
-            "Pixel size",
-            "Image resolution"
+            "Opening",
+            "Dilation",
+            "Erosion",
+            "Closing"
         ],
-        "answer": "Direction of intensity change"
+        "answer": "Opening"
     },
     {
-        "question": "HOG features are robust to:",
+        "question": "Which segmentation method uses pixel connectivity to group pixels into regions?",
+        "options": [
+            "Region labeling",
+            "Fourier transform",
+            "Histogram equalization",
+            "K-means clustering"
+        ],
+        "answer": "Region labeling"
+    },
+    {
+        "question": "What does connected component labeling do?",
+        "options": [
+            "Assigns labels to connected pixel regions",
+            "Smooths edges",
+            "Enhances contrast",
+            "Converts images to binary"
+        ],
+        "answer": "Assigns labels to connected pixel regions"
+    },
+    {
+        "question": "What is the purpose of edge linking in segmentation?",
+        "options": [
+            "To connect fragmented edge segments",
+            "To remove noise",
+            "To segment color regions",
+            "To compress the image"
+        ],
+        "answer": "To connect fragmented edge segments"
+    },
+    {
+        "question": "What does a segmentation quality metric like Dice coefficient measure?",
+        "options": [
+            "Overlap between segmented regions and ground truth",
+            "Image contrast",
+            "Edge sharpness",
+            "Compression ratio"
+        ],
+        "answer": "Overlap between segmented regions and ground truth"
+    },
+    {
+        "question": "Which of the following is a challenge in image segmentation?",
+        "options": [
+            "Handling noisy images",
+            "Increasing image size",
+            "Improving compression ratio",
+            "Enhancing color saturation"
+        ],
+        "answer": "Handling noisy images"
+    },
+    {
+        "question": "What is the difference between supervised and unsupervised segmentation?",
+        "options": [
+            "Supervised uses labeled data, unsupervised does not",
+            "Unsupervised requires training, supervised does not",
+            "Supervised is faster",
+            "Unsupervised works only with color images"
+        ],
+        "answer": "Supervised uses labeled data, unsupervised does not"
+    },
+    {
+        "question": "Which segmentation approach is based on graph theory?",
+        "options": [
+            "Graph cut",
+            "K-means clustering",
+            "Region growing",
+            "Fourier transform"
+        ],
+        "answer": "Graph cut"
+    },
+    {
+        "question": "What is thresholding primarily sensitive to?",
         "options": [
             "Illumination changes",
-            "Color variations",
-            "Noise amplification",
-            "Blurry images"
+            "Noise",
+            "Image resolution",
+            "Color depth"
         ],
         "answer": "Illumination changes"
     },
     {
-        "question": "Template matching is best suited for:",
+        "question": "In multilevel thresholding, how many thresholds are used?",
         "options": [
-            "Detecting objects in cluttered scenes",
-            "Finding exact matches of a template in an image",
-            "Identifying corners",
-            "Segmenting large regions"
+            "More than one",
+            "Only one",
+            "None",
+            "Exactly two"
         ],
-        "answer": "Finding exact matches of a template in an image"
+        "answer": "More than one"
     },
     {
-        "question": "Which method is commonly used for template matching?",
+        "question": "What is the role of edge detectors in segmentation?",
         "options": [
-            "Normalized Cross-Correlation",
-            "Laplacian of Gaussian",
-            "Histogram equalization",
-            "Hough transform"
+            "Identify boundaries between regions",
+            "Increase image brightness",
+            "Reduce noise",
+            "Compress the image"
         ],
-        "answer": "Normalized Cross-Correlation"
+        "answer": "Identify boundaries between regions"
     },
     {
-        "question": "A limitation of template matching is:",
+        "question": "Which segmentation technique works well for images with homogeneous regions?",
         "options": [
-            "It is computationally inexpensive",
-            "It is sensitive to scale and rotation",
-            "It works well with low-resolution images",
-            "It is robust to noise"
-        ],
-        "answer": "It is sensitive to scale and rotation"
-    },
-    {
-        "question": "What does the Harris corner detector use to determine corner strength?",
-        "options": [
-            "Corner response function",
-            "Blob scale",
-            "Gradient histogram",
-            "Template correlation"
-        ],
-        "answer": "Corner response function"
-    },
-    {
-        "question": "In blob detection, the Difference of Gaussians (DoG) approximates:",
-        "options": [
-            "Canny edge detector",
-            "Laplacian of Gaussian",
-            "Harris corner detector",
-            "HOG features"
-        ],
-        "answer": "Laplacian of Gaussian"
-    },
-    {
-        "question": "Which of the following is NOT a step in HOG feature extraction?",
-        "options": [
-            "Gradient computation",
-            "Histogram normalization",
-            "Blob detection",
-            "Block normalization"
-        ],
-        "answer": "Blob detection"
-    },
-    {
-        "question": "Template matching assumes that the template and target image have:",
-        "options": [
-            "Different lighting conditions",
-            "Similar appearance and orientation",
-            "Unrelated content",
-            "Significant noise"
-        ],
-        "answer": "Similar appearance and orientation"
-    },
-    {
-        "question": "The Shi-Tomasi detector is often used in:",
-        "options": [
-            "Image compression",
-            "Feature tracking",
-            "Color segmentation",
-            "Noise filtering"
-        ],
-        "answer": "Feature tracking"
-    },
-    {
-        "question": "In HOG, what is the purpose of block normalization?",
-        "options": [
-            "To reduce illumination variations",
-            "To detect corners",
-            "To smooth the image",
-            "To increase image resolution"
-        ],
-        "answer": "To reduce illumination variations"
-    },
-    {
-        "question": "Which detector is more robust to noise: Harris or Shi-Tomasi?",
-        "options": [
-            "Harris",
-            "Shi-Tomasi",
-            "Both are equally robust",
-            "Neither is robust"
-        ],
-        "answer": "Shi-Tomasi"
-    },
-    {
-        "question": "Blob detection is often used in:",
-        "options": [
-            "Fingerprint recognition",
+            "Region growing",
             "Edge detection",
-            "Color correction",
-            "Image sharpening"
+            "Histogram equalization",
+            "Fourier transform"
         ],
-        "answer": "Fingerprint recognition"
+        "answer": "Region growing"
     },
     {
-        "question": "What is a disadvantage of template matching?",
+        "question": "What is the outcome of a good segmentation process?",
         "options": [
-            "It is fast for large images",
-            "It fails with occlusion",
-            "It is robust to scale changes",
-            "It works well in low-light conditions"
+            "Accurate partitioning of regions corresponding to objects",
+            "Reduced image size",
+            "Increased color saturation",
+            "Enhanced texture details"
         ],
-        "answer": "It fails with occlusion"
+        "answer": "Accurate partitioning of regions corresponding to objects"
     },
     {
-        "question": "The Harris detector classifies a point as a corner based on:",
+        "question": "Which segmentation method is computationally intensive but yields accurate object boundaries?",
         "options": [
-            "High eigenvalues in the second-moment matrix",
-            "Low gradient magnitude",
-            "Uniform intensity",
-            "Blob-like structure"
+            "Active contour (snakes)",
+            "Thresholding",
+            "Histogram equalization",
+            "Morphological filtering"
         ],
-        "answer": "High eigenvalues in the second-moment matrix"
+        "answer": "Active contour (snakes)"
     },
     {
-        "question": "Which feature is NOT typically detected by blob detection?",
+        "question": "What does the term 'over-segmentation' refer to?",
         "options": [
-            "Circular regions",
-            "Keypoints at different scales",
-            "Straight edges",
-            "Regions with distinct intensity"
+            "Dividing the image into too many small regions",
+            "Not segmenting the image enough",
+            "Compressing the image too much",
+            "Enhancing edges too much"
         ],
-        "answer": "Straight edges"
+        "answer": "Dividing the image into too many small regions"
     },
     {
-        "question": "HOG features are commonly used in:",
+        "question": "Which method can be used to post-process segmentation results to merge small regions?",
         "options": [
-            "Pedestrian detection",
-            "Image denoising",
-            "Corner detection",
-            "Template matching"
+            "Morphological closing",
+            "Fourier transform",
+            "Histogram equalization",
+            "Edge detection"
         ],
-        "answer": "Pedestrian detection"
-    },
-    {
-        "question": "Template matching performs poorly when:",
-        "options": [
-            "The template is identical to the target",
-            "The target is rotated or scaled",
-            "The image is noise-free",
-            "The template is small"
-        ],
-        "answer": "The target is rotated or scaled"
+        "answer": "Morphological closing"
     }
 ]

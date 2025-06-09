@@ -1,9 +1,9 @@
-/* import mongoose from "mongoose";
+import mongoose from "mongoose";
 import dotenv from "dotenv";
 import fs from "fs";
 import path from "path";
+import { Buffer } from "buffer";
 
-// 1. Define the Topic schema
 const topicSchema = new mongoose.Schema({
   chapterId: { type: Number, required: true },
   chapterTitle: { type: String, required: true },
@@ -11,82 +11,105 @@ const topicSchema = new mongoose.Schema({
   title: { type: String, required: true },
   markdownPath: { type: String, required: true },
   videoPath: { type: String },
-  images: [String],
-});
+  images: [
+    {
+      filename: String,
+      data: Buffer,
+      contentType: String,
+    },
+  ],
+}, { timestamps: true });
 const Topic = mongoose.model("Topic", topicSchema);
 
-// 2. Load environment variables from .env file
 dotenv.config();
 
-// 3. Connect to MongoDB
 await mongoose.connect(process.env.MONGO_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });
 console.log("MongoDB connected");
 
-// 4. Read topics.json file
-const topicsPath = path.join(process.cwd(), "public", "topics.json");
-let topicsData = [];
-try {
-  topicsData = JSON.parse(fs.readFileSync(topicsPath, "utf-8"));
-} catch (err) {
-  console.error(`Error reading or parsing topics.json: ${topicsPath}`);
-  throw err;
-}
+const docsDir = path.join(process.cwd(), "public", "docs");
+const chapterDirs = fs
+  .readdirSync(docsDir)
+  .filter((d) => /^Chapter \d+ /.test(d) && fs.statSync(path.join(docsDir, d)).isDirectory());
 
-// 5. Flatten and prepare topics for insertion, including images and video
 const allTopics = [];
-for (let chapterIndex = 0; chapterIndex < topicsData.length; chapterIndex++) {
-  const chapter = topicsData[chapterIndex];
-  const chapterId = chapterIndex + 1;
-  const chapterTitle = chapter.chapter;
-  for (const topic of chapter.topics) {
-    const baseDir = path.join(process.cwd(), "public", "docs", chapterTitle);
-    const mdFile = path.basename(topic.path);
-    const mdPath = path.join("docs", chapterTitle, mdFile);
+for (let i = 0; i < chapterDirs.length; i++) {
+  const chapterDir = chapterDirs[i];
+  const chapterId = parseInt(chapterDir.split(" ")[1], 10);
+  const chapterTitle = chapterDir.replace(/^Chapter \d+ /, "");
+  const baseDir = path.join(docsDir, chapterDir);
 
-    // Video: look for .mp4 with same base name as .md
-    const videoBase = mdFile.replace(/\.md$/, ".mp4");
-    const videoFullPath = path.join(baseDir, videoBase);
-    const videoPath = fs.existsSync(videoFullPath)
-      ? path.join("docs", chapterTitle, videoBase)
-      : null;
+  const mdFiles = fs
+    .readdirSync(baseDir)
+    .filter((f) => f.endsWith(".md") && fs.statSync(path.join(baseDir, f)).isFile());
 
-    // Images: all png/jpg/jpeg in the folder that start with topic number (e.g., "1.1")
-    const topicPrefix = mdFile.split(" ")[0]; // e.g., "1.1"
+  for (const mdFile of mdFiles) {
+    const match = /^(\d+\.\d+)-(.+)\.md$/i.exec(mdFile);
+    if (!match) continue;
+    const topicNumber = match[1];
+    const topicTitle = match[2]
+      .replace(/-/g, " ")
+      .replace(/\b\w/g, (c) => c.toUpperCase());
+    const topicId = `chapter_${chapterId}_${topicNumber.replace(".", "_")}_${match[2].toLowerCase().replace(/[^a-z0-9]+/g, "_")}`;
+    const mdPath = path.join("docs", chapterDir, mdFile);
+    const mdFullPath = path.join(baseDir, mdFile);
+
+    // --- Parse Markdown for images and videos ---
+    const mdContent = fs.readFileSync(mdFullPath, "utf-8");
+
+    // Find images: ![alt](filename) or ![](filename)
+    const imageMatches = [...mdContent.matchAll(/!\[[^\]]*\]\(([^)]+)\)/g)];
+    // Find videos: <video src="filename" ...>
+    const videoMatches = [...mdContent.matchAll(/<video[^>]+src=["']([^"']+)["']/gi)];
+
+    // --- IMAGES ---
     let images = [];
-    if (fs.existsSync(baseDir)) {
-      images = fs
-        .readdirSync(baseDir)
-        .filter(
-          (f) => f.startsWith(topicPrefix) && /\.(png|jpg|jpeg)$/i.test(f)
-        )
-        .map((f) => path.join("docs", chapterTitle, f));
+    for (const m of imageMatches) {
+      const imgFile = m[1];
+      const imgPath = path.join(baseDir, imgFile);
+      if (fs.existsSync(imgPath)) {
+        images.push({
+          filename: path.basename(imgFile),
+          data: fs.readFileSync(imgPath),
+          contentType: `image/${imgFile.split(".").pop()}`,
+        });
+      }
+    }
+
+    // --- VIDEO ---
+    let videoPath = null;
+    if (videoMatches.length > 0) {
+      const vidFile = videoMatches[0][1];
+      const vidPath = path.join(baseDir, vidFile);
+      if (fs.existsSync(vidPath)) {
+        videoPath = path.join("docs", chapterDir, vidFile);
+      }
     }
 
     allTopics.push({
       chapterId,
       chapterTitle,
-      topicId: topic.id,
-      title: topic.title,
+      topicId,
+      title: topicTitle,
       markdownPath: mdPath,
       videoPath,
       images,
     });
+
+    console.log(`Added topic: ${topicTitle} (chapter ${chapterId})`);
   }
 }
 
-// 6. Insert all topics into the database
 (async () => {
   try {
-    await Topic.deleteMany({}); // Optional: clear old topics before import
+    await Topic.deleteMany({});
     await Topic.insertMany(allTopics);
-    console.log("All topics (with images and videos) imported successfully!");
+    console.log("All topics are imported successfully!");
     process.exit(0);
   } catch (err) {
     console.error("Error importing topics:", err);
     process.exit(1);
   }
 })();
- */

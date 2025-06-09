@@ -1,312 +1,202 @@
 [
     {
-        "question": "What is the primary purpose of spatial filtering in image processing?",
+        "question": "What is the main purpose of smoothing filters in image processing?",
         "options": [
-            "To enhance image colors",
-            "To modify pixel values based on neighboring pixels",
-            "To compress image size",
-            "To remove image metadata"
+            "Reduce noise",
+            "Enhance edges",
+            "Increase image sharpness",
+            "Compress the image"
         ],
-        "answer": "To modify pixel values based on neighboring pixels"
+        "answer": "Reduce noise"
     },
     {
-        "question": "Which filter is commonly used to reduce noise in an image?",
+        "question": "Which filter is commonly used as a smoothing filter?",
         "options": [
+            "Gaussian filter",
             "Laplacian filter",
             "Sobel filter",
-            "Average filter",
             "High-pass filter"
-        ],
-        "answer": "Average filter"
-    },
-    {
-        "question": "What does a smoothing filter primarily do?",
-        "options": [
-            "Enhances edges",
-            "Blurs the image",
-            "Increases contrast",
-            "Sharpens details"
-        ],
-        "answer": "Blurs the image"
-    },
-    {
-        "question": "The Gaussian filter is preferred over the average filter because:",
-        "options": [
-            "It is computationally faster",
-            "It assigns different weights to neighboring pixels",
-            "It sharpens the image",
-            "It removes all noise completely"
-        ],
-        "answer": "It assigns different weights to neighboring pixels"
-    },
-    {
-        "question": "What is the shape of the Gaussian filter kernel?",
-        "options": [
-            "Rectangular",
-            "Circular",
-            "Bell-shaped",
-            "Linear"
-        ],
-        "answer": "Bell-shaped"
-    },
-    {
-        "question": "Which parameter controls the spread of the Gaussian filter?",
-        "options": [
-            "Mean",
-            "Standard deviation (sigma)",
-            "Kernel size",
-            "Pixel intensity"
-        ],
-        "answer": "Standard deviation (sigma)"
-    },
-    {
-        "question": "What is the main goal of a sharpening filter?",
-        "options": [
-            "To reduce noise",
-            "To enhance edges and details",
-            "To blur the image",
-            "To reduce image size"
-        ],
-        "answer": "To enhance edges and details"
-    },
-    {
-        "question": "The Laplacian filter is used to:",
-        "options": [
-            "Smooth the image",
-            "Detect edges",
-            "Remove noise",
-            "Increase brightness"
-        ],
-        "answer": "Detect edges"
-    },
-    {
-        "question": "What does the Sobel filter primarily detect?",
-        "options": [
-            "Image brightness",
-            "Edges in specific directions",
-            "Noise levels",
-            "Color gradients"
-        ],
-        "answer": "Edges in specific directions"
-    },
-    {
-        "question": "How does the Sobel filter differ from the Laplacian filter?",
-        "options": [
-            "Sobel detects edges in all directions",
-            "Sobel is sensitive to noise",
-            "Sobel computes gradients in specific directions",
-            "Sobel smooths the image"
-        ],
-        "answer": "Sobel computes gradients in specific directions"
-    },
-    {
-        "question": "Which filter is non-linear?",
-        "options": [
-            "Average filter",
-            "Gaussian filter",
-            "Median filter",
-            "Laplacian filter"
-        ],
-        "answer": "Median filter"
-    },
-    {
-        "question": "The median filter is particularly effective for:",
-        "options": [
-            "Enhancing edges",
-            "Removing salt-and-pepper noise",
-            "Blurring the image",
-            "Increasing contrast"
-        ],
-        "answer": "Removing salt-and-pepper noise"
-    },
-    {
-        "question": "How does the median filter process an image?",
-        "options": [
-            "Averages pixel values",
-            "Replaces each pixel with the median of neighboring pixels",
-            "Applies a weighted sum",
-            "Enhances high-frequency components"
-        ],
-        "answer": "Replaces each pixel with the median of neighboring pixels"
-    },
-    {
-        "question": "What is a key advantage of the median filter over the average filter?",
-        "options": [
-            "It is faster to compute",
-            "It preserves edges better",
-            "It smooths the image more effectively",
-            "It enhances contrast"
-        ],
-        "answer": "It preserves edges better"
-    },
-    {
-        "question": "The bilateral filter is an improvement over the Gaussian filter because it:",
-        "options": [
-            "Is faster to compute",
-            "Preserves edges while smoothing",
-            "Removes all types of noise",
-            "Enhances image contrast"
-        ],
-        "answer": "Preserves edges while smoothing"
-    },
-    {
-        "question": "What does the bilateral filter consider in addition to spatial proximity?",
-        "options": [
-            "Pixel intensity similarity",
-            "Image brightness",
-            "Kernel size",
-            "Noise level"
-        ],
-        "answer": "Pixel intensity similarity"
-    },
-    {
-        "question": "Which filter is most sensitive to noise?",
-        "options": [
-            "Gaussian filter",
-            "Laplacian filter",
-            "Median filter",
-            "Bilateral filter"
-        ],
-        "answer": "Laplacian filter"
-    },
-    {
-        "question": "What is a common application of sharpening filters?",
-        "options": [
-            "Noise reduction",
-            "Edge enhancement",
-            "Image compression",
-            "Color correction"
-        ],
-        "answer": "Edge enhancement"
-    },
-    {
-        "question": "The kernel size of a filter affects:",
-        "options": [
-            "The amount of smoothing or sharpening",
-            "The image resolution",
-            "The color depth",
-            "The file size"
-        ],
-        "answer": "The amount of smoothing or sharpening"
-    },
-    {
-        "question": "Which filter is best suited for preserving fine details in an image?",
-        "options": [
-            "Average filter",
-            "Gaussian filter",
-            "Bilateral filter",
-            "Sobel filter"
-        ],
-        "answer": "Bilateral filter"
-    },
-    {
-        "question": "What happens if the kernel size of a smoothing filter is increased?",
-        "options": [
-            "The image becomes sharper",
-            "The image becomes more blurred",
-            "The image contrast increases",
-            "The image size decreases"
-        ],
-        "answer": "The image becomes more blurred"
-    },
-    {
-        "question": "Which filter is computationally more expensive?",
-        "options": [
-            "Average filter",
-            "Gaussian filter",
-            "Bilateral filter",
-            "Median filter"
-        ],
-        "answer": "Bilateral filter"
-    },
-    {
-        "question": "The Laplacian filter is classified as:",
-        "options": [
-            "A low-pass filter",
-            "A high-pass filter",
-            "A non-linear filter",
-            "A directional filter"
-        ],
-        "answer": "A high-pass filter"
-    },
-    {
-        "question": "What type of noise is the Gaussian filter most effective against?",
-        "options": [
-            "Salt-and-pepper noise",
-            "Gaussian noise",
-            "Speckle noise",
-            "Uniform noise"
-        ],
-        "answer": "Gaussian noise"
-    },
-    {
-        "question": "Which filter is most effective for reducing Gaussian noise?",
-        "options": [
-            "Median filter",
-            "Sobel filter",
-            "Gaussian filter",
-            "Laplacian filter"
         ],
         "answer": "Gaussian filter"
     },
     {
-        "question": "Which filter requires sorting pixel values in the kernel?",
+        "question": "What effect does a smoothing filter generally have on an image?",
         "options": [
-            "Gaussian filter",
+            "Blurs the image",
+            "Sharpens the edges",
+            "Increases contrast",
+            "Adds noise"
+        ],
+        "answer": "Blurs the image"
+    },
+    {
+        "question": "Which of the following is a linear smoothing filter?",
+        "options": [
+            "Mean filter",
             "Median filter",
-            "Laplacian filter",
-            "Sobel filter"
+            "Morphological filter",
+            "Non-linear filter"
+        ],
+        "answer": "Mean filter"
+    },
+    {
+        "question": "Which filter is non-linear and effective for removing salt-and-pepper noise?",
+        "options": [
+            "Median filter",
+            "Mean filter",
+            "Gaussian filter",
+            "Laplacian filter"
         ],
         "answer": "Median filter"
     },
     {
-        "question": "The Sobel filter uses two kernels to detect:",
+        "question": "What type of filter is the Laplacian?",
         "options": [
-            "Horizontal and vertical edges",
-            "Noise and blur",
-            "Color and brightness",
-            "Diagonal edges only"
-        ],
-        "answer": "Horizontal and vertical edges"
-    },
-    {
-        "question": "Which filter can be used to reduce noise while preserving edges?",
-        "options": [
-            "Average filter",
-            "Gaussian filter",
-            "Bilateral filter",
-            "Laplacian filter"
-        ],
-        "answer": "Bilateral filter"
-    },
-    {
-        "question": "What is a disadvantage of the Laplacian filter?",
-        "options": [
-            "It blurs the image",
-            "It is sensitive to noise",
-            "It removes edges",
-            "It reduces contrast"
-        ],
-        "answer": "It is sensitive to noise"
-    },
-    {
-        "question": "The bilateral filter is considered:",
-        "options": [
-            "Linear",
-            "Non-linear",
-            "High-pass",
-            "Low-pass"
-        ],
-        "answer": "Non-linear"
-    },
-    {
-        "question": "Which filter is most suitable for real-time image processing applications?",
-        "options": [
-            "Bilateral filter",
+            "Sharpening filter",
+            "Smoothing filter",
             "Median filter",
-            "Average filter",
+            "Gaussian filter"
+        ],
+        "answer": "Sharpening filter"
+    },
+    {
+        "question": "Which operation enhances edges by emphasizing regions of rapid intensity change?",
+        "options": [
+            "Sharpening",
+            "Smoothing",
+            "Blurring",
+            "Compression"
+        ],
+        "answer": "Sharpening"
+    },
+    {
+        "question": "What is the main characteristic of a high-pass filter?",
+        "options": [
+            "It allows high-frequency components to pass and suppresses low-frequency components",
+            "It allows low-frequency components to pass",
+            "It reduces image resolution",
+            "It smooths the image"
+        ],
+        "answer": "It allows high-frequency components to pass and suppresses low-frequency components"
+    },
+    {
+        "question": "Which filter can be used to highlight edges and fine details in an image?",
+        "options": [
+            "Laplacian filter",
+            "Mean filter",
+            "Gaussian filter",
+            "Median filter"
+        ],
+        "answer": "Laplacian filter"
+    },
+    {
+        "question": "What is the primary difference between the mean and median filters?",
+        "options": [
+            "Mean filter is linear; median filter is non-linear",
+            "Median filter is linear; mean filter is non-linear",
+            "Both are linear",
+            "Both are non-linear"
+        ],
+        "answer": "Mean filter is linear; median filter is non-linear"
+    },
+    {
+        "question": "Which filter is better at preserving edges while reducing noise?",
+        "options": [
+            "Median filter",
+            "Mean filter",
+            "Gaussian filter",
             "Laplacian filter"
         ],
-        "answer": "Average filter"
+        "answer": "Median filter"
+    },
+    {
+        "question": "What type of kernel does a Gaussian filter use?",
+        "options": [
+            "Weighted kernel with Gaussian distribution",
+            "Uniform kernel",
+            "Edge detection kernel",
+            "High-pass kernel"
+        ],
+        "answer": "Weighted kernel with Gaussian distribution"
+    },
+    {
+        "question": "How does increasing the size of the smoothing filter kernel affect the image?",
+        "options": [
+            "More blurring",
+            "More sharpening",
+            "No change",
+            "Increased noise"
+        ],
+        "answer": "More blurring"
+    },
+    {
+        "question": "What is the effect of applying a sharpening filter to an image?",
+        "options": [
+            "Enhances edges and fine details",
+            "Blurs the image",
+            "Reduces noise",
+            "Compresses the image"
+        ],
+        "answer": "Enhances edges and fine details"
+    },
+    {
+        "question": "Which filter emphasizes the second derivative of the image intensity?",
+        "options": [
+            "Laplacian filter",
+            "Mean filter",
+            "Gaussian filter",
+            "Median filter"
+        ],
+        "answer": "Laplacian filter"
+    },
+    {
+        "question": "Which of these is NOT a smoothing filter?",
+        "options": [
+            "Laplacian filter",
+            "Mean filter",
+            "Gaussian filter",
+            "Median filter"
+        ],
+        "answer": "Laplacian filter"
+    },
+    {
+        "question": "What is an advantage of using the median filter over the mean filter?",
+        "options": [
+            "Better at preserving edges",
+            "Faster computation",
+            "Increases image contrast",
+            "Enhances noise"
+        ],
+        "answer": "Better at preserving edges"
+    },
+    {
+        "question": "What does the term 'convolution' refer to in spatial filtering?",
+        "options": [
+            "Applying a filter kernel to each pixel and its neighborhood",
+            "Compressing the image",
+            "Increasing pixel intensity",
+            "Reducing the image size"
+        ],
+        "answer": "Applying a filter kernel to each pixel and its neighborhood"
+    },
+    {
+        "question": "Which filter is commonly used for edge detection, closely related to sharpening?",
+        "options": [
+            "Sobel filter",
+            "Mean filter",
+            "Gaussian filter",
+            "Median filter"
+        ],
+        "answer": "Sobel filter"
+    },
+    {
+        "question": "What happens if a sharpening filter is applied multiple times to an image?",
+        "options": [
+            "Edges become more pronounced and noise may increase",
+            "Image becomes smoother",
+            "Image becomes darker",
+            "No visible change"
+        ],
+        "answer": "Edges become more pronounced and noise may increase"
     }
 ]

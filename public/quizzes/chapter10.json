@@ -1,302 +1,302 @@
 [
     {
-        "question": "What does the RGB color model primarily represent?",
+        "question": "What is the main purpose of morphological image processing?",
         "options": [
-            "Hue, Saturation, Value",
-            "Red, Green, Blue",
-            "Luminance, Chrominance, Brightness",
-            "Cyan, Magenta, Yellow"
+            "To process geometric structures in images",
+            "To enhance image color",
+            "To perform frequency analysis",
+            "To compress images"
         ],
-        "answer": "Red, Green, Blue"
+        "answer": "To process geometric structures in images"
     },
     {
-        "question": "In the HSV color model, what does the 'H' stand for?",
+        "question": "Which operation is considered a fundamental morphological operation?",
         "options": [
-            "Hue",
-            "High intensity",
-            "Histogram",
-            "Harmony"
-        ],
-        "answer": "Hue"
-    },
-    {
-        "question": "Which color model is commonly used for television broadcasting?",
-        "options": [
-            "RGB",
-            "HSV",
-            "YCbCr",
-            "CMYK"
-        ],
-        "answer": "YCbCr"
-    },
-    {
-        "question": "What is the range of values for each component in an 8-bit RGB color model?",
-        "options": [
-            "0 to 100",
-            "0 to 255",
-            "0 to 1",
-            "-128 to 127"
-        ],
-        "answer": "0 to 255"
-    },
-    {
-        "question": "Which color model separates luminance from chrominance?",
-        "options": [
-            "RGB",
-            "HSV",
-            "YCbCr",
-            "CMYK"
-        ],
-        "answer": "YCbCr"
-    },
-    {
-        "question": "In the HSV model, what does the 'S' represent?",
-        "options": [
-            "Saturation",
-            "Scale",
-            "Shade",
-            "Spectrum"
-        ],
-        "answer": "Saturation"
-    },
-    {
-        "question": "What is the purpose of color transformation in image processing?",
-        "options": [
-            "To reduce image size",
-            "To convert between color models",
-            "To remove noise",
-            "To increase resolution"
-        ],
-        "answer": "To convert between color models"
-    },
-    {
-        "question": "Which component in the YCbCr model represents luminance?",
-        "options": [
-            "Y",
-            "Cb",
-            "Cr",
-            "None of the above"
-        ],
-        "answer": "Y"
-    },
-    {
-        "question": "What does color enhancement aim to improve in an image?",
-        "options": [
-            "File size",
-            "Visual quality",
-            "Compression ratio",
-            "Pixel density"
-        ],
-        "answer": "Visual quality"
-    },
-    {
-        "question": "Which color model is most intuitive for human perception?",
-        "options": [
-            "RGB",
-            "HSV",
-            "YCbCr",
-            "CMYK"
-        ],
-        "answer": "HSV"
-    },
-    {
-        "question": "In color segmentation, what is the primary goal?",
-        "options": [
-            "To merge colors",
-            "To isolate regions based on color",
-            "To reduce image contrast",
-            "To increase brightness"
-        ],
-        "answer": "To isolate regions based on color"
-    },
-    {
-        "question": "Which of the following is NOT a color model?",
-        "options": [
-            "RGB",
-            "HSV",
-            "JPEG",
-            "YCbCr"
-        ],
-        "answer": "JPEG"
-    },
-    {
-        "question": "What is a common technique for color enhancement?",
-        "options": [
+            "Dilation",
             "Histogram equalization",
-            "Edge detection",
             "Fourier transform",
-            "Morphological filtering"
+            "Edge detection"
         ],
-        "answer": "Histogram equalization"
+        "answer": "Dilation"
     },
     {
-        "question": "In the RGB model, what color is represented by (255, 0, 0)?",
+        "question": "What does dilation do to a binary image?",
         "options": [
-            "Blue",
-            "Green",
-            "Red",
-            "White"
+            "Expands object boundaries",
+            "Shrinks object boundaries",
+            "Smooths image noise",
+            "Converts image to grayscale"
         ],
-        "answer": "Red"
+        "answer": "Expands object boundaries"
     },
     {
-        "question": "Which color model is used primarily for printing?",
+        "question": "Which morphological operation shrinks the objects in a binary image?",
         "options": [
-            "RGB",
-            "HSV",
-            "YCbCr",
-            "CMYK"
+            "Erosion",
+            "Dilation",
+            "Opening",
+            "Closing"
         ],
-        "answer": "CMYK"
+        "answer": "Erosion"
     },
     {
-        "question": "What does the 'V' in HSV stand for?",
+        "question": "What is a structuring element in morphological operations?",
         "options": [
-            "Value",
-            "Vibrance",
-            "Volume",
-            "Velocity"
+            "A shape used to probe the image",
+            "A filter kernel for smoothing",
+            "A threshold value",
+            "A color transformation matrix"
         ],
-        "answer": "Value"
+        "answer": "A shape used to probe the image"
     },
     {
-        "question": "Which component in YCbCr represents blue chrominance?",
+        "question": "What is the result of applying the opening operation to a binary image?",
         "options": [
-            "Y",
-            "Cb",
-            "Cr",
-            "None of the above"
+            "Removes small objects and smooths contours",
+            "Fills holes inside objects",
+            "Expands object boundaries",
+            "Inverts the image"
         ],
-        "answer": "Cb"
+        "answer": "Removes small objects and smooths contours"
     },
     {
-        "question": "What is a key advantage of using the HSV model for color segmentation?",
+        "question": "Which morphological operation is a dilation followed by erosion?",
         "options": [
-            "It separates color from intensity",
-            "It reduces image size",
-            "It eliminates noise",
-            "It increases resolution"
+            "Closing",
+            "Opening",
+            "Erosion",
+            "Dilation"
         ],
-        "answer": "It separates color from intensity"
+        "answer": "Closing"
     },
     {
-        "question": "Which of the following is a color transformation?",
+        "question": "What is the main use of morphological closing?",
         "options": [
-            "Converting RGB to grayscale",
-            "Applying a Gaussian blur",
-            "Edge detection",
-            "Image resizing"
+            "To fill small holes and gaps in objects",
+            "To remove noise",
+            "To detect edges",
+            "To convert images to binary"
         ],
-        "answer": "Converting RGB to grayscale"
+        "answer": "To fill small holes and gaps in objects"
     },
     {
-        "question": "What does color segmentation rely on to group pixels?",
+        "question": "Which of the following is NOT true about structuring elements?",
         "options": [
-            "Texture",
-            "Color similarity",
-            "Image size",
-            "Brightness only"
+            "They can have different shapes",
+            "They are always square",
+            "They determine the effect of morphological operations",
+            "They are typically small relative to the image"
         ],
-        "answer": "Color similarity"
+        "answer": "They are always square"
     },
     {
-        "question": "In RGB, what color is represented by (255, 255, 255)?",
+        "question": "What is morphological gradient used for?",
         "options": [
-            "Black",
-            "White",
-            "Red",
-            "Blue"
+            "Highlighting object boundaries",
+            "Smoothing images",
+            "Reducing noise",
+            "Increasing image contrast"
         ],
-        "answer": "White"
+        "answer": "Highlighting object boundaries"
     },
     {
-        "question": "Which color model is best suited for adjusting brightness and contrast?",
+        "question": "How is the morphological gradient computed?",
         "options": [
-            "RGB",
-            "HSV",
-            "YCbCr",
-            "CMYK"
+            "Difference between dilation and erosion",
+            "Sum of dilation and erosion",
+            "Product of dilation and erosion",
+            "Difference between opening and closing"
         ],
-        "answer": "HSV"
+        "answer": "Difference between dilation and erosion"
     },
     {
-        "question": "What is a common application of color segmentation?",
+        "question": "What does the hit-or-miss transform do?",
         "options": [
+            "Detects specific patterns in binary images",
+            "Enhances edges",
+            "Removes noise",
+            "Performs color segmentation"
+        ],
+        "answer": "Detects specific patterns in binary images"
+    },
+    {
+        "question": "Which of the following is an application of morphological image processing?",
+        "options": [
+            "Shape analysis",
+            "Color correction",
             "Image compression",
-            "Object detection",
-            "Noise reduction",
-            "Resolution enhancement"
+            "Fourier analysis"
         ],
-        "answer": "Object detection"
+        "answer": "Shape analysis"
     },
     {
-        "question": "Which component in YCbCr represents red chrominance?",
+        "question": "Which morphological operation is best for removing small noise pixels?",
         "options": [
-            "Y",
-            "Cb",
-            "Cr",
-            "None of the above"
+            "Opening",
+            "Closing",
+            "Dilation",
+            "Erosion"
         ],
-        "answer": "Cr"
+        "answer": "Opening"
     },
     {
-        "question": "What is the effect of increasing saturation in the HSV model?",
+        "question": "Which morphological operation is best for closing small gaps in objects?",
         "options": [
-            "Colors become more vivid",
-            "Colors become darker",
-            "Colors become lighter",
-            "Colors remain unchanged"
+            "Closing",
+            "Opening",
+            "Erosion",
+            "Dilation"
         ],
-        "answer": "Colors become more vivid"
+        "answer": "Closing"
     },
     {
-        "question": "Which of the following is a color enhancement technique?",
+        "question": "What type of images is morphological processing mainly used on?",
         "options": [
-            "Contrast stretching",
-            "Edge sharpening",
-            "Image cropping",
-            "Noise addition"
+            "Binary and grayscale images",
+            "Only color images",
+            "Only RGB images",
+            "Only compressed images"
         ],
-        "answer": "Contrast stretching"
+        "answer": "Binary and grayscale images"
     },
     {
-        "question": "In the RGB model, what color is (0, 0, 255)?",
+        "question": "What happens when you apply erosion to a binary image with a structuring element that fits entirely inside the object?",
         "options": [
-            "Red",
-            "Green",
-            "Blue",
-            "Black"
+            "The pixel remains",
+            "The pixel is removed",
+            "The object is inverted",
+            "The image becomes color"
         ],
-        "answer": "Blue"
+        "answer": "The pixel remains"
     },
     {
-        "question": "What is a challenge in color segmentation?",
+        "question": "Which morphological operation would help in separating two connected objects?",
         "options": [
-            "High computational cost",
-            "Low image resolution",
-            "Limited color models",
-            "Small image size"
+            "Erosion",
+            "Dilation",
+            "Closing",
+            "Opening"
         ],
-        "answer": "High computational cost"
+        "answer": "Erosion"
     },
     {
-        "question": "Which color model is additive?",
+        "question": "Which of these is true about dilation?",
         "options": [
-            "RGB",
-            "CMYK",
-            "YCbCr",
-            "HSV"
+            "It adds pixels to object boundaries",
+            "It removes pixels from object boundaries",
+            "It detects edges",
+            "It smooths intensity values"
         ],
-        "answer": "RGB"
+        "answer": "It adds pixels to object boundaries"
     },
     {
-        "question": "What is the purpose of converting an image from RGB to YCbCr?",
+        "question": "In grayscale morphology, how is dilation typically defined?",
         "options": [
-            "To enhance colors",
-            "To separate luminance and chrominance",
-            "To reduce file size",
-            "To increase resolution"
+            "Maximum value over the neighborhood defined by the structuring element",
+            "Minimum value over the neighborhood",
+            "Average value of the neighborhood",
+            "Median value of the neighborhood"
         ],
-        "answer": "To separate luminance and chrominance"
+        "answer": "Maximum value over the neighborhood defined by the structuring element"
+    },
+    {
+        "question": "In grayscale morphology, erosion is defined as:",
+        "options": [
+            "Minimum value over the neighborhood defined by the structuring element",
+            "Maximum value over the neighborhood",
+            "Median value",
+            "Mean value"
+        ],
+        "answer": "Minimum value over the neighborhood defined by the structuring element"
+    },
+    {
+        "question": "What effect does morphological opening have on small bright spots in a grayscale image?",
+        "options": [
+            "Removes them",
+            "Enhances them",
+            "Does nothing",
+            "Inverts them"
+        ],
+        "answer": "Removes them"
+    },
+    {
+        "question": "Which of the following is true about morphological closing on grayscale images?",
+        "options": [
+            "Fills small dark holes",
+            "Removes bright spots",
+            "Shrinks bright regions",
+            "Sharpens edges"
+        ],
+        "answer": "Fills small dark holes"
+    },
+    {
+        "question": "What does the size of the structuring element affect in morphological operations?",
+        "options": [
+            "The scale of features to be processed",
+            "The color of the image",
+            "The compression ratio",
+            "The frequency components"
+        ],
+        "answer": "The scale of features to be processed"
+    },
+    {
+        "question": "Which morphological operation can be used to extract skeletons of objects?",
+        "options": [
+            "Thinning",
+            "Dilation",
+            "Erosion",
+            "Closing"
+        ],
+        "answer": "Thinning"
+    },
+    {
+        "question": "What is the purpose of the top-hat transform?",
+        "options": [
+            "Extract small elements and details from images",
+            "Smooth image noise",
+            "Convert grayscale to binary",
+            "Fill holes"
+        ],
+        "answer": "Extract small elements and details from images"
+    },
+    {
+        "question": "What is the result of applying the morphological black-hat transform?",
+        "options": [
+            "Extracts small dark regions on a bright background",
+            "Removes large objects",
+            "Enhances edges",
+            "Converts image to binary"
+        ],
+        "answer": "Extracts small dark regions on a bright background"
+    },
+    {
+        "question": "Which morphological operation is often used before contour detection to clean the image?",
+        "options": [
+            "Opening",
+            "Closing",
+            "Dilation",
+            "Gradient"
+        ],
+        "answer": "Opening"
+    },
+    {
+        "question": "How does the hit-or-miss transform differ from dilation and erosion?",
+        "options": [
+            "It detects specific patterns instead of expanding or shrinking",
+            "It smooths image edges",
+            "It compresses images",
+            "It enhances color"
+        ],
+        "answer": "It detects specific patterns instead of expanding or shrinking"
+    },
+    {
+        "question": "What does morphological reconstruction help with?",
+        "options": [
+            "Extracting connected components based on markers",
+            "Color enhancement",
+            "Frequency filtering",
+            "Noise removal by averaging"
+        ],
+        "answer": "Extracting connected components based on markers"
     }
 ]

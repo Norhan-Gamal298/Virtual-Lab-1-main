@@ -1,26 +1,66 @@
 [
     {
-        "question": "What is the process of converting a continuous signal into a discrete signal called?",
+        "question": "What are the main components of a general-purpose image processing system?",
         "options": [
-            "Quantization",
-            "Sampling",
-            "Compression",
-            "Filtering"
+            "Image acquisition, processing, display, and storage",
+            "Image compression and enhancement only",
+            "Sampling and quantization",
+            "Filtering and segmentation"
         ],
-        "answer": "Sampling"
+        "answer": "Image acquisition, processing, display, and storage"
     },
     {
-        "question": "What does quantization determine in digital imaging?",
+        "question": "Which device is commonly used for image acquisition in digital systems?",
         "options": [
-            "Spatial resolution",
-            "Number of intensity levels",
-            "Image size",
-            "Sampling rate"
+            "Scanner",
+            "Monitor",
+            "Printer",
+            "Speaker"
         ],
-        "answer": "Number of intensity levels"
+        "answer": "Scanner"
     },
     {
-        "question": "How many intensity levels are possible in an 8-bit grayscale image?",
+        "question": "What is the primary purpose of image sampling?",
+        "options": [
+            "To convert continuous image data into discrete form",
+            "To compress image size",
+            "To enhance image contrast",
+            "To segment image regions"
+        ],
+        "answer": "To convert continuous image data into discrete form"
+    },
+    {
+        "question": "What does quantization in image processing refer to?",
+        "options": [
+            "Reducing the spatial resolution",
+            "Assigning discrete intensity values to sampled pixels",
+            "Filtering noise",
+            "Changing the image format"
+        ],
+        "answer": "Assigning discrete intensity values to sampled pixels"
+    },
+    {
+        "question": "What determines the spatial resolution of a digital image?",
+        "options": [
+            "Number of bits per pixel",
+            "Sampling rate",
+            "Compression ratio",
+            "Image format"
+        ],
+        "answer": "Sampling rate"
+    },
+    {
+        "question": "Which of the following is true about image representation?",
+        "options": [
+            "Images are represented as 2D arrays of pixel values",
+            "Images are stored as audio files",
+            "Images do not require quantization",
+            "Images are continuous signals"
+        ],
+        "answer": "Images are represented as 2D arrays of pixel values"
+    },
+    {
+        "question": "In grayscale images, each pixel is represented by how many intensity levels for 8-bit quantization?",
         "options": [
             "128",
             "256",
@@ -30,273 +70,233 @@
         "answer": "256"
     },
     {
-        "question": "What is the main purpose of sampling in digital imaging?",
+        "question": "What is a pixel?",
         "options": [
-            "To reduce noise",
-            "To discretize spatial coordinates",
+            "A point in the image representing brightness or color",
+            "A color channel",
+            "A type of compression",
+            "A wavelet coefficient"
+        ],
+        "answer": "A point in the image representing brightness or color"
+    },
+    {
+        "question": "Which image compression method is based on discrete cosine transform (DCT)?",
+        "options": [
+            "JPEG",
+            "JPEG2000",
+            "PNG",
+            "GIF"
+        ],
+        "answer": "JPEG"
+    },
+    {
+        "question": "JPEG2000 compression primarily uses which transform?",
+        "options": [
+            "Discrete Fourier Transform",
+            "Discrete Wavelet Transform",
+            "Discrete Cosine Transform",
+            "Fast Fourier Transform"
+        ],
+        "answer": "Discrete Wavelet Transform"
+    },
+    {
+        "question": "Which of the following is NOT a benefit of image compression?",
+        "options": [
+            "Reduced storage space",
+            "Faster transmission",
+            "Improved image quality",
+            "Lower bandwidth usage"
+        ],
+        "answer": "Improved image quality"
+    },
+    {
+        "question": "What does lossless compression guarantee?",
+        "options": [
+            "No loss of image information after decompression",
+            "Maximum compression ratio",
+            "Reduced image size but with quality loss",
+            "Faster compression time"
+        ],
+        "answer": "No loss of image information after decompression"
+    },
+    {
+        "question": "Which compression type is used by JPEG?",
+        "options": [
+            "Lossy compression",
+            "Lossless compression",
+            "Both lossy and lossless",
+            "No compression"
+        ],
+        "answer": "Lossy compression"
+    },
+    {
+        "question": "Which is a fundamental concept in digital image processing?",
+        "options": [
+            "Sampling and quantization",
+            "Analog signal processing",
+            "Audio signal compression",
+            "Data encryption"
+        ],
+        "answer": "Sampling and quantization"
+    },
+    {
+        "question": "What is the typical bit-depth for a color image in RGB format?",
+        "options": [
+            "8 bits total",
+            "24 bits total",
+            "16 bits per channel",
+            "12 bits total"
+        ],
+        "answer": "24 bits total"
+    },
+    {
+        "question": "Which process involves dividing an image into smaller regions called pixels?",
+        "options": [
+            "Sampling",
+            "Quantization",
+            "Compression",
+            "Filtering"
+        ],
+        "answer": "Sampling"
+    },
+    {
+        "question": "How does increasing the number of quantization levels affect an image?",
+        "options": [
+            "Increases image quality",
+            "Decreases image size",
+            "Increases noise",
+            "Reduces spatial resolution"
+        ],
+        "answer": "Increases image quality"
+    },
+    {
+        "question": "What does a higher sampling rate provide in image acquisition?",
+        "options": [
+            "More detail and higher resolution",
+            "Lower storage requirements",
+            "Faster processing",
+            "More noise"
+        ],
+        "answer": "More detail and higher resolution"
+    },
+    {
+        "question": "What is the main disadvantage of lossy compression?",
+        "options": [
+            "Compression takes longer",
+            "Loss of some image details",
+            "No size reduction",
+            "Requires special hardware"
+        ],
+        "answer": "Loss of some image details"
+    },
+    {
+        "question": "Which component of image processing system is responsible for displaying the processed image?",
+        "options": [
+            "Image acquisition",
+            "Image storage",
+            "Image display",
+            "Image processing"
+        ],
+        "answer": "Image display"
+    },
+    {
+        "question": "What is the effect of quantization error in images?",
+        "options": [
+            "Image noise and distortion",
+            "Compression artifacts",
+            "Enhanced image sharpness",
+            "Improved color accuracy"
+        ],
+        "answer": "Image noise and distortion"
+    },
+    {
+        "question": "Which of these image types uses multiple color channels?",
+        "options": [
+            "Grayscale images",
+            "Binary images",
+            "RGB images",
+            "Indexed images"
+        ],
+        "answer": "RGB images"
+    },
+    {
+        "question": "JPEG compression is most effective on which type of images?",
+        "options": [
+            "Images with sharp edges and lines",
+            "Natural photographs",
+            "Binary images",
+            "Images with limited colors"
+        ],
+        "answer": "Natural photographs"
+    },
+    {
+        "question": "What is the primary function of image pre-processing?",
+        "options": [
+            "To improve image quality before analysis",
             "To compress the image",
-            "To enhance contrast"
+            "To store the image",
+            "To display the image"
         ],
-        "answer": "To discretize spatial coordinates"
+        "answer": "To improve image quality before analysis"
     },
     {
-        "question": "Which of the following affects the spatial resolution of a digital image?",
+        "question": "Which of the following is true about JPEG2000 compared to JPEG?",
         "options": [
-            "Quantization levels",
-            "Sampling rate",
-            "Bit depth",
-            "Image histogram"
+            "Uses wavelet transform instead of DCT",
+            "Is older than JPEG",
+            "Always results in larger files",
+            "Does not support lossy compression"
         ],
-        "answer": "Sampling rate"
+        "answer": "Uses wavelet transform instead of DCT"
     },
     {
-        "question": "In image representation, what does a pixel represent?",
+        "question": "Which parameter directly affects image file size?",
         "options": [
-            "A single intensity value",
-            "A color channel",
-            "A spatial coordinate",
-            "A compression ratio"
+            "Image resolution and bit depth",
+            "Image enhancement technique",
+            "Image segmentation accuracy",
+            "Image acquisition device"
         ],
-        "answer": "A single intensity value"
+        "answer": "Image resolution and bit depth"
     },
     {
-        "question": "What is the bit depth of a 24-bit RGB image?",
+        "question": "Which step comes first in the image processing pipeline?",
         "options": [
-            "8 bits per channel",
-            "24 bits per channel",
-            "12 bits per channel",
-            "6 bits per channel"
-        ],
-        "answer": "8 bits per channel"
-    },
-    {
-        "question": "Which of the following is a linear intensity transformation?",
-        "options": [
-            "Log transformation",
-            "Power-law transformation",
-            "Contrast stretching",
-            "Thresholding"
-        ],
-        "answer": "Contrast stretching"
-    },
-    {
-        "question": "What does bit-plane slicing do?",
-        "options": [
-            "Compresses the image",
-            "Separates an image into binary planes",
-            "Enhances image contrast",
-            "Reduces noise"
-        ],
-        "answer": "Separates an image into binary planes"
-    },
-    {
-        "question": "Which bit-plane contains the most significant visual information in an 8-bit image?",
-        "options": [
-            "Bit-plane 0",
-            "Bit-plane 4",
-            "Bit-plane 7",
-            "Bit-plane 1"
-        ],
-        "answer": "Bit-plane 7"
-    },
-    {
-        "question": "What happens if the sampling rate is too low?",
-        "options": [
-            "Image becomes blurry",
-            "Aliasing occurs",
-            "Image size increases",
-            "Noise is reduced"
-        ],
-        "answer": "Aliasing occurs"
-    },
-    {
-        "question": "What is the role of quantization in image processing?",
-        "options": [
-            "To reduce spatial resolution",
-            "To discretize intensity values",
-            "To increase image size",
-            "To remove aliasing"
-        ],
-        "answer": "To discretize intensity values"
-    },
-    {
-        "question": "In a grayscale image, how is pixel intensity typically represented?",
-        "options": [
-            "As RGB values",
-            "As a single value between 0 and 255",
-            "As a binary value",
-            "As a vector"
-        ],
-        "answer": "As a single value between 0 and 255"
-    },
-    {
-        "question": "Which transformation is used to enhance dark regions of an image?",
-        "options": [
-            "Negative transformation",
-            "Log transformation",
-            "Linear transformation",
-            "Thresholding"
-        ],
-        "answer": "Log transformation"
-    },
-    {
-        "question": "What is the effect of increasing the number of quantization levels?",
-        "options": [
-            "Increased spatial resolution",
-            "Smoother intensity transitions",
-            "Larger image size",
-            "Reduced noise"
-        ],
-        "answer": "Smoother intensity transitions"
-    },
-    {
-        "question": "What does the term 'bit-plane' refer to in bit-plane slicing?",
-        "options": [
-            "A single bit of each pixel’s intensity value",
-            "A compressed image layer",
-            "A color channel",
-            "A spatial coordinate"
-        ],
-        "answer": "A single bit of each pixel’s intensity value"
-    },
-    {
-        "question": "Which of the following is NOT an intensity transformation?",
-        "options": [
-            "Log transformation",
-            "Power-law transformation",
-            "Bit-plane slicing",
-            "Negative transformation"
-        ],
-        "answer": "Bit-plane slicing"
-    },
-    {
-        "question": "What is the result of applying a negative transformation to an 8-bit grayscale image?",
-        "options": [
-            "Pixel values are inverted",
-            "Image becomes binary",
-            "Contrast is reduced",
-            "Image is compressed"
-        ],
-        "answer": "Pixel values are inverted"
-    },
-    {
-        "question": "How many bit-planes are there in an 8-bit grayscale image?",
-        "options": [
-            "4",
-            "6",
-            "8",
-            "10"
-        ],
-        "answer": "8"
-    },
-    {
-        "question": "What is aliasing in the context of image sampling?",
-        "options": [
-            "Loss of image details due to insufficient sampling",
-            "Increase in image noise",
-            "Compression of image data",
-            "Enhancement of image contrast"
-        ],
-        "answer": "Loss of image details due to insufficient sampling"
-    },
-    {
-        "question": "Which intensity transformation is used to compress high-intensity values?",
-        "options": [
-            "Log transformation",
-            "Linear transformation",
-            "Negative transformation",
-            "Contrast stretching"
-        ],
-        "answer": "Log transformation"
-    },
-    {
-        "question": "What does the least significant bit-plane (bit-plane 0) contribute to an image?",
-        "options": [
-            "Major visual details",
-            "Fine details and noise",
-            "Color information",
-            "Spatial resolution"
-        ],
-        "answer": "Fine details and noise"
-    },
-    {
-        "question": "What is the primary advantage of bit-plane slicing?",
-        "options": [
+            "Image processing",
+            "Image acquisition",
             "Image compression",
-            "Noise reduction",
-            "Analysis of image contribution per bit",
-            "Contrast enhancement"
+            "Image display"
         ],
-        "answer": "Analysis of image contribution per bit"
+        "answer": "Image acquisition"
     },
     {
-        "question": "In an RGB image, how many bits are used to represent each pixel?",
+        "question": "What is the typical dynamic range of pixel values in an 8-bit grayscale image?",
         "options": [
-            "8 bits",
-            "16 bits",
-            "24 bits",
-            "32 bits"
+            "0-1",
+            "0-255",
+            "0-1023",
+            "0-4095"
         ],
-        "answer": "24 bits"
+        "answer": "0-255"
     },
     {
-        "question": "Which of the following transformations is non-linear?",
+        "question": "Which image processing operation reduces image size by removing redundant information?",
         "options": [
-            "Contrast stretching",
-            "Negative transformation",
-            "Power-law transformation",
-            "Linear scaling"
+            "Enhancement",
+            "Sampling",
+            "Compression",
+            "Quantization"
         ],
-        "answer": "Power-law transformation"
+        "answer": "Compression"
     },
     {
-        "question": "What is the effect of reducing the bit depth of an image?",
+        "question": "In which format does JPEG2000 store image data?",
         "options": [
-            "Increased spatial resolution",
-            "Reduced number of intensity levels",
-            "Enhanced contrast",
-            "Larger image size"
+            "Raster format using DCT",
+            "Raster format using wavelets",
+            "Vector format",
+            "Uncompressed bitmap"
         ],
-        "answer": "Reduced number of intensity levels"
-    },
-    {
-        "question": "What is the purpose of contrast stretching?",
-        "options": [
-            "To compress the image",
-            "To enhance the visibility of intensity differences",
-            "To reduce noise",
-            "To invert pixel values"
-        ],
-        "answer": "To enhance the visibility of intensity differences"
-    },
-    {
-        "question": "Which bit-plane would contribute the least to the visual quality of an image?",
-        "options": [
-            "Bit-plane 7",
-            "Bit-plane 0",
-            "Bit-plane 4",
-            "Bit-plane 6"
-        ],
-        "answer": "Bit-plane 0"
-    },
-    {
-        "question": "What is the relationship between sampling and aliasing?",
-        "options": [
-            "Higher sampling reduces aliasing",
-            "Lower sampling reduces aliasing",
-            "Sampling has no effect on aliasing",
-            "Aliasing increases with more quantization"
-        ],
-        "answer": "Higher sampling reduces aliasing"
-    },
-    {
-        "question": "Which of the following is true about power-law transformation?",
-        "options": [
-            "It is used to reduce noise",
-            "It adjusts image intensity non-linearly",
-            "It inverts pixel values",
-            "It discretizes spatial coordinates"
-        ],
-        "answer": "It adjusts image intensity non-linearly"
+        "answer": "Raster format using wavelets"
     }
 ]

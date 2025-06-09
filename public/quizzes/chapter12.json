@@ -1,0 +1,302 @@
+[
+    {
+        "question": "What is the main purpose of feature extraction in image processing?",
+        "options": [
+            "To reduce the dimensionality of data while preserving important information",
+            "To enhance image contrast",
+            "To compress the image",
+            "To convert the image to grayscale"
+        ],
+        "answer": "To reduce the dimensionality of data while preserving important information"
+    },
+    {
+        "question": "Which of the following is NOT a common type of feature used in image processing?",
+        "options": [
+            "Color",
+            "Texture",
+            "Shape",
+            "Compression ratio"
+        ],
+        "answer": "Compression ratio"
+    },
+    {
+        "question": "What is the main goal of object recognition?",
+        "options": [
+            "To identify and classify objects within an image",
+            "To segment the image into regions",
+            "To enhance image brightness",
+            "To reduce image noise"
+        ],
+        "answer": "To identify and classify objects within an image"
+    },
+    {
+        "question": "Which technique is commonly used for edge detection as a preprocessing step in feature extraction?",
+        "options": [
+            "Sobel operator",
+            "Histogram equalization",
+            "Morphological dilation",
+            "Fourier transform"
+        ],
+        "answer": "Sobel operator"
+    },
+    {
+        "question": "What does scale-invariant feature transform (SIFT) do?",
+        "options": [
+            "Detects and describes local features that are invariant to scale and rotation",
+            "Performs image compression",
+            "Enhances contrast",
+            "Smooths the image"
+        ],
+        "answer": "Detects and describes local features that are invariant to scale and rotation"
+    },
+    {
+        "question": "What type of features are histograms of oriented gradients (HOG)?",
+        "options": [
+            "Shape features",
+            "Color features",
+            "Texture features",
+            "Frequency features"
+        ],
+        "answer": "Shape features"
+    },
+    {
+        "question": "What is a keypoint in feature extraction?",
+        "options": [
+            "A distinctive image location used for matching",
+            "A pixel with maximum intensity",
+            "A region of uniform color",
+            "A compressed image block"
+        ],
+        "answer": "A distinctive image location used for matching"
+    },
+    {
+        "question": "Which machine learning technique is often used for object classification after feature extraction?",
+        "options": [
+            "Support Vector Machines (SVM)",
+            "Fourier transform",
+            "Histogram equalization",
+            "Morphological operations"
+        ],
+        "answer": "Support Vector Machines (SVM)"
+    },
+    {
+        "question": "What is the purpose of feature selection?",
+        "options": [
+            "To select the most relevant features for classification",
+            "To segment the image",
+            "To compress the image",
+            "To detect edges"
+        ],
+        "answer": "To select the most relevant features for classification"
+    },
+    {
+        "question": "Which of the following is a global feature?",
+        "options": [
+            "Shape of the entire object",
+            "Local corner point",
+            "Texture pattern in a small patch",
+            "Edge orientation at a pixel"
+        ],
+        "answer": "Shape of the entire object"
+    },
+    {
+        "question": "Which feature extraction method uses statistical measures like contrast and homogeneity?",
+        "options": [
+            "Gray Level Co-occurrence Matrix (GLCM)",
+            "SIFT",
+            "HOG",
+            "Fourier transform"
+        ],
+        "answer": "Gray Level Co-occurrence Matrix (GLCM)"
+    },
+    {
+        "question": "What is the role of template matching in object recognition?",
+        "options": [
+            "To find parts of an image that match a predefined template",
+            "To enhance image brightness",
+            "To compress image data",
+            "To segment the image"
+        ],
+        "answer": "To find parts of an image that match a predefined template"
+    },
+    {
+        "question": "What is the main challenge in object recognition?",
+        "options": [
+            "Variability in object appearance due to scale, rotation, and illumination",
+            "Increasing image size",
+            "Improving color saturation",
+            "Reducing compression artifacts"
+        ],
+        "answer": "Variability in object appearance due to scale, rotation, and illumination"
+    },
+    {
+        "question": "Which feature descriptor is known for being robust to noise and illumination changes?",
+        "options": [
+            "SIFT",
+            "Raw pixel values",
+            "Histogram equalization",
+            "Thresholding"
+        ],
+        "answer": "SIFT"
+    },
+    {
+        "question": "What is the output of feature extraction?",
+        "options": [
+            "A set of feature vectors representing image characteristics",
+            "A compressed image",
+            "An enhanced image",
+            "A segmented image"
+        ],
+        "answer": "A set of feature vectors representing image characteristics"
+    },
+    {
+        "question": "Which of the following is NOT a step in a typical object recognition pipeline?",
+        "options": [
+            "Feature extraction",
+            "Classification",
+            "Image compression",
+            "Feature matching"
+        ],
+        "answer": "Image compression"
+    },
+    {
+        "question": "What is the role of dimensionality reduction in feature extraction?",
+        "options": [
+            "To reduce the number of features while retaining important information",
+            "To increase the number of features",
+            "To compress the image",
+            "To enhance edges"
+        ],
+        "answer": "To reduce the number of features while retaining important information"
+    },
+    {
+        "question": "Which algorithm is used for dimensionality reduction?",
+        "options": [
+            "Principal Component Analysis (PCA)",
+            "K-means clustering",
+            "Sobel operator",
+            "Histogram equalization"
+        ],
+        "answer": "Principal Component Analysis (PCA)"
+    },
+    {
+        "question": "What is a common similarity measure used in feature matching?",
+        "options": [
+            "Euclidean distance",
+            "Bit rate",
+            "Histogram equalization",
+            "Morphological dilation"
+        ],
+        "answer": "Euclidean distance"
+    },
+    {
+        "question": "What type of features does color histogram represent?",
+        "options": [
+            "Color features",
+            "Shape features",
+            "Texture features",
+            "Frequency features"
+        ],
+        "answer": "Color features"
+    },
+    {
+        "question": "Which descriptor is often used for texture feature extraction?",
+        "options": [
+            "Local Binary Patterns (LBP)",
+            "SIFT",
+            "HOG",
+            "Fourier transform"
+        ],
+        "answer": "Local Binary Patterns (LBP)"
+    },
+    {
+        "question": "What does feature normalization help with?",
+        "options": [
+            "Making features comparable by scaling them to a common range",
+            "Enhancing image contrast",
+            "Reducing image size",
+            "Smoothing images"
+        ],
+        "answer": "Making features comparable by scaling them to a common range"
+    },
+    {
+        "question": "Which of these is a machine learning approach for object recognition?",
+        "options": [
+            "Convolutional Neural Networks (CNN)",
+            "Fourier transform",
+            "Histogram equalization",
+            "Morphological filtering"
+        ],
+        "answer": "Convolutional Neural Networks (CNN)"
+    },
+    {
+        "question": "What is the difference between local and global features?",
+        "options": [
+            "Local features describe small regions; global features describe the entire object",
+            "Local features are for grayscale images; global for color",
+            "Local features are for edges; global for textures",
+            "Local features require compression; global do not"
+        ],
+        "answer": "Local features describe small regions; global features describe the entire object"
+    },
+    {
+        "question": "Which feature extraction method is based on frequency domain analysis?",
+        "options": [
+            "Fourier transform",
+            "SIFT",
+            "HOG",
+            "GLCM"
+        ],
+        "answer": "Fourier transform"
+    },
+    {
+        "question": "What is the function of feature matching in object recognition?",
+        "options": [
+            "To find correspondences between features in different images",
+            "To compress the image",
+            "To enhance edges",
+            "To segment the image"
+        ],
+        "answer": "To find correspondences between features in different images"
+    },
+    {
+        "question": "Which of the following is NOT a feature extraction technique?",
+        "options": [
+            "Image histogram equalization",
+            "SIFT",
+            "HOG",
+            "LBP"
+        ],
+        "answer": "Image histogram equalization"
+    },
+    {
+        "question": "What is the role of feature descriptors?",
+        "options": [
+            "To represent the characteristics of detected features numerically",
+            "To compress the image",
+            "To enhance the image contrast",
+            "To segment the image"
+        ],
+        "answer": "To represent the characteristics of detected features numerically"
+    },
+    {
+        "question": "Which is a popular feature descriptor for matching keypoints across images?",
+        "options": [
+            "SIFT",
+            "Fourier transform",
+            "Histogram equalization",
+            "Thresholding"
+        ],
+        "answer": "SIFT"
+    },
+    {
+        "question": "What does 'object recognition' depend heavily on?",
+        "options": [
+            "Quality and distinctiveness of extracted features",
+            "Image compression ratio",
+            "Brightness of the image",
+            "Noise in the image"
+        ],
+        "answer": "Quality and distinctiveness of extracted features"
+    }
+]

@@ -1,302 +1,282 @@
 [
     {
-        "question": "What is the primary goal of image restoration?",
+        "question": "What does an image restoration process aim to do?",
         "options": [
+            "Recover the original image from a degraded version",
+            "Compress the image",
             "Enhance image contrast",
-            "Recover the original image from degraded versions",
-            "Add artistic effects to images",
-            "Compress image data"
+            "Change image resolution"
         ],
-        "answer": "Recover the original image from degraded versions"
+        "answer": "Recover the original image from a degraded version"
     },
     {
         "question": "Which of the following is a common noise model in image processing?",
         "options": [
-            "Poisson noise",
             "Gaussian noise",
-            "Uniform noise",
-            "All of the above"
+            "JPEG noise",
+            "RGB noise",
+            "Blur noise"
         ],
         "answer": "Gaussian noise"
     },
     {
-        "question": "Salt & Pepper noise is characterized by:",
+        "question": "What is the characteristic of Gaussian noise?",
         "options": [
-            "Random white and black pixels",
-            "Smooth variations in intensity",
-            "Periodic patterns",
-            "Gaussian distribution"
+            "It has a normal distribution with zero mean",
+            "It affects only edges",
+            "It occurs only in color images",
+            "It is always uniform"
         ],
-        "answer": "Random white and black pixels"
+        "answer": "It has a normal distribution with zero mean"
     },
     {
-        "question": "What type of noise is typically caused by faulty sensors or transmission errors?",
+        "question": "Which noise model represents sudden disturbances or pixel dropouts?",
         "options": [
-            "Gaussian noise",
-            "Salt & Pepper noise",
-            "Speckle noise",
-            "Thermal noise"
-        ],
-        "answer": "Salt & Pepper noise"
-    },
-    {
-        "question": "Gaussian noise is best described as:",
-        "options": [
-            "Noise with a uniform distribution",
-            "Noise following a bell-shaped probability distribution",
-            "Noise with only two intensity values",
-            "Noise caused by quantization errors"
-        ],
-        "answer": "Noise following a bell-shaped probability distribution"
-    },
-    {
-        "question": "Which filter is commonly used to remove Gaussian noise?",
-        "options": [
-            "Median filter",
-            "Mean filter",
-            "Inverse filter",
-            "Wiener filter"
-        ],
-        "answer": "Wiener filter"
-    },
-    {
-        "question": "What is the main limitation of inverse filtering?",
-        "options": [
-            "It amplifies noise in the presence of zeros in the degradation function",
-            "It requires a large kernel size",
-            "It only works for Salt & Pepper noise",
-            "It is computationally expensive"
-        ],
-        "answer": "It amplifies noise in the presence of zeros in the degradation function"
-    },
-    {
-        "question": "The Wiener filter is designed to:",
-        "options": [
-            "Maximize noise in the restored image",
-            "Minimize the mean square error between the original and restored image",
-            "Apply a high-pass filter to the image",
-            "Remove all frequency components"
-        ],
-        "answer": "Minimize the mean square error between the original and restored image"
-    },
-    {
-        "question": "Which noise model is independent of the image intensity?",
-        "options": [
-            "Gaussian noise",
-            "Poisson noise",
-            "Speckle noise",
-            "Quantization noise"
-        ],
-        "answer": "Gaussian noise"
-    },
-    {
-        "question": "Inverse filtering assumes:",
-        "options": [
-            "The degradation function is known",
-            "The noise is completely absent",
-            "The image is grayscale only",
-            "The image is not blurred"
-        ],
-        "answer": "The degradation function is known"
-    },
-    {
-        "question": "Salt & Pepper noise can be effectively reduced using:",
-        "options": [
-            "Mean filter",
-            "Median filter",
-            "High-pass filter",
-            "Inverse filter"
-        ],
-        "answer": "Median filter"
-    },
-    {
-        "question": "The Wiener filter requires knowledge of:",
-        "options": [
-            "The noise power spectrum",
-            "The image resolution",
-            "The camera aperture size",
-            "The image histogram"
-        ],
-        "answer": "The noise power spectrum"
-    },
-    {
-        "question": "What happens when the degradation function in inverse filtering has zeros?",
-        "options": [
-            "The restored image becomes perfect",
-            "The filter amplifies noise significantly",
-            "The filter ignores the zeros",
-            "The image becomes completely black"
-        ],
-        "answer": "The filter amplifies noise significantly"
-    },
-    {
-        "question": "Which of the following is a characteristic of Gaussian noise?",
-        "options": [
-            "It affects only dark pixels",
-            "It is additive and independent of pixel intensity",
-            "It appears as random black and white pixels",
-            "It follows a Poisson distribution"
-        ],
-        "answer": "It is additive and independent of pixel intensity"
-    },
-    {
-        "question": "The Wiener filter is considered:",
-        "options": [
-            "A non-linear filter",
-            "A spatial domain filter only",
-            "A linear optimal filter",
-            "A high-pass filter"
-        ],
-        "answer": "A linear optimal filter"
-    },
-    {
-        "question": "Inverse filtering is most effective when:",
-        "options": [
-            "Noise levels are high",
-            "The degradation function is well-defined and noise is minimal",
-            "The image is heavily blurred",
-            "The noise is Salt & Pepper"
-        ],
-        "answer": "The degradation function is well-defined and noise is minimal"
-    },
-    {
-        "question": "Which filter balances noise reduction and image detail preservation?",
-        "options": [
-            "Inverse filter",
-            "Wiener filter",
-            "Median filter",
-            "Mean filter"
-        ],
-        "answer": "Wiener filter"
-    },
-    {
-        "question": "Salt & Pepper noise is also known as:",
-        "options": [
-            "Impulse noise",
+            "Impulse noise (salt and pepper)",
             "Gaussian noise",
             "Speckle noise",
-            "Thermal noise"
-        ],
-        "answer": "Impulse noise"
-    },
-    {
-        "question": "The Wiener filter uses which domain for processing?",
-        "options": [
-            "Spatial domain",
-            "Frequency domain",
-            "Time domain",
-            "Wavelet domain"
-        ],
-        "answer": "Frequency domain"
-    },
-    {
-        "question": "What is a key assumption of the Wiener filter?",
-        "options": [
-            "The noise and image are uncorrelated",
-            "The image is binary",
-            "The noise is Salt & Pepper",
-            "The degradation function is unknown"
-        ],
-        "answer": "The noise and image are uncorrelated"
-    },
-    {
-        "question": "Inverse filtering can lead to:",
-        "options": [
-            "Noise suppression",
-            "Noise amplification",
-            "Perfect restoration",
-            "Image compression"
-        ],
-        "answer": "Noise amplification"
-    },
-    {
-        "question": "Which noise model is more challenging to remove using linear filters?",
-        "options": [
-            "Gaussian noise",
-            "Salt & Pepper noise",
-            "Uniform noise",
             "Poisson noise"
         ],
-        "answer": "Salt & Pepper noise"
+        "answer": "Impulse noise (salt and pepper)"
     },
     {
-        "question": "The Wiener filter incorporates:",
+        "question": "What does the inverse filtering method require knowledge of?",
         "options": [
-            "Only the degradation function",
-            "Both the degradation function and noise statistics",
-            "Only the noise statistics",
-            "The image histogram"
+            "Degradation function",
+            "Noise type",
+            "Color distribution",
+            "Compression ratio"
         ],
-        "answer": "Both the degradation function and noise statistics"
+        "answer": "Degradation function"
     },
     {
-        "question": "Which of the following is true about Salt & Pepper noise?",
+        "question": "What is a major drawback of inverse filtering?",
         "options": [
-            "It affects all pixels uniformly",
-            "It appears as random spikes in intensity",
-            "It is always additive",
-            "It follows a Gaussian distribution"
+            "It amplifies noise, especially at frequencies where degradation is low",
+            "It requires no prior knowledge",
+            "It removes noise perfectly",
+            "It blurs the image"
         ],
-        "answer": "It appears as random spikes in intensity"
+        "answer": "It amplifies noise, especially at frequencies where degradation is low"
     },
     {
-        "question": "Inverse filtering is based on:",
+        "question": "What is the Wiener filter mainly designed to do?",
         "options": [
-            "Convolution in the spatial domain",
-            "Division in the frequency domain",
-            "Subtraction in the spatial domain",
-            "Addition in the frequency domain"
+            "Minimize the mean square error between restored and original images",
+            "Maximize image brightness",
+            "Remove color artifacts",
+            "Compress the image"
         ],
-        "answer": "Division in the frequency domain"
+        "answer": "Minimize the mean square error between restored and original images"
     },
     {
-        "question": "The Wiener filter is an improvement over inverse filtering because:",
+        "question": "What additional information does the Wiener filter use that inverse filtering does not?",
         "options": [
-            "It ignores noise",
-            "It accounts for noise statistics",
-            "It uses a larger kernel",
-            "It is non-linear"
+            "Statistics of noise and original image",
+            "Image size",
+            "Color space",
+            "Compression method"
         ],
-        "answer": "It accounts for noise statistics"
+        "answer": "Statistics of noise and original image"
     },
     {
-        "question": "Which filter is non-linear and effective for Salt & Pepper noise?",
+        "question": "Which filter performs better when noise is present in the degraded image?",
         "options": [
             "Wiener filter",
             "Inverse filter",
             "Median filter",
-            "Mean filter"
+            "Gaussian filter"
         ],
-        "answer": "Median filter"
+        "answer": "Wiener filter"
     },
     {
-        "question": "Gaussian noise is typically modeled as:",
+        "question": "What type of filtering is the Wiener filter classified as?",
         "options": [
-            "Multiplicative noise",
-            "Additive noise",
+            "Adaptive filtering",
+            "Non-adaptive filtering",
+            "Median filtering",
+            "Lowpass filtering"
+        ],
+        "answer": "Adaptive filtering"
+    },
+    {
+        "question": "In the frequency domain, the inverse filter attempts to divide by what?",
+        "options": [
+            "Degradation function",
+            "Noise function",
+            "Image histogram",
+            "Fourier magnitude"
+        ],
+        "answer": "Degradation function"
+    },
+    {
+        "question": "What happens if the degradation function has zeros or near-zero values in inverse filtering?",
+        "options": [
+            "Noise gets amplified drastically",
+            "Image is perfectly restored",
+            "Image becomes darker",
+            "No effect on restoration"
+        ],
+        "answer": "Noise gets amplified drastically"
+    },
+    {
+        "question": "Which type of noise is multiplicative in nature?",
+        "options": [
+            "Speckle noise",
+            "Gaussian noise",
             "Impulse noise",
-            "Quantization noise"
+            "Poisson noise"
         ],
-        "answer": "Additive noise"
+        "answer": "Speckle noise"
     },
     {
-        "question": "The Wiener filter minimizes:",
+        "question": "Which noise type is common in radar and ultrasound imaging?",
         "options": [
-            "The maximum error",
-            "The mean square error",
-            "The absolute error",
-            "The median error"
+            "Speckle noise",
+            "Gaussian noise",
+            "Salt and pepper noise",
+            "Uniform noise"
         ],
-        "answer": "The mean square error"
+        "answer": "Speckle noise"
     },
     {
-        "question": "What is a common application of image restoration?",
+        "question": "Why is inverse filtering rarely used alone in practice?",
         "options": [
-            "Image compression",
-            "Image deblurring",
-            "Image segmentation",
-            "Image encryption"
+            "Because it is very sensitive to noise",
+            "Because it is too slow",
+            "Because it changes color space",
+            "Because it requires large memory"
         ],
-        "answer": "Image deblurring"
+        "answer": "Because it is very sensitive to noise"
+    },
+    {
+        "question": "Which restoration technique incorporates both degradation and noise statistics?",
+        "options": [
+            "Wiener filtering",
+            "Inverse filtering",
+            "Histogram equalization",
+            "Gaussian smoothing"
+        ],
+        "answer": "Wiener filtering"
+    },
+    {
+        "question": "Which filter reduces noise effect by smoothing but may blur edges?",
+        "options": [
+            "Wiener filter",
+            "Inverse filter",
+            "Highpass filter",
+            "Median filter"
+        ],
+        "answer": "Wiener filter"
+    },
+    {
+        "question": "Which of the following is NOT a typical noise model?",
+        "options": [
+            "Fourier noise",
+            "Gaussian noise",
+            "Salt and pepper noise",
+            "Speckle noise"
+        ],
+        "answer": "Fourier noise"
+    },
+    {
+        "question": "What is a key limitation of the Wiener filter?",
+        "options": [
+            "Requires knowledge or estimation of noise and signal power spectra",
+            "Cannot handle Gaussian noise",
+            "Blurs the image heavily",
+            "Does not reduce noise"
+        ],
+        "answer": "Requires knowledge or estimation of noise and signal power spectra"
+    },
+    {
+        "question": "Which restoration technique performs filtering in the frequency domain?",
+        "options": [
+            "Inverse filtering and Wiener filtering",
+            "Median filtering",
+            "Histogram equalization",
+            "Spatial averaging"
+        ],
+        "answer": "Inverse filtering and Wiener filtering"
+    },
+    {
+        "question": "Which restoration technique is considered optimal in the mean square error sense?",
+        "options": [
+            "Wiener filter",
+            "Inverse filter",
+            "Median filter",
+            "Gaussian filter"
+        ],
+        "answer": "Wiener filter"
+    },
+    {
+        "question": "What is the impact of noise on inverse filtering?",
+        "options": [
+            "It causes amplification of noise during restoration",
+            "It reduces image brightness",
+            "It sharpens edges",
+            "It compresses the image"
+        ],
+        "answer": "It causes amplification of noise during restoration"
+    },
+    {
+        "question": "Which restoration method can be described as 'non-blind' because it requires prior knowledge?",
+        "options": [
+            "Inverse filtering",
+            "Median filtering",
+            "Histogram equalization",
+            "Adaptive thresholding"
+        ],
+        "answer": "Inverse filtering"
+    },
+    {
+        "question": "What does a comparison of restoration techniques often involve?",
+        "options": [
+            "Assessing noise reduction and preservation of image details",
+            "Checking file size",
+            "Evaluating color accuracy",
+            "Measuring compression rate"
+        ],
+        "answer": "Assessing noise reduction and preservation of image details"
+    },
+    {
+        "question": "What is the major advantage of Wiener filtering over inverse filtering?",
+        "options": [
+            "Handles noise more effectively",
+            "Is computationally simpler",
+            "Does not require degradation function",
+            "Is a spatial domain method"
+        ],
+        "answer": "Handles noise more effectively"
+    },
+    {
+        "question": "Which type of noise can be best handled by median filtering rather than inverse or Wiener filtering?",
+        "options": [
+            "Impulse noise (salt and pepper)",
+            "Gaussian noise",
+            "Speckle noise",
+            "Poisson noise"
+        ],
+        "answer": "Impulse noise (salt and pepper)"
+    },
+    {
+        "question": "In restoration, what does the degradation function represent?",
+        "options": [
+            "The distortion or blurring introduced to the image",
+            "The original image intensity",
+            "Noise power spectrum",
+            "Image resolution"
+        ],
+        "answer": "The distortion or blurring introduced to the image"
+    },
+    {
+        "question": "What is the main goal when comparing restoration techniques?",
+        "options": [
+            "Finding a balance between noise suppression and detail preservation",
+            "Maximizing compression",
+            "Increasing image brightness",
+            "Reducing image size"
+        ],
+        "answer": "Finding a balance between noise suppression and detail preservation"
     }
 ]
