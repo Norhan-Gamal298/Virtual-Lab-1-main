@@ -19,7 +19,8 @@ const __dirname = path.dirname(__filename);
 // Initialize Express App
 const app = express();
 const PORT = 8080;
-
+const multer = require('multer');
+const upload = multer({ dest: 'uploads/' });
 // Middleware Setup
 app.use(cors()); // Enable Cross-Origin Resource Sharing
 app.use(express.json()); // Parse incoming JSON requests
@@ -841,19 +842,54 @@ app.get("/api/docs/:topicId", async (req, res) => {
   }
 });
 
+
+// Add this endpoint for saving markdown content
+app.put("/api/topics/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { title, chapterId, content } = req.body;
+
+    const chapterIdNum = parseInt(chapterId, 10);
+
+    // First update the markdown file
+    const topic = await Topic.findOne({ topicId: id });
+    if (topic && topic.markdownPath) {
+      const fullPath = path.join(__dirname, topic.markdownPath);
+      fs.writeFileSync(fullPath, content);
+    }
+
+    // Then update database record
+    const updated = await Topic.findOneAndUpdate(
+      { topicId: id },
+      { title, chapterId: chapterIdNum, content },
+      { new: true }
+    );
+
+    res.json(updated);
+  } catch (err) {
+    res.status(500).json({ error: "Failed to update topic" });
+  }
+});
+
+
 // Fetch all topics/chapters from the database
+// Update the /api/topics endpoint
 app.get("/api/topics", async (req, res) => {
   try {
     const topics = await Topic.find({}, { "images.data": 0, "video.data": 0 });
 
-    // Group topics by chapterTitle
-    const chaptersMap = {};
+    // Group topics by chapterId and chapterTitle
+    const chaptersMap = new Map();
     topics.forEach((topic) => {
-      const chapterTitle = topic.chapterTitle || "Other";
-      if (!chaptersMap[chapterTitle]) {
-        chaptersMap[chapterTitle] = [];
+      const key = `${topic.chapterId}-${topic.chapterTitle}`;
+      if (!chaptersMap.has(key)) {
+        chaptersMap.set(key, {
+          chapterId: topic.chapterId,
+          chapterTitle: topic.chapterTitle,
+          topics: [],
+        });
       }
-      chaptersMap[chapterTitle].push({
+      chaptersMap.get(key).topics.push({
         id: topic.topicId,
         title: topic.title,
         markdownPath: topic.markdownPath,
@@ -862,15 +898,102 @@ app.get("/api/topics", async (req, res) => {
       });
     });
 
-    // Convert to array format
-    const chapters = Object.entries(chaptersMap).map(([chapter, topics]) => ({
-      chapter,
-      topics,
-    }));
+    // Convert to array and sort by chapterId
+    const chapters = Array.from(chaptersMap.values()).sort((a, b) => a.chapterId - b.chapterId);
 
     res.json(chapters);
   } catch (err) {
     res.status(500).json({ error: "Failed to fetch topics" });
+  }
+});
+
+
+
+app.post("/api/chapters", async (req, res) => {
+  try {
+    const { chapterId, chapterTitle } = req.body;
+    // Create a placeholder topic when creating a new chapter
+    const topicId = `chapter_${chapterId}_1_placeholder`;
+    const newTopic = new Topic({
+      chapterId,
+      chapterTitle,
+      topicId,
+      title: "New Topic",
+      markdownPath: `/docs/chapter_${chapterId}/placeholder.md`,
+    });
+    await newTopic.save();
+    res.status(201).json({ chapterId, chapterTitle });
+  } catch (err) {
+    res.status(500).json({ error: "Failed to create chapter" });
+  }
+});
+
+app.put("/api/chapters/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { chapterTitle } = req.body;
+
+    // Convert to number
+    const chapterId = parseInt(id, 10);
+
+    await Topic.updateMany(
+      { chapterId },
+      { $set: { chapterTitle } }
+    );
+
+    res.json({ chapterId, chapterTitle });
+  } catch (err) {
+    res.status(500).json({ error: "Failed to update chapter" });
+  }
+});
+
+// Topic CRUD Endpoints
+app.post(
+  "/api/topics",
+  upload.fields([
+    { name: "video", maxCount: 1 },
+    { name: "images", maxCount: 10 },
+  ]),
+  async (req, res) => {
+    try {
+      const { chapterId, chapterTitle, topicId, title, markdownPath } = req.body;
+      const videoFile = req.files["video"]?.[0];
+      const imageFiles = req.files["images"] || [];
+
+      // You can optionally move the uploaded files, rename them, or store their paths
+      const videoPath = videoFile ? videoFile.path : null;
+      const imagePaths = imageFiles.map(file => file.path); // array of paths
+
+      const newTopic = new Topic({
+        chapterId,
+        chapterTitle,
+        topicId,
+        title,
+        markdownPath,
+        videoPath,
+        imagePaths, // Optional: add this to your schema if needed
+      });
+
+      await newTopic.save();
+      res.status(201).json(newTopic);
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ error: "Failed to create topic" });
+    }
+  }
+);
+
+app.delete("/api/topics/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    if (!id) return res.status(400).json({ error: "Topic ID is required" });
+
+    const result = await Topic.findOneAndDelete({ topicId: id });
+    if (!result) return res.status(404).json({ error: "Topic not found" });
+
+    res.status(204).send();
+  } catch (err) {
+    res.status(500).json({ error: "Failed to delete topic" });
   }
 });
 
@@ -909,6 +1032,30 @@ app.get("/api/video/:topicId", async (req, res) => {
     console.error("Error serving video:", err);
     res.status(500).send("Internal server error");
   }
+});
+
+
+
+
+// Add this to server.js
+const ensureDirectoryExistence = (filePath) => {
+  const dirname = path.dirname(filePath);
+  if (fs.existsSync(dirname)) return true;
+  ensureDirectoryExistence(dirname);
+  fs.mkdirSync(dirname);
+};
+
+// Update topic saving to handle files
+topicSchema.pre("save", function (next) {
+  if (this.isModified("markdownPath")) {
+    const fullPath = path.join(__dirname, this.markdownPath);
+    ensureDirectoryExistence(fullPath);
+
+    if (!fs.existsSync(fullPath)) {
+      fs.writeFileSync(fullPath, this.content || "# New Topic");
+    }
+  }
+  next();
 });
 
 // ---------------- Start Express Server ---------------- //
