@@ -1,11 +1,11 @@
 [
     {
-        "chapter": "Introduction to Image Processing",
+        "chapter": "Chapter 1 Introduction to Image Processing",
         "topics": [
             {
                 "id": "chapter_1_1_what_is_image_processing",
                 "title": "What is Image Processing",
-                "path": "Chapter 1 - Introduction to Image Processing/1.1 What is Image Processing.md"
+                "path": "Chapter 1 Introduction to Image Processing1.1-What-is-Image-Processing.md"
             },
             {
                 "id": "chapter_1_2_types_of_image_processing",

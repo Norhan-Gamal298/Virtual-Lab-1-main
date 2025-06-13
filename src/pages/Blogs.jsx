@@ -1,9 +1,18 @@
+import { useEffect, useState } from "react";
 import { Link } from 'react-router-dom';
-import { motion } from 'framer-motion'; // import motion
-import blogsData from '../../public/blogs/blogs.json';
+import { motion } from 'framer-motion';
 import { CgProfile } from "react-icons/cg";
 
 export default function Blogs() {
+    const [blogsData, setBlogsData] = useState([]);
+
+    useEffect(() => {
+        fetch("http://localhost:8080/api/blogs")
+            .then(res => res.json())
+            .then(data => setBlogsData(data))
+            .catch(() => setBlogsData([]));
+    }, []);
+
     const formatPostTime = (createdAt) => {
         const now = new Date();
         const postDate = new Date(createdAt);

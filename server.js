@@ -6,7 +6,15 @@ import cors from "cors";
 import dotenv from "dotenv";
 import bodyParser from "body-parser";
 import jwt from "jsonwebtoken";
+import { Buffer } from "buffer";
+import fs from "fs";
+import path from "path";
+import nodemailer from "nodemailer";
+import crypto from "crypto";
+import { fileURLToPath } from "url";
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // Initialize Express App
 const app = express();
@@ -39,6 +47,8 @@ const userSchema = new mongoose.Schema({
   password: { type: String, required: true },
   role: { type: String, enum: ["user", "admin", "root"], default: "user" },
   isBlocked: { type: Boolean, default: false },
+  isVerified: { type: Boolean, default: false },
+  verificationToken: { type: String },
   createdAt: { type: Date, default: Date.now },
 });
 
@@ -80,6 +90,99 @@ const quizSchema = new mongoose.Schema({
 
 // Create Quiz Model
 const Quiz = mongoose.model("Quiz", quizSchema);
+
+// Topic Schema & Model
+const topicSchema = new mongoose.Schema(
+  {
+    chapterId: { type: Number, required: true },
+    chapterTitle: { type: String, required: true },
+    topicId: { type: String, required: true },
+    title: { type: String, required: true },
+    markdownPath: { type: String, required: true },
+    videoPath: { type: String },
+    images: [
+      {
+        filename: String,
+        data: Buffer,
+        contentType: String,
+      },
+    ],
+  },
+  { timestamps: true }
+);
+
+const Topic = mongoose.models.Topic || mongoose.model("Topic", topicSchema);
+
+// 1. Define the Blog schema
+const blogSchema = new mongoose.Schema({
+  id: { type: Number, required: true },
+  title: { type: String, required: true },
+  author: { type: String, required: true },
+  createdAt: { type: Date, required: true },
+  content: { type: String, required: true },
+  image: { type: String, required: true },
+});
+// 2. Create the Blog model
+const Blog = mongoose.model("Blog", blogSchema);
+
+// Create a new blog
+app.post("/api/blogs", async (req, res) => {
+  try {
+    const { title, author, content, image } = req.body;
+    if (!title || !author || !content) {
+      return res
+        .status(400)
+        .json({ error: "Title, author, and content are required" });
+    }
+    const blog = new Blog({
+      title,
+      author,
+      content,
+      image,
+      createdAt: new Date(),
+    });
+    await blog.save();
+    res.status(201).json(blog);
+  } catch (err) {
+    res.status(500).json({ error: "Failed to create blog" });
+  }
+});
+
+app.get("/api/blogs", async (req, res) => {
+  try {
+    const blogs = await Blog.find().sort({ createdAt: -1 });
+    res.json(blogs);
+  } catch (err) {
+    console.error("Error fetching blogs:", err);
+    res.status(500).json({ error: "Failed to fetch blogs" });
+  }
+});
+
+// Update an existing blog
+app.put("/api/blogs/:id", async (req, res) => {
+  try {
+    const { title, author, content, image } = req.body;
+    const blog = await Blog.findByIdAndUpdate(
+      req.params.id,
+      { title, author, content, image },
+      { new: true }
+    );
+    if (!blog) return res.status(404).json({ error: "Blog not found" });
+    res.json(blog);
+  } catch (err) {
+    res.status(500).json({ error: "Failed to update blog" });
+  }
+});
+
+app.get("/api/blogs/:id", async (req, res) => {
+  try {
+    const blog = await Blog.findOne({ id: Number(req.params.id) });
+    if (!blog) return res.status(404).json({ error: "Blog not found" });
+    res.json(blog);
+  } catch (err) {
+    res.status(500).json({ error: "Failed to fetch blog" });
+  }
+});
 
 // ---------------- Routes ---------------- //
 
@@ -237,78 +340,65 @@ app.patch("/api/admin/users/:id/block", adminAuth, async (req, res) => {
   }
 });
 
-// Add this to your server.js
-// Add this with your other routes in server.js
-/* app.post('/api/admin/login', async (req, res) => {
-  const { email, password } = req.body;
-
-  try {
-    // 1. Find user by email
-    const user = await User.findOne({ email });
-    if (!user) {
-      return res.status(401).json({ error: "Invalid credentials" });
-    }
-
-    // 2. Check password
-    const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) {
-      return res.status(401).json({ error: "Invalid credentials" });
-    }
-
-    // 3. Verify admin role
-    if (!['admin', 'root'].includes(user.role)) {
-      return res.status(403).json({ error: "Admin privileges required" });
-    }
-
-    // 4. Create JWT token
-    const token = jwt.sign(
-      {
-        id: user._id,
-        email: user.email,
-        role: user.role
-      },
-      process.env.JWT_SECRET,
-      { expiresIn: '1h' }
-    );
-
-    // 5. Send response
-    res.json({
-      user: {
-        id: user._id,
-        firstName: user.firstName,
-        lastName: user.lastName,
-        email: user.email,
-        role: user.role
-      },
-      token
-    });
-
-  } catch (error) {
-    console.error('Admin login error:', error);
-    res.status(500).json({ error: "Internal server error" });
-  }
-}); */
-
 // Sign-Up Route
 app.post("/api/register", async (req, res) => {
   const { firstName, lastName, email, password } = req.body;
   try {
+    const verificationToken = crypto.randomBytes(32).toString("hex");
+
     console.log("Signup request received:", req.body);
 
     // Create and save new user
-    const user = new User({ firstName, lastName, email, password });
+    const user = new User({
+      firstName,
+      lastName,
+      email,
+      password,
+      verificationToken,
+      isVerified: false,
+    });
     await user.save();
 
-    console.log("User created successfully:", user);
-    res.status(201).json({
-      user: {
-        id: user._id,
-        firstName: user.firstName,
-        lastName: user.lastName,
-        email: user.email,
+    // Send verification email
+    const transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: process.env.GMAIL_USER, // your gmail address
+        pass: process.env.GMAIL_PASS, // your gmail app password
       },
-      token: "dummy-token", // Replace with real token (JWT) later
     });
+    const verifyUrl = `http://localhost:8080/api/verify-email?token=${verificationToken}&email=${email}`;
+    await transporter.sendMail({
+      from: process.env.GMAIL_USER,
+      to: email,
+      subject: "Please verify your email address",
+      html: `
+        <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
+        <h2>Welcome to virtual Lab!</h2>
+        <p>Thank you for signing up. We're excited to have you on board.</p>
+        <p>To complete your registration and activate your account, please verify your email address by clicking the button below:</p>
+        <p style="text-align: center; margin: 30px 0;">
+        <a href="${verifyUrl}" style="background-color: #4CAF50; color: white; padding: 12px 20px; text-decoration: none; border-radius: 5px; display: inline-block;">Verify Email</a>
+      </p>
+        <p>If the button above doesn't work, you can also verify your email by copying and pasting the following link into your browser:</p>
+        <p style="word-break: break-all;"><a href="${verifyUrl}">${verifyUrl}</a></p>
+      <hr>
+        <p style="font-size: 0.9em; color: #777;">If you did not create an account with virtual Lab, please disregard this message.</p>
+        <p style="font-size: 0.9em; color: #777;">This verification link will expire in 24 hours for your security.</p>
+      </div>
+`,
+    });
+
+    console.log("User created successfully:", user);
+    // res.status(201).json({
+    //   user: {
+    //     id: user._id,
+    //     firstName: user.firstName,
+    //     lastName: user.lastName,
+    //     email: user.email,
+    //   },
+    //   token: "dummy-token", // Replace with real token (JWT) later
+    // });
   } catch (err) {
     console.error("Error during signup:", err);
     if (err.code === 11000) {
@@ -316,6 +406,23 @@ app.post("/api/register", async (req, res) => {
     } else {
       res.status(500).json({ error: "Internal server error" });
     }
+  }
+});
+
+// Email Verification Route
+app.get("/api/verify-email", async (req, res) => {
+  const { token, email } = req.query;
+  try {
+    const user = await User.findOne({ email, verificationToken: token });
+    if (!user) {
+      return res.status(400).send("Invalid verification link.");
+    }
+    user.isVerified = true;
+    user.verificationToken = undefined;
+    await user.save();
+    res.send("Email verified successfully! You can now log in.");
+  } catch (error) {
+    res.status(500).send("Server error.");
   }
 });
 
@@ -346,6 +453,12 @@ app.post("/api/signin", async (req, res) => {
       { expiresIn: "1h" }
     );
 
+    if (!user.isVerified) {
+      return res
+        .status(403)
+        .json({ error: "Please verify your email before logging in." });
+    }
+
     res.status(200).json({
       user: {
         id: user._id,
@@ -358,6 +471,87 @@ app.post("/api/signin", async (req, res) => {
     });
   } catch (error) {
     console.error("Error during signin:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+//reset password request route
+app.post("/api/request-reset-password", async (req, res) => {
+  const { email } = req.body;
+  try {
+    const user = await User.findOne({ email });
+    if (!user) return res.status(404).json({ error: "User not found" });
+
+    // Generate reset token
+    const resetToken = crypto.randomBytes(32).toString("hex");
+    user.verificationToken = resetToken;
+    await user.save();
+
+    // Send reset email
+    const transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: process.env.GMAIL_USER,
+        pass: process.env.GMAIL_PASS,
+      },
+    });
+
+    const resetUrl = `http://localhost:5173/reset-password?token=${resetToken}&email=${email}`;
+    await transporter.sendMail({
+      from: process.env.GMAIL_USER,
+      to: email,
+      subject: "Reset your password",
+      html: `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 30px; background-color: #f9f9f9; border: 1px solid #ddd; border-radius: 8px;">
+        <h2 style="color: #333;">Reset Your Password</h2>
+        <p style="font-size: 16px; color: #555;">
+          You recently requested to reset your password for your Virtual Lab account. Click the button below to proceed:
+        </p>
+        <div style="text-align: center; margin: 30px 0;">
+        <a href="${resetUrl}" style="padding: 12px 24px; background-color: #007BFF; color: #ffffff; text-decoration: none; border-radius: 6px; font-weight: bold; display: inline-block;">
+        Reset Password
+        </a>
+        </div>
+        <p style="font-size: 14px; color: #555;">
+         Or copy and paste the following link into your browser if the button doesn't work:
+        </p>
+        <p style="word-break: break-all; color: #007BFF;">${resetUrl}</p>
+        <hr style="margin: 40px 0; border: none; border-top: 1px solid #eee;">
+        <p style="font-size: 13px; color: #999;">
+          If you didn’t request a password reset, you can safely ignore this email—your password will not be changed.
+        </p>
+        <p style="font-size: 13px; color: #999;">
+          This link will expire in 30 minutes for your security.
+        </p>
+        <p style="font-size: 13px; color: #999;">
+          Need help? Contact our support team or reply to this email.
+        </p>
+      </div>
+  `,
+    });
+
+    res.json({ message: "Password reset email sent." });
+  } catch (error) {
+    console.error("Error in password reset request:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+// Reset Password Route
+app.post("/api/reset-password", async (req, res) => {
+  const { email, token, newPassword } = req.body;
+  try {
+    const user = await User.findOne({ email, verificationToken: token });
+    if (!user)
+      return res.status(400).json({ error: "Invalid or expired token" });
+
+    user.password = newPassword;
+    user.verificationToken = undefined;
+    await user.save();
+
+    res.json({ message: "Password reset successful. You can now log in." });
+  } catch (error) {
+    console.error("Error resetting password:", error);
     res.status(500).json({ error: "Internal server error" });
   }
 });
@@ -602,6 +796,99 @@ app.get("/api/quizzes/:chapterId", async (req, res) => {
     res.json(questions);
   } catch (error) {
     res.status(500).json({ error: "Failed to fetch quiz questions" });
+  }
+});
+
+// Fetch markdown content for a topic by topicId
+app.get("/api/docs/:topicId", async (req, res) => {
+  try {
+    const { topicId } = req.params;
+
+    const topic = await Topic.findOne({ topicId });
+    if (!topic) {
+      return res.status(404).send("Topic not found");
+    }
+    const mdFullPath = path.join(__dirname, topic.markdownPath);
+
+    if (!fs.existsSync(mdFullPath)) {
+      return res.status(404).send("Markdown file not found");
+    }
+
+    const markdown = fs.readFileSync(mdFullPath, "utf-8");
+    res.type("text/markdown").send(markdown);
+  } catch (err) {
+    console.error("Error fetching markdown:", err);
+    res.status(500).send("Internal server error");
+  }
+});
+
+// Fetch all topics/chapters from the database
+app.get("/api/topics", async (req, res) => {
+  try {
+    const topics = await Topic.find({}, { "images.data": 0, "video.data": 0 });
+
+    // Group topics by chapterTitle
+    const chaptersMap = {};
+    topics.forEach((topic) => {
+      const chapterTitle = topic.chapterTitle || "Other";
+      if (!chaptersMap[chapterTitle]) {
+        chaptersMap[chapterTitle] = [];
+      }
+      chaptersMap[chapterTitle].push({
+        id: topic.topicId,
+        title: topic.title,
+        markdownPath: topic.markdownPath,
+        videoPath: topic.videoPath || null,
+        images: topic.images || [],
+      });
+    });
+
+    // Convert to array format
+    const chapters = Object.entries(chaptersMap).map(([chapter, topics]) => ({
+      chapter,
+      topics,
+    }));
+
+    res.json(chapters);
+  } catch (err) {
+    res.status(500).json({ error: "Failed to fetch topics" });
+  }
+});
+
+app.get("/api/image/:topicId/:filename", async (req, res) => {
+  try {
+    const { topicId, filename } = req.params;
+    const topic = await Topic.findOne({ topicId });
+
+    if (!topic || !topic.images) return res.status(404).send("Image not found");
+
+    const image = topic.images.find((img) => img.filename === filename);
+    if (!image) return res.status(404).send("Image file not found");
+
+    res.set("Content-Type", image.contentType);
+    res.send(image.data);
+  } catch (err) {
+    console.error("Error serving image:", err);
+    res.status(500).send("Internal server error");
+  }
+});
+
+app.get("/api/video/:topicId", async (req, res) => {
+  try {
+    const { topicId } = req.params;
+    const topic = await Topic.findOne({ topicId });
+
+    if (!topic || !topic.videoPath)
+      return res.status(404).send("Video not found");
+
+    const videoFullPath = path.join(__dirname, topic.videoPath);
+    if (!fs.existsSync(videoFullPath))
+      return res.status(404).send("Video file not found");
+
+    res.sendFile(videoFullPath);
+  } catch (err) {
+    console.error("Error serving video:", err);
+    res.status(500).send("Internal server error");
   }
 });
 

@@ -148,13 +148,13 @@
 }
 
 
-.dark .navLogo {
+/* .dark .navLogo {
   filter: none;
 }
 
 .navLogo {
   filter: invert(1);
-}
+} */
 
 @plugin "@tailwindcss/typography";
 
@@ -716,15 +716,7 @@ pre {
 }
 
 
-.heroSection img {
-  position: absolute;
-  height: 100%;
-  width: 100%;
-  z-index: -1;
-  object-fit: cover;
-  opacity: 0.4;
-  animation: background-pulse 4s alternate infinite;
-}
+
 
 @keyframes background-pulse {
   0% {
@@ -739,11 +731,9 @@ pre {
 
 .heroSection a {
   position: relative;
-  width: 120px;
-  height: 40px;
+
   overflow: hidden;
   display: flex;
-  border-radius: 6px;
   justify-content: center;
   align-items: center;
   transition: 0.3s ease-in-out;
@@ -751,9 +741,7 @@ pre {
 }
 
 
-.heroSection a:hover {
-  
-}
+
 
 
 .heroSection button a {
@@ -794,10 +782,6 @@ pre {
 
 .ink-trap {
   display: inline-block;
-}
-
-.nexusItem {
-  opacity: 0.4;
 }
 
 
@@ -1208,6 +1192,22 @@ pre {
 }
 
 
+.logoImgIntro {
+  max-width: 100%;
+  height: auto;
+  filter: hue-rotate(35deg);
+  width: 1860px;
+  transition: opacity 0.7s ease-in-out;
+}
+
+.image-wrapper {
+  position: relative;
+  width: 100%;
+  height: 400px; /* Adjust this height based on your image size */
+  z-index: 1;
+}
+
+
 
 
 @layer utilities {
@@ -1218,4 +1218,240 @@ pre {
   .lightBtn {
     @apply bg-[##fbfbfb] py-[16px] px-[16px] rounded-[12px] border border-[#3B3B3B] hover:bg-[#3B3B3B] cursor-pointer transition
   }
+}
+
+
+
+.gradient-bg-light, .gradient-bg-dark {
+  margin: auto;
+  width: 98%;
+  height: 395px;
+  border-top-left-radius: 44px;
+  border-top-right-radius: 44px;
+  position: absolute;
+  z-index: 0;
+  top: -3rem;
+  justify-self: anchor-center;
+  transition: opacity 0.8s ease-in-out;
+}
+
+.gradient-bg-light {
+  background: radial-gradient(89.99% 120.37% at 50% 100%, transparent 7%, transparent 53.53%, #531CB2 71.34%, #6836EE 80.65%, #CFBFFA 99.83%);
+  opacity: 1;
+}
+
+.gradient-bg-dark {
+  background: radial-gradient(89.99% 120.37% at 50% 100%, transparent 7%, transparent 53.53%, #531CB2 71.34%, #6836EE 80.65%, #CFBFFA 99.83%);
+  opacity: 0;
+}
+
+.dark .gradient-bg-light {
+  opacity: 0;
+}
+
+.dark .gradient-bg-dark {
+  opacity: 1;
+}
+
+@keyframes glowPulse {
+  0% {
+    box-shadow: 0px 0px 81px 2px #6525D3;
+    opacity: 0.8;
+  }
+  50% {
+    box-shadow: 0px 0px 120px 5px #7C3AED;
+    opacity: 1;
+  }
+  100% {
+    box-shadow: 0px 0px 81px 2px #6525D3;
+    opacity: 0.8;
+  }
+}
+
+.dark .featuresDivider {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  width: 90%;
+  margin-left: auto;
+  margin-right: auto;
+  height: 1px;
+  border: none;
+  background: linear-gradient(90deg, #0F0F0F 0%, #7C3AED 50%, #0F0F0F 100%);
+  box-shadow: 0px 0px 81px 2px #6525D3;
+  opacity: 1;
+  transition: all 0.3s ease-in-out;
+  animation: glowPulse 3s ease-in-out infinite;
+}
+
+.featuresDivider {
+  opacity: 0;
+}
+
+
+
+
+/* ******************End******************* */
+
+
+@layer utilities {
+.textTitleSection {
+  @apply font-black text-4xl md:text-7xl uppercase leading-[0.82] tracking-tighter;
+}
+
+.textCaptionBtn {
+  @apply font-bold text-xs md:text-sm uppercase tracking-wider;
+}
+
+.nexusItem {
+  --content-height: 6rem;
+  @apply opacity-40 transition-all duration-500;
+}
+
+.nexusItem.active {
+  @apply opacity-100 py-4 md:py-6;
+}
+
+.nexusItem__header {
+  @apply flex items-end h-4 pl-12 relative cursor-pointer;
+}
+
+.nexusItem__number {
+  @apply absolute left-0 bottom-0 text-xs font-mono;
+}
+
+.nexusItem__title {
+  @apply text-xs md:text-sm font-mono uppercase tracking-wider relative;
+}
+
+.nexusItem.active .nexusItem__title {
+  @apply text-xl md:text-2xl font-medium leading-[0.7] md:leading-[0.5] tracking-tighter normal-case;
+}
+
+.nexusItem__content {
+  @apply overflow-hidden transition-all duration-500;
+  max-height: 0;
+}
+
+.nexusItem.active .nexusItem__content {
+  max-height: var(--content-height, 10rem);
+}
+
+.nexusItem__contentInner {
+  @apply relative py-4;
+}
+
+.nexusItem__progress {
+  @apply absolute left-0 top-0 bottom-0 w-px bg-gray-300;
+}
+
+.nexusItem__progressBar {
+  @apply absolute top-0 left-0 w-full h-full bg-black origin-top;
+  transform: scaleY(0);
+}
+
+.nexusItem__description {
+  @apply text-xs md:text-sm opacity-0 pl-4 transition-opacity duration-500;
+}
+
+.nexusItem.active .nexusItem__description {
+  @apply opacity-100;
+}
+
+/* Button styles */
+.btnMain {
+  @apply relative overflow-hidden px-6 py-3 rounded-full;
+}
+
+.btnMain__text {
+  @apply relative inline-block;
+}
+
+.btnMain__text .rollover {
+  @apply absolute top-0 left-0 w-full h-full;
+}
+
+.btnMain__shape {
+  @apply absolute inset-0 -z-10;
+}
+
+.btnMain__shapeIcon {
+  @apply w-full h-full;
+}
+
+.btnMain__shapePath {
+  @apply fill-current;
+}
+
+/* Layout adjustments */
+@media (min-width: 768px) {
+  .nexusItem__progress {
+    @apply top-8 w-0.5;
+  }
+  
+  .nexusItem__description {
+    @apply pt-8 w-64;
+  }
+}
+
+/* Animation helper classes */
+.perspectiveTransition {
+  perspective: 1000px;
+}
+
+.perspectiveTransition__content {
+  transform-style: preserve-3d;
+  will-change: transform, opacity;
+}
+
+}
+
+
+/* Base state with smooth transition */
+.topicBlockIcon {
+  background: linear-gradient(180deg, #2F2864 0%, #0E0B27 100%);
+  border: 1.5px solid #3E3764;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Create a pseudo-element for the hover gradient */
+.topicBlockIcon::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(146.47% 137.3% at 49.21% 125.4%, #0F0F0F 48.14%, #47169B 69.1%, #5434E2 83.33%, #9CBDFF 100%);
+  opacity: 0;
+  transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: inherit;
+}
+
+/* Ensure the icon stays on top */
+.topicBlockIcon img {
+  position: relative;
+  z-index: 1;
+}
+
+/* Hover state using group hover */
+.group:hover .topicBlockIcon::before {
+  opacity: 1;
+}
+
+/* Alternative approach using direct hover if you prefer */
+.topicBlockIconHover::before {
+  opacity: 1;
+}
+
+/* Optional: Add a subtle transform for extra smoothness */
+.topicBlockIcon img {
+  transform: translateZ(0); /* Enable hardware acceleration */
+  will-change: background; /* Hint to browser about upcoming changes */
+}
+
+/* Additional smooth hover effects */
+.group:hover .topicBlockIcon img {
+  transform: translateZ(0) scale(1.02);
 }

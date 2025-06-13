@@ -11,7 +11,8 @@ import QuizPage from "./pages/QuizPage";
 import TerminalPage from "./pages/TerminalPage";
 import BlogDetail from "./components/BlogDetail";
 import Blogs from "./pages/Blogs";
-
+import ResetPassword from "./pages/ResetPassword";
+import BlogsLayout from "./layout/BlogsLayout";
 // Admin imports
 import AdminLayout from "./layout/AdminLayout";
 import AdminDashboard from "./pages/admin/Dashboard";
@@ -33,18 +34,26 @@ function App() {
         <Route path="/community" element={<Community />} />
         <Route path="/about" element={<About />} />
         <Route path="/docs/*" element={<DocsLayout />}>
-          <Route path=":topicId" element={<MarkdownPage />} />
+          <Route index element={<MarkdownPage />} /> {/* This catches /docs */}
+          <Route path=":topicId" element={<MarkdownPage />} />{" "}
+          {/* This catches /docs/specific-topic */}
         </Route>
+
         <Route path="/quizzes" element={<QuizListPage />} />
         <Route path="/quizzes/:chapterId" element={<QuizPage />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/terminal-page" element={<TerminalPage />} />
         <Route path="/blogs" element={<Blogs />} />
+        <Route path="/blogs" element={<BlogsLayout />}>
+          <Route index element={<Blogs />} />
+          <Route path=":id" element={<BlogDetail />} />
+        </Route>
         <Route path="/blogs/:id" element={<BlogDetail />} />
       </Route>
 
       {/* Admin login (public) */}
       <Route path="/admin/login" element={<AdminLogin />} />
+      <Route path="/reset-password" element={<ResetPassword />} />
 
       {/* Protected admin routes */}
       <Route
@@ -72,6 +81,3 @@ function App() {
 }
 
 export default App;
-
-
-
