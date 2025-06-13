@@ -32,7 +32,6 @@ const Profile = () => {
                     <ProfileHeader user={user} />
                     <hr className='border-[#98989840] mt-[4rem] mb-[2rem]' />
                     <PersonalInfo user={user} />
-                    <Bio />
                 </div>
             )}
 

@@ -69,7 +69,7 @@ const PasswordTab = () => {
     }
   };
   return (
-    <div className="passwordTab bg-[#1a1a1a] p-6 w-140 text-white rounded-[20px]">
+    <div className="passwordTab shadow-lg dark:bg-[#1a1a1a] p-6 w-140 dark:text-white rounded-[20px] transition-all duration-300">
       <h2 className="text-xl font-semibold mb-4">Change Password</h2>
       {error && <p className="text-red-500 text-sm mb-3">{error}</p>}
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
@@ -79,7 +79,7 @@ const PasswordTab = () => {
             type={showPassword ? "text" : "password"}
             value={currentPassword}
             onChange={(e) => setCurrentPassword(e.target.value)}
-            className="w-128 bg-[#252525] border border-gray-700 rounded-lg p-2 text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+            className="w-128 dark:bg-[#252525] border border-gray-700 rounded-lg p-2 dark:text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
             required
           />
         </div>
@@ -89,7 +89,7 @@ const PasswordTab = () => {
             type={showPassword ? "text" : "password"}
             value={newPassword}
             onChange={(e) => setNewPassword(e.target.value)}
-            className="w-128 bg-[#252525] border border-gray-700 rounded-lg p-2 text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+            className="w-128 dark:bg-[#252525] border border-gray-700 rounded-lg p-2 dark:text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
             required
           />
         </div>
@@ -99,7 +99,7 @@ const PasswordTab = () => {
             type={showPassword ? "text" : "password"}
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
-            className="w-128 bg-[#252525] border border-gray-700 rounded-lg p-2 text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+            className="w-128 dark:bg-[#252525] border border-gray-700 rounded-lg p-2 dark:text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
             required
           />
           <button

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { MdKeyboardArrowRight } from "react-icons/md"; // Icon for arrow buttons
 import { FiCheckCircle } from "react-icons/fi"; // Icon for completed topics
 import rookieBadge from "../assets/rookie-badge.jpg"; // Badge image
-import { Link } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 // Component: UserAchievements
 // Displays user progress, completed topics, and quiz results
 const UserAchievements = () => {
@@ -12,10 +12,47 @@ const UserAchievements = () => {
   const [chapters, setChapters] = useState([]); // Store all chapters and topics
   const [topicProgress, setTopicProgress] = useState({}); // User's completion status for each topic
   const [completedTopicsCount, setCompletedTopicsCount] = useState(0); // Total number of completed topics
-
+  const navigate = useNavigate();
+  const location = useLocation();
   // Get user email from localStorage (assumes user info is stored after login)
   const user = JSON.parse(localStorage.getItem("user"));
   const email = user?.email;
+
+  const handleDocsClick = async () => {
+    try {
+      const response = await fetch("http://localhost:8080/api/topics");
+      if (!response.ok) throw new Error("Failed to fetch topics");
+      const data = await response.json();
+
+      const sortedChapters = [...data].sort((a, b) => {
+        const numA = parseInt(a.chapter?.match(/^\d+/)?.[0] || "0", 10);
+        const numB = parseInt(b.chapter?.match(/^\d+/)?.[0] || "0", 10);
+        return numA - numB;
+      });
+
+      const allTopics = sortedChapters.flatMap((chapter) =>
+        [...chapter.topics].sort((a, b) => {
+          const getParts = (t) => {
+            const match = t.id.match(/^chapter_(\d+)_(\d+)_(\d+)_/);
+            return match
+              ? [parseInt(match[1]), parseInt(match[2]), parseInt(match[3])]
+              : [0, 0, 0];
+          };
+          const [a1, a2, a3] = getParts(a);
+          const [b1, b2, b3] = getParts(b);
+          return a1 - b1 || a2 - b2 || a3 - b3;
+        })
+      );
+
+      if (allTopics.length > 0) {
+        navigate(`/docs/${allTopics[0].id}`);
+      } else {
+        alert("No topics available.");
+      }
+    } catch (error) {
+      console.error("Error loading docs:", error);
+    }
+  };
 
   // Fetch chapters and user progress when the component mounts
   useEffect(() => {
@@ -40,9 +77,9 @@ const UserAchievements = () => {
         // Ensure the progress is in the correct format
         const progress = Array.isArray(data)
           ? data.reduce((acc, topic) => {
-              acc[topic.id] = topic.completed; // Map topic.id to its completed status
-              return acc;
-            }, {})
+            acc[topic.id] = topic.completed; // Map topic.id to its completed status
+            return acc;
+          }, {})
           : data;
 
         setTopicProgress(progress);
@@ -100,9 +137,9 @@ const UserAchievements = () => {
   return (
     <div className="flex flex-col py-4">
       {/* Achievements Card */}
-      <div className="userAchievements bg-[#1a1a1a] p-6 w-200 text-white flex h-[max-content] items-center gap-[1rem] justify-between rounded-[20px]">
+      <div className="userAchievements shadow-lg dark:bg-[#1a1a1a] p-6 w-auto dark:text-white flex h-[max-content] items-center gap-[1rem] justify-between rounded-[20px]">
         {/* Learning Progress Section */}
-        <div className="learnProgressSection w-[80%] p-6 rounded-lg shadow-lg">
+        <div className="learnProgressSection w-[80%] p-6 rounded-lg ">
           <h2 className="text-lg font-semibold">Your Achievements</h2>
           <p className="text-sm mt-1 text-gray-400">
             Completed {completedTopicsCount} topics across{" "}
@@ -118,15 +155,14 @@ const UserAchievements = () => {
             <div
               className="absolute top-0 left-0 h-[20px] bg-purple-500 rounded-full"
               style={{
-                width: `${
-                  (Object.keys(topicProgress).filter((id) => topicProgress[id])
-                    .length /
-                    chapters.reduce(
-                      (total, chapter) => total + chapter.topics.length,
-                      0
-                    )) *
-                    100 || 0
-                }%`,
+                width: `${(Object.keys(topicProgress).filter((id) => topicProgress[id])
+                  .length /
+                  chapters.reduce(
+                    (total, chapter) => total + chapter.topics.length,
+                    0
+                  )) *
+                  100 || 0
+                  }%`,
               }}
             ></div>
           </div>
@@ -137,7 +173,7 @@ const UserAchievements = () => {
 
           {/* Continue Learning Button */}
           <Link
-            to="/docs/chapter_1_1_what_is_image_processing"
+            onClick={handleDocsClick}
             className="mt-4 flex items-center gap-2 px-4 py-2 border-3 border-[#252525] rounded-lg hover:bg-gray-700 transition"
           >
             Continue learning <MdKeyboardArrowRight size={20} />
@@ -157,7 +193,7 @@ const UserAchievements = () => {
       </div>
 
       {/* Completed Topics Section */}
-      <div className="progressCard mt-6 bg-[#1a1a1a] p-6 rounded-[20px] shadow-lg">
+      <div className="progressCard mt-6 shadow-lg dark:bg-[#1a1a1a] p-6 rounded-[20px] shadow-lg">
         <h2 className="text-lg font-semibold mb-4">Completed Topics</h2>
         {chapters.map((chapter) => {
           const completedTopics = chapter.topics.filter(
@@ -195,7 +231,7 @@ const UserAchievements = () => {
       </div>
 
       {/* Solved Quizzes Section */}
-      <div className="quizzesCard mt-6 bg-[#1a1a1a] p-6 rounded-[20px] shadow-lg">
+      <div className="quizzesCard mt-6 shadow-lg dark:bg-[#1a1a1a] p-6 rounded-[20px] shadow-lg">
         <h2 className="text-lg font-semibold mb-4">Solved Quizzes</h2>
         {quizzes.map((quiz) => (
           <div
@@ -208,8 +244,11 @@ const UserAchievements = () => {
               <p className="text-[#878787] py-1">
                 You got {quiz.score * 10}% correct
               </p>
-              <button className="mt-2 px-4 py-2 border-3 border-[#252525] text-sm rounded-md hover:bg-gray-700 flex items-center gap-2">
-                Review your answers
+              <button
+                className="mt-2 px-4 py-2 border-3 border-[#252525] text-sm rounded-md hover:bg-gray-700 flex items-center gap-2"
+                onClick={() => navigate(`/quizzes/${quiz.quizId.replace('chapter', '')}`)} // Navigate to quiz page
+              >
+                Retake the quiz
                 <MdKeyboardArrowRight />
               </button>
             </div>
