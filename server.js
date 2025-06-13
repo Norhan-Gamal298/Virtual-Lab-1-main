@@ -789,13 +789,32 @@ app.post("/api/notes", async (req, res) => {
   }
 });
 // ---------------- Quiz Fetch Route ---------------- //
+// app.get("/api/quizzes/:chapterId", async (req, res) => {
+//   try {
+//     const chapterId = parseInt(req.params.chapterId, 10);
+//     const questions = await Quiz.find({ chapterId });
+//     res.json(questions);
+//   } catch (error) {
+//     res.status(500).json({ error: "Failed to fetch quiz questions" });
+//   }
+// });
+
+app.get("/api/quizzes", async (req, res) => {
+  try {
+    const quizzes = await Quiz.find();
+    res.json(quizzes);
+  } catch (err) {
+    res.status(500).json({ error: "Failed to fetch quizzes" });
+  }
+});
+
+// Get all questions for a chapter
 app.get("/api/quizzes/:chapterId", async (req, res) => {
   try {
-    const chapterId = parseInt(req.params.chapterId, 10);
-    const questions = await Quiz.find({ chapterId });
+    const questions = await Quiz.find({ chapterId: req.params.chapterId });
     res.json(questions);
-  } catch (error) {
-    res.status(500).json({ error: "Failed to fetch quiz questions" });
+  } catch (err) {
+    res.status(500).json({ error: "Failed to fetch questions" });
   }
 });
 

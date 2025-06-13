@@ -45,33 +45,31 @@ const Quiz = ({ chapterId }) => {
   }, [startTime, isSubmitted]);
 
   useEffect(() => {
-    // Fetch questions when the component mounts or when chapterId changes
     const fetchQuestions = async () => {
       setIsLoading(true);
       setError(null);
 
       try {
-        // First, try to fetch topics.json to get the chapter title
         let chapterTitle = `Chapter ${chapterId}`;
         try {
-          const topicsResponse = await fetch("/topics.json");
+          const topicsResponse = await fetch(
+            `http://localhost:8080/api/topics/${chapterId}`
+          );
           if (topicsResponse.ok) {
-            const topicsData = await topicsResponse.json();
-            const chapter = topicsData.find(
-              (_, index) => index + 1 === parseInt(chapterId)
-            );
-            if (chapter) {
-              chapterTitle = chapter.chapter;
+            const chapterData = await topicsResponse.json();
+            if (chapterData && chapterData.chapter) {
+              chapterTitle = chapterData.chapter;
             }
           }
         } catch (topicsError) {
-          console.warn("Could not fetch topics data:", topicsError);
+          console.warn("Could not fetch chapter data:", topicsError);
         }
-
         setQuizTitle(chapterTitle);
 
-        // Fetch the quiz questions JSON file based on the chapterId
-        const response = await fetch(`/quizzes/chapter${chapterId}.json`);
+        // ✅ Fetch from backend (MongoDB)
+        const response = await fetch(
+          `http://localhost:8080/api/quizzes/${chapterId}`
+        );
 
         if (!response.ok) {
           throw new Error(
@@ -82,10 +80,10 @@ const Quiz = ({ chapterId }) => {
         const data = await response.json();
 
         if (!Array.isArray(data) || data.length === 0) {
-          throw new Error("No questions found in the quiz data");
+          throw new Error("No questions found in the database");
         }
 
-        // Shuffle the questions randomly and pick the first 10 (or all if less than 10)
+        // Shuffle and limit to 10 questions
         const shuffled = data
           .sort(() => 0.5 - Math.random())
           .slice(0, Math.min(10, data.length));
