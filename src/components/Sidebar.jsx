@@ -1,13 +1,16 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
-import { FiChevronDown, FiChevronRight, FiCircle, FiCheckCircle } from "react-icons/fi";
+import { FiChevronDown, FiChevronRight, FiCircle, FiCheckCircle, FiEye, FiEyeOff } from "react-icons/fi";
 import { TbLayoutSidebarRightCollapse, TbLayoutSidebarLeftCollapse } from "react-icons/tb";
 import { useSelector } from "react-redux";
 
 export default function Sidebar() {
   const [chapters, setChapters] = useState([]);
   const [expanded, setExpanded] = useState({});
+  const [topicContentExpanded, setTopicContentExpanded] = useState({});
+  const [topicContents, setTopicContents] = useState({});
+  const [loadingContent, setLoadingContent] = useState({});
   const [sidebarCollapsed, setSidebarCollapsed] = useState(true);
   const [activeTab, setActiveTab] = useState("chapters");
   const { user, topicProgress } = useSelector((state) => state.auth);
@@ -44,6 +47,34 @@ export default function Sidebar() {
     }
   };
 
+  const fetchTopicContent = async (topicId) => {
+    if (topicContents[topicId]) return; // Already loaded
+
+    setLoadingContent(prev => ({ ...prev, [topicId]: true }));
+    try {
+      const response = await fetch(`http://localhost:8080/api/topics/${topicId}/content`);
+      if (response.ok) {
+        const content = await response.text();
+        setTopicContents(prev => ({ ...prev, [topicId]: content }));
+      } else {
+        console.error(`Failed to load content for topic ${topicId}`);
+      }
+    } catch (error) {
+      console.error(`Error loading content for topic ${topicId}:`, error);
+    } finally {
+      setLoadingContent(prev => ({ ...prev, [topicId]: false }));
+    }
+  };
+
+  const toggleTopicContent = (topicId) => {
+    const isExpanded = topicContentExpanded[topicId];
+    setTopicContentExpanded(prev => ({ ...prev, [topicId]: !isExpanded }));
+
+    if (!isExpanded && !topicContents[topicId]) {
+      fetchTopicContent(topicId);
+    }
+  };
+
   const getTopicStatusIcon = (topicId) => {
     if (!user) return null;
     return topicProgress && topicProgress[topicId] ? (
@@ -55,8 +86,8 @@ export default function Sidebar() {
 
   return (
     <aside
-      className={`markdownSidebar transition-all duration-900 ease-in-out
-        ${sidebarCollapsed ? "w-[50px]" : "w-[380px] bg-neutral-surface"} 
+      className={`markdownSidebar transition-all duration-300 ease-in-out
+        ${sidebarCollapsed ? "w-[50px]" : "w-[450px] bg-neutral-surface"} 
         pb-[3rem] text-neutral-text-primary dark:text-neutral-text-primary sticky z-40`}
     >
       <div className="sidebarViewport overflow-auto">
@@ -64,7 +95,7 @@ export default function Sidebar() {
           <div className="flex p-2">
             <button
               onClick={() => setSidebarCollapsed(prev => !prev)}
-              className="p-1 bg-neutral-surface hover:bg-neutral-surface border-2 border-neutral-border rounded-lg transition"
+              className="p-1 bg-neutral-surface hover:bg-neutral-surface-hover border-2 border-neutral-border rounded-lg transition"
               title={sidebarCollapsed ? "Expand Sidebar" : "Collapse Sidebar"}
             >
               {sidebarCollapsed ? <TbLayoutSidebarRightCollapse size={30} /> : <TbLayoutSidebarLeftCollapse size={30} />}
@@ -96,106 +127,139 @@ export default function Sidebar() {
               {activeTab === "chapters" && (
                 <nav>
                   <ul className="space-y-2 pr-2 pl-[12px]">
-  {chapters
-    // Sort chapters by leading number (chapterId or number in chapter name)
-    .sort((a, b) => {
-      // Prefer chapterId if present, else extract number from chapter name
-      const numA = a.chapterId || parseInt(a.chapter.match(/\d+/)?.[0] || "0", 10);
-      const numB = b.chapterId || parseInt(b.chapter.match(/\d+/)?.[0] || "0", 10);
-      return numA - numB;
-    })
-    .map((chapter) => (
-      <li key={chapter.chapter}>
-        <div
-          onClick={() => toggleChapter(chapter)}
-          className="cursor-pointer font-semibold hover:bg-neutral-background p-2 rounded-lg flex justify-between items-center"
-        >
-          <motion.span
-            className="select-none overflow-hidden text-ellipsis w-full"
-            initial={{ opacity: 0, x: 0 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -10 }}
-            transition={{ duration: 0.25 }}
-          >
-            {chapter.chapter}
-          </motion.span>
-          <span>
-            {expanded[chapter.chapter]
-              ? <FiChevronDown size={18} />
-              : <FiChevronRight size={18} />}
-          </span>
-        </div>
+                    {chapters
+                      .sort((a, b) => a.chapterId - b.chapterId)
+                      .map((chapter) => (
+                        <li key={chapter.chapter}>
+                          <div
+                            onClick={() => toggleChapter(chapter)}
+                            className={`cursor-pointer font-semibold p-2 rounded-lg flex justify-between items-center transition
+                              ${expanded[chapter.chapter] ? 'bg-neutral-background-hover' : 'hover:bg-neutral-background-hover'}`}
+                          >
+                            <motion.span
+                              className="select-none overflow-hidden text-ellipsis w-full"
+                              initial={{ opacity: 0, x: 0 }}
+                              animate={{ opacity: 1, x: 0 }}
+                              exit={{ opacity: 0, x: -10 }}
+                              transition={{ duration: 0.25 }}
+                            >
+                              {chapter.chapter}
+                            </motion.span>
+                            <span>
+                              {expanded[chapter.chapter]
+                                ? <FiChevronDown size={18} />
+                                : <FiChevronRight size={18} />}
+                            </span>
+                          </div>
 
-        <AnimatePresence initial={false}>
-          {expanded[chapter.chapter] && (
-            <motion.div
-              key={chapter.chapter}
-              initial={{ height: 0, opacity: 0 }}
-              animate={{ height: "auto", opacity: 0.9 }}
-              exit={{ height: 0, opacity: 0 }}
-              transition={{ duration: 0.2, ease: "easeInOut" }}
-              className="overflow-hidden"
-            >
-              <motion.ul
-                className="ml-4 mt-2 space-y-1"
-                initial="hidden"
-                animate="visible"
-                exit="exit"
-                variants={{
-                  visible: {
-                    transition: {
-                      staggerChildren: 0.10,
-                      when: "beforeChildren"
-                    }
-                  },
-                  exit: {
-                    transition: {
-                      staggerChildren: 0.03,
-                      staggerDirection: -1
-                    }
-                  }
-                }}
-              >
-                {chapter.topics
-                  // Filter out topics whose title ends with ".0" (e.g. "9.0")
-                  .filter(topic => !/^\d+\.0(\D|$)/.test(topic.title))
-                  // Sort topics by the number in their title, e.g. "9.1", "9.2", ...
-                  .sort((a, b) => {
-                    // Extract the number after the chapter, e.g. "9.1" => 1
-                    const numA = parseFloat(a.title.match(/^\d+\.(\d+)/)?.[0] || "0");
-                    const numB = parseFloat(b.title.match(/^\d+\.(\d+)/)?.[0] || "0");
-                    return numA - numB;
-                  })
-                  .map((topic) => {
-                    const isActive = location.pathname === `/docs/${topic.id}`;
-                    return (
-                      <motion.li
-                        key={topic.id}
-                        variants={{
-                          hidden: { opacity: 0, x: -20 },
-                          visible: { opacity: 1, x: 0 },
-                          exit: { opacity: 0, x: -20 }
-                        }}
-                        transition={{ duration: 0.2 }}
-                      >
-                        <Link
-                          to={`/docs/${topic.id}`}
-                          className={`block px-2 py-1 rounded-lg transition ${isActive ? "bg-neutral-background" : "hover:bg-neutral-background"} flex items-center`}
-                          style={{ whiteSpace: "normal", overflow: "visible", textOverflow: "unset" }}
-                        >
-                          {getTopicStatusIcon(topic.id)}
-                          <span>{topic.title}</span>
-                        </Link>
-                      </motion.li>
-                    );
-                  })}
-              </motion.ul>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </li>
-    ))}
-</ul>
+                          <AnimatePresence initial={false}>
+                            {expanded[chapter.chapter] && (
+                              <motion.div
+                                key={chapter.chapter}
+                                initial={{ height: 0, opacity: 0 }}
+                                animate={{ height: "auto", opacity: 1 }}
+                                exit={{ height: 0, opacity: 0 }}
+                                transition={{ duration: 0.2, ease: "easeInOut" }}
+                                className="overflow-hidden"
+                              >
+                                <motion.ul
+                                  className="ml-4 mt-2 space-y-1"
+                                  initial="hidden"
+                                  animate="visible"
+                                  exit="exit"
+                                  variants={{
+                                    visible: {
+                                      transition: {
+                                        staggerChildren: 0.10,
+                                        when: "beforeChildren"
+                                      }
+                                    },
+                                    exit: {
+                                      transition: {
+                                        staggerChildren: 0.03,
+                                        staggerDirection: -1
+                                      }
+                                    }
+                                  }}
+                                >
+                                  {chapter.topics
+                                    .filter(topic => !/^\d+\.0(\D|$)/.test(topic.title))
+                                    .sort((a, b) => {
+                                      const numA = parseFloat(a.title.match(/^\d+\.(\d+)/)?.[0] || "0");
+                                      const numB = parseFloat(b.title.match(/^\d+\.(\d+)/)?.[0] || "0");
+                                      return numA - numB;
+                                    })
+                                    .map((topic) => {
+                                      const isActive = location.pathname === `/docs/${topic.id}`;
+                                      const isContentExpanded = topicContentExpanded[topic.id];
+                                      const isLoading = loadingContent[topic.id];
+
+                                      return (
+                                        <motion.li
+                                          key={topic.id}
+                                          variants={{
+                                            hidden: { opacity: 0, x: -20 },
+                                            visible: { opacity: 1, x: 0 },
+                                            exit: { opacity: 0, x: -20 }
+                                          }}
+                                          transition={{ duration: 0.2 }}
+                                        >
+                                          <div className={`block px-3 py-2 rounded-lg transition-all duration-200 
+                                              ${isActive
+                                              ? 'font-medium border-primary bg-[#dfdfdf] dark:bg-[#353535]'
+                                              : 'hover:text-neutral-text-primary hover:bg-[#dfdfdf] hover:dark:bg-[#353535]'}`}>
+
+                                            {/* Topic Title Row */}
+                                            <div className="flex items-center justify-between">
+                                              <Link
+                                                to={`/docs/${topic.id}`}
+                                                className="items-center flex flex-1"
+                                              >
+                                                {getTopicStatusIcon(topic.id)}
+                                                <span className="topicSidebarTitle">{topic.title}</span>
+                                              </Link>
+
+
+                                            </div>
+
+                                            {/* Topic Content */}
+                                            <AnimatePresence>
+                                              {isContentExpanded && (
+                                                <motion.div
+                                                  initial={{ height: 0, opacity: 0 }}
+                                                  animate={{ height: "auto", opacity: 1 }}
+                                                  exit={{ height: 0, opacity: 0 }}
+                                                  transition={{ duration: 0.2 }}
+                                                  className="overflow-hidden mt-2"
+                                                >
+                                                  <div className="bg-gray-50 dark:bg-gray-800 p-3 rounded text-sm max-h-60 overflow-y-auto">
+                                                    {isLoading ? (
+                                                      <div className="text-gray-500">Loading content...</div>
+                                                    ) : topicContents[topic.id] ? (
+                                                      <div
+                                                        className="prose prose-sm max-w-none dark:prose-invert"
+                                                        dangerouslySetInnerHTML={{
+                                                          __html: topicContents[topic.id]
+                                                        }}
+                                                      />
+                                                    ) : (
+                                                      <div className="text-gray-500">No content available</div>
+                                                    )}
+                                                  </div>
+                                                </motion.div>
+                                              )}
+                                            </AnimatePresence>
+                                          </div>
+                                        </motion.li>
+                                      );
+                                    })}
+                                </motion.ul>
+                              </motion.div>
+                            )}
+                          </AnimatePresence>
+                        </li>
+                      ))}
+                  </ul>
                 </nav>
               )}
             </div>

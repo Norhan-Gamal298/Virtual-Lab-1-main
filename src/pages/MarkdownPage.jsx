@@ -201,9 +201,44 @@ export default function MarkdownPage() {
             <div className="max-w-none markdownContent">
               {loading ? (
                 <div className="space-y-6 animate-pulse">
-                  <div className="h-8 bg-neutral-surface rounded w-3/4"></div>
-                  <div className="h-4 bg-neutral-surface rounded w-5/6"></div>
-                  <div className="h-64 bg-neutral-surface rounded-lg"></div>
+                  {/* Title skeleton */}
+                  <div className="h-8 dark:bg-[#353535] rounded w-3/4 bg-[#dfdfdf]"></div>
+
+                  {/* Paragraph skeletons */}
+                  <div className="space-y-3">
+                    <div className="h-4 dark:bg-[#353535] rounded w-full bg-[#dfdfdf]"></div>
+                    <div className="h-4 dark:bg-[#353535] rounded w-5/6 bg-[#dfdfdf]"></div>
+                    <div className="h-4 dark:bg-[#353535] rounded w-4/6 bg-[#dfdfdf]"></div>
+                    <div className="h-4 dark:bg-[#353535] rounded w-5/6 bg-[#dfdfdf]"></div>
+                  </div>
+
+                  {/* Code block skeleton */}
+                  <div className="h-64 dark:bg-[#353535] rounded-lg bg-[#dfdfdf]"></div>
+
+                  {/* Subheading skeleton */}
+                  <div className="h-6 dark:bg-[#353535] rounded w-1/2 bg-[#dfdfdf] mt-8"></div>
+
+                  {/* List skeletons */}
+                  <div className="space-y-2 pl-6">
+                    <div className="h-4 dark:bg-[#353535] rounded w-4/6 bg-[#dfdfdf]"></div>
+                    <div className="dark:bg-[#353535] rounded w-3/6 bg-[#dfdfdf]"></div>
+                    <div className="h-4 dark:bg-[#353535] rounded w-5/6 bg-[#dfdfdf]"></div>
+                  </div>
+
+                  {/* Image skeleton */}
+                  <div className="h-48 dark:bg-[#353535] rounded-lg mt-6 bg-[#dfdfdf]"></div>
+
+                  {/* Another paragraph */}
+                  <div className="space-y-3 mt-6">
+                    <div className="h-4 dark:bg-[#353535] rounded w-full bg-[#dfdfdf]"></div>
+                    <div className="h-4 dark:bg-[#353535] rounded w-2/3 bg-[#dfdfdf]"></div>
+                  </div>
+
+                  {/* Table skeleton */}
+                  <div className="mt-6">
+                    <div className="h-8 dark:bg-[#353535] rounded-t-lg bg-[#dfdfdf]"></div>
+                    <div className="h-32 dark:bg-[#353535] rounded-b-lg bg-[#dfdfdf]"></div>
+                  </div>
                 </div>
               ) : (
                 <ReactMarkdown
@@ -267,7 +302,7 @@ export default function MarkdownPage() {
                         (t) => t.id === topicId
                       );
                       if (!currentTopic) return null;
-                      
+
 
                       // Extract filename from src (e.g., "grayscale.png")
                       const filename = src.split("/").pop(); // in case it's "photos/grayscale.png"

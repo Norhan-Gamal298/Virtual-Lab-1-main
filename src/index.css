@@ -505,6 +505,11 @@ button {
   text-overflow: ellipsis;
 }
 
+.topicSidebarTitle{
+  word-break: break-word;
+
+}
+
 .sidebar nav {
   scrollbar-width: thin;
   overflow-x: hidden;

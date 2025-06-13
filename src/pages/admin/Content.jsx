@@ -236,7 +236,7 @@ const Content = () => {
     const handleSaveChapter = async () => {
         try {
             const url = editingChapter
-                ? `/api/chapters/${editingChapter.id}`
+                ? `/api/chapters/${editingChapter.chapterId}`
                 : '/api/chapters';
 
             const method = editingChapter ? 'PUT' : 'POST';
