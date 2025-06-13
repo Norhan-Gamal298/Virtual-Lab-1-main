@@ -17,12 +17,12 @@ const AdminSidebar = () => {
     const navigate = useNavigate();
 
     const menuItems = [
-        {
+        /* {
             label: 'Dashboard',
             icon: <TbDashboard size={28} />,
             path: '/admin',
             exact: true
-        },
+        }, */
         {
             label: 'Users Management',
             icon: <TbUsers size={28} />,
@@ -50,7 +50,7 @@ const AdminSidebar = () => {
             icon: <TbNews size={28} />,
             path: '/admin/blogs'
         },
-        {
+        /* {
             label: 'Settings',
             icon: <TbSettings size={28} />,
             path: '/admin/settings'
@@ -59,7 +59,7 @@ const AdminSidebar = () => {
             label: 'Profile',
             icon: <TbUser size={28} />,
             path: '/admin/profile'
-        }
+        } */
     ];
 
     const isActive = (path, exact) => {

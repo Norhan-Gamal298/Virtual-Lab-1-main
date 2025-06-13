@@ -12,15 +12,14 @@ import path from "path";
 import nodemailer from "nodemailer";
 import crypto from "crypto";
 import { fileURLToPath } from "url";
-
+import multer from 'multer';
+const upload = multer({ dest: 'uploads/' });
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // Initialize Express App
 const app = express();
 const PORT = 8080;
-const multer = require('multer');
-const upload = multer({ dest: 'uploads/' });
 // Middleware Setup
 app.use(cors()); // Enable Cross-Origin Resource Sharing
 app.use(express.json()); // Parse incoming JSON requests
@@ -819,6 +818,62 @@ app.get("/api/quizzes/:chapterId", async (req, res) => {
   }
 });
 
+
+
+
+app.get("/api/quizs/all", async (req, res) => {
+  try {
+    const questions = await Quiz.find();
+    res.json(questions); // ✅ Send array directly
+  } catch (err) {
+    console.error("Error fetching quizzes:", err); // 🔍 Add this for debugging
+    res.status(500).json({ error: "Failed to fetch quiz questions" });
+  }
+});
+
+
+// POST add a new quiz question
+app.post("/api/quizs", async (req, res) => {
+  try {
+    const { chapterId, question, options, answer } = req.body;
+    if (!chapterId || !question || !options || !answer) {
+      return res.status(400).json({ error: "All fields are required" });
+    }
+    const quiz = new Quiz({ chapterId, question, options, answer });
+    await quiz.save();
+    res.status(201).json(quiz);
+  } catch (err) {
+    res.status(500).json({ error: "Failed to add question" });
+  }
+});
+
+// PUT update a quiz question
+app.put("/api/quizzes/:id", async (req, res) => {
+  try {
+    const { chapterId, question, options, answer } = req.body;
+    const quiz = await Quiz.findByIdAndUpdate(
+      req.params.id,
+      { chapterId, question, options, answer },
+      { new: true }
+    );
+    if (!quiz) return res.status(404).json({ error: "Question not found" });
+    res.json(quiz);
+  } catch (err) {
+    res.status(500).json({ error: "Failed to update question" });
+  }
+});
+
+// DELETE a quiz question
+app.delete("/api/quizzes/:id", async (req, res) => {
+  try {
+    const quiz = await Quiz.findByIdAndDelete(req.params.id);
+    if (!quiz) return res.status(404).json({ error: "Question not found" });
+    res.json({ message: "Question deleted" });
+  } catch (err) {
+    res.status(500).json({ error: "Failed to delete question" });
+  }
+});
+
 // Fetch markdown content for a topic by topicId
 app.get("/api/docs/:topicId", async (req, res) => {
   try {
@@ -873,7 +928,7 @@ app.put("/api/topics/:id", async (req, res) => {
 
 
 // Fetch all topics/chapters from the database
-// Update the /api/topics endpoint
+// Updated /api/topics endpoint
 app.get("/api/topics", async (req, res) => {
   try {
     const topics = await Topic.find({}, { "images.data": 0, "video.data": 0 });
@@ -885,7 +940,7 @@ app.get("/api/topics", async (req, res) => {
       if (!chaptersMap.has(key)) {
         chaptersMap.set(key, {
           chapterId: topic.chapterId,
-          chapterTitle: topic.chapterTitle,
+          chapter: topic.chapterTitle, // Changed from chapterTitle to chapter
           topics: [],
         });
       }
@@ -899,7 +954,9 @@ app.get("/api/topics", async (req, res) => {
     });
 
     // Convert to array and sort by chapterId
-    const chapters = Array.from(chaptersMap.values()).sort((a, b) => a.chapterId - b.chapterId);
+    const chapters = Array.from(chaptersMap.values()).sort(
+      (a, b) => a.chapterId - b.chapterId
+    );
 
     res.json(chapters);
   } catch (err) {

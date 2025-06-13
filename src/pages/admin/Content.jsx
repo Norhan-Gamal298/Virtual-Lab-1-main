@@ -176,6 +176,7 @@ const Content = () => {
     }, []);
 
     // Update loadData function
+    // Updated loadData function
     const loadData = async () => {
         try {
             setLoading(true);
@@ -184,20 +185,21 @@ const Content = () => {
 
             const data = await response.json();
 
-            // Ensure all chapters have required fields
-            const chapterList = data.map((ch, index) => ({
-                id: ch.chapterId ? `chapter-${ch.chapterId}` : `chapter-${index}-${Date.now()}`,
-                title: ch.chapterTitle || 'Untitled Chapter',
-                order: ch.chapterId || index + 1
+            // Create chapter list directly from API response
+            const chapterList = data.map(ch => ({
+                id: `chapter-${ch.chapterId}`,
+                chapterId: ch.chapterId,
+                title: ch.chapter,  // Use 'chapter' property instead of 'chapterTitle'
+                order: ch.chapterId
             })).sort((a, b) => a.order - b.order);
 
-            // Ensure all topics have required fields
-            const allTopics = data.flatMap((ch, chIndex) =>
-                ch.topics.map((t, tIndex) => ({
+            // Create topics list
+            const allTopics = data.flatMap(ch =>
+                ch.topics.map(t => ({
                     ...t,
-                    id: t.id || `topic-${chIndex}-${tIndex}-${Date.now()}`,
+                    id: t.id,
                     chapterId: ch.chapterId,
-                    chapterTitle: ch.chapterTitle,
+                    chapterTitle: ch.chapter,  // Use 'chapter' property
                     title: t.title || 'Untitled Topic',
                     videoPath: t.videoPath || null,
                     images: t.images || []
