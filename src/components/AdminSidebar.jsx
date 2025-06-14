@@ -8,6 +8,7 @@ import { logout } from '../features/auth/authSlice';
 import { FiChevronDown, FiChevronRight } from "react-icons/fi";
 import { FiMoon, FiSun } from "react-icons/fi";
 import { useTheme } from "../ThemeProvider";
+import { PiExamFill } from "react-icons/pi";
 
 
 const AdminSidebar = () => {
@@ -57,7 +58,7 @@ const AdminSidebar = () => {
         },
         {
             label: 'Quizzes Management',
-            icon: <TbSettings size={28} />, // You can replace this with a quiz-related icon if you like
+            icon: <PiExamFill size={28} />, // You can replace this with a quiz-related icon if you like
             path: '/admin/quizzes'
         },
         /* {
