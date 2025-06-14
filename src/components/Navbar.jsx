@@ -21,6 +21,8 @@ const Navbar = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [completionRate, setCompletionRate] = useState(0);
+
   const isDocsPage = location.pathname.startsWith("/docs");
   const dropdownRef = useRef(null);
   // Get theme context
@@ -86,6 +88,41 @@ const Navbar = () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [showDropdown]);
+  useEffect(() => {
+    const user = JSON.parse(localStorage.getItem("user"));
+    const email = user?.email;
+
+    const fetchProgress = async () => {
+      try {
+        if (!email) return;
+
+        const [chaptersRes, progressRes] = await Promise.all([
+          fetch("http://localhost:8080/api/topics"),
+          fetch(`http://localhost:8080/api/user-progress/${email}`),
+        ]);
+
+        const chaptersData = await chaptersRes.json();
+        const progressData = await progressRes.json();
+
+        const totalTopics = chaptersData.reduce(
+          (total, chapter) => total + chapter.topics.length,
+          0
+        );
+
+        const completedCount = Array.isArray(progressData)
+          ? progressData.filter((t) => t.completed).length
+          : Object.values(progressData).filter(Boolean).length;
+
+        setCompletionRate(totalTopics ? (completedCount / totalTopics) * 100 : 0);
+      } catch (err) {
+        console.error("Failed to calculate user progress:", err);
+      }
+    };
+
+    fetchProgress();
+  }, []);
+
+
 
   return (
     <nav className="sticky top-0 left-0 right-0 z-50 bg-brand-background dark:bg-dark-brand-background border-neutral-border shadow-sm px-4 py-3 poppins-regular transition-colors duration-300 dark:border-dark-neutral-border">
@@ -141,9 +178,9 @@ const Navbar = () => {
                 transition={{ duration: 0.2 }}
               >
                 {isDark ? (
-                  <FiSun className="text-yellow-300" size={22} />
+                  <FiSun className="text-yellow-300" size={28} />
                 ) : (
-                  <FiMoon className="text-gray-700" size={22} />
+                  <FiMoon className="text-gray-700" size={28} />
                 )}
               </motion.div>
             </AnimatePresence>
@@ -157,7 +194,7 @@ const Navbar = () => {
             >
               <FiSearch
                 className="text-[#000] dark:text-[#fff] transition-colors duration-300"
-                size={22}
+                size={28}
               />
             </button>
           )}
@@ -166,13 +203,21 @@ const Navbar = () => {
             <div className="relative cursor-pointer" ref={dropdownRef}>
               <div
                 onClick={() => setShowDropdown(!showDropdown)}
-                className="flex items-center gap-2"
+                className="flex items-center"
               >
-                <img
-                  src={`${user.image || defaultAvatar}?v=${Date.now()}`}
-                  alt="User"
-                  className="w-12 h-12 rounded-lg bg-[#F5F7FA] dark:bg-[#1f1f1f] dark:border-[#3b3b3b] object-cover border border-neutral-border"
-                />
+                <div
+                  className="p-[4px] rounded-lg bg-white dark:bg-transparent transition-all duration-200"
+                  style={{
+                    background: `conic-gradient(#7c3aed ${completionRate}%, #303135 ${completionRate}%)`,
+                  }}
+                >
+                  <img
+                    src={`${user.image || defaultAvatar}?v=${Date.now()}`}
+                    alt="User"
+                    className="w-12 h-12 rounded-md object-cover border border-neutral-border bg-[#F5F7FA] dark:bg-[#1f1f1f] dark:border-[#3b3b3b] transition-all duration-200"
+                  />
+                </div>
+
                 <span className="font-medium hidden md:inline ">
                   {user.name}
                 </span>

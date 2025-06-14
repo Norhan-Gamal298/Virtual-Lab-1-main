@@ -102,7 +102,7 @@ const About = () => {
         }
     };
     return (
-        <div className="backgroundPatterns relative px-32 py-12 mx-auto">
+        <div className="backgroundPatterns relative px-32 py-12 mx-auto poppins-regular">
 
             {/* Hero Section */}
             <div className="flex items-center justify-between gap-12 mb-24">

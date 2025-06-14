@@ -4,6 +4,7 @@ import { FiCheckCircle } from "react-icons/fi";
 import rookieBadge from "../assets/rookie-badge.jpg";
 import { Link } from "react-router-dom";
 
+
 const UserAchievements = () => {
   const [quizzes, setQuizzes] = useState([]);
   const [animatedScores, setAnimatedScores] = useState({});
@@ -42,9 +43,9 @@ const UserAchievements = () => {
         const data = await response.json();
         const progress = Array.isArray(data)
           ? data.reduce((acc, topic) => {
-              acc[topic.id] = topic.completed;
-              return acc;
-            }, {})
+            acc[topic.id] = topic.completed;
+            return acc;
+          }, {})
           : data;
 
         setTopicProgress(progress);
@@ -114,15 +115,14 @@ const UserAchievements = () => {
             <div
               className="absolute top-0 left-0 h-[20px] bg-purple-500 rounded-full"
               style={{
-                width: `${
-                  (Object.keys(topicProgress).filter((id) => topicProgress[id])
-                    .length /
-                    chapters.reduce(
-                      (total, chapter) => total + chapter.topics.length,
-                      0
-                    )) *
-                    100 || 0
-                }%`,
+                width: `${(Object.keys(topicProgress).filter((id) => topicProgress[id])
+                  .length /
+                  chapters.reduce(
+                    (total, chapter) => total + chapter.topics.length,
+                    0
+                  )) *
+                  100 || 0
+                  }%`,
               }}
             ></div>
           </div>

@@ -202,7 +202,7 @@ export default function MarkdownPage() {
   };
 
   return (
-    <div className="docsLayoutContainer">
+    <div className="docsLayoutContainer poppins-regular">
       <div className="markdownMain">
         <div className="markdownContainer">
           <div className="flex flex-1 flex-col markdownContentContainer">
