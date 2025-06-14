@@ -169,7 +169,7 @@ export default function QuizQuestionsAdmin() {
                                         required
                                     />
                                 </div>
-                                <div>
+                                {/* <div>
                                     <label className="block text-sm font-medium text-slate-700 mb-2">
                                         Chapter Title
                                     </label>
@@ -180,7 +180,7 @@ export default function QuizQuestionsAdmin() {
                                         value={form.chapterTitle}
                                         onChange={handleChange}
                                     />
-                                </div>
+                                </div> */}
                             </div>
 
                             <div>
