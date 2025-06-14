@@ -6,6 +6,8 @@ import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { logout } from '../features/auth/authSlice';
 import { FiChevronDown, FiChevronRight } from "react-icons/fi";
+import { FiMoon, FiSun } from "react-icons/fi";
+import { useTheme } from "../ThemeProvider";
 
 
 const AdminSidebar = () => {
@@ -15,6 +17,9 @@ const AdminSidebar = () => {
     const location = useLocation();
     const dispatch = useDispatch();
     const navigate = useNavigate();
+    const { theme, toggleTheme } = useTheme();
+    const isDark = theme === "dark";
+
 
     const menuItems = [
         /* {
@@ -273,15 +278,51 @@ const AdminSidebar = () => {
                 </nav>
             </div>
 
-            {/* Logout Button */}
-            <div className="p-2 border-t border-gray-800">
+            <div className="p-2 border-t border-gray-800 flex flex-col">
                 <motion.button
-                    onClick={handleLogout}
-                    className={`flex items-center w-full p-2 rounded-lg justify-start  ${sidebarCollapsed ? 'justify-center' : ''}`}
+                    className={`p-[12px] rounded-lg bg-[#F5F7FA] dark:bg-[#1f1f1f] dark:border-[#3b3b3b] transition-colors duration-300 border border-neutral-border mb-[10px] flex ${sidebarCollapsed ? '' : ''}`}
+                    onClick={toggleTheme}
+                    aria-label={`Switch to ${isDark ? "light" : "dark"} mode`}
                     whileHover={{ backgroundColor: "#202323" }}
                     transition={hoverTransition}
                 >
-                    <span className="text-xl"><TbLogout size={28} /></span>
+                    <AnimatePresence mode="wait" initial={false}>
+                        <motion.div
+                            key={theme}
+                            initial={{ scale: 0.8, opacity: 0 }}
+                            animate={{ scale: 1, opacity: 1 }}
+                            exit={{ scale: 0.8, opacity: 0 }}
+                            transition={{ duration: 0.2 }}
+                        >
+                            {isDark ? (
+                                <FiSun className="text-yellow-300" size={22} />
+                            ) : (
+                                <FiMoon className="text-gray-700" size={22} />
+                            )}
+                        </motion.div>
+                    </AnimatePresence>
+                    <AnimatePresence>
+                        {!sidebarCollapsed && (
+                            <motion.span
+                                className="ml-2 text-sm whitespace-nowrap"
+                                initial="hidden"
+                                animate="visible"
+                                exit="exit"
+                                variants={itemVariants}
+                            >
+                                Switch mode
+                            </motion.span>
+                        )}
+                    </AnimatePresence>
+                </motion.button>
+
+                <motion.button
+                    onClick={handleLogout}
+                    className={`p-[12px] flex rounded-lg bg-[#F5F7FA] dark:bg-[#1f1f1f] dark:border-[#3b3b3b] transition-colors duration-300 border border-neutral-border ${sidebarCollapsed ? '' : ''}`}
+                    whileHover={{ backgroundColor: "#202323" }}
+                    transition={hoverTransition}
+                >
+                    <span className="text-xl"><TbLogout size={22} /></span>
                     <AnimatePresence>
                         {!sidebarCollapsed && (
                             <motion.span
