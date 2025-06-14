@@ -1,6 +1,14 @@
 import React from 'react'
 
 import about_img from "../assets/about_main_img.png"
+import ayaImg from "../assets/team/ayaImg.jpg"
+import mahmoudImg from "../assets/team/mahmoudImg.jpg"
+import martinImg from "../assets/team/martinImg.jpg"
+import omarImg from "../assets/team/omarImg.jpg"
+import yousefImg from "../assets/team/yousefImg.jpg"
+import norhanImg from "../assets/team/norhanImg.jpg"
+import ahmedImg from "../assets/team/ahmedImg.JPG"
+import sayedImg from "../assets/team/sayedImg.jpg"
 
 import { RxCode } from "react-icons/rx";
 import { LuPresentation } from "react-icons/lu";
@@ -12,41 +20,45 @@ const teamMembers = [
     {
         name: "Ahmed Omar",
         role: "Frontend Team",
+        image: ahmedImg,
     },
     {
         name: "Martin Maged",
         role: "Frontend Team",
+        image: martinImg,
     },
     {
         name: "Mohamed El-Sayed",
         role: "Frontend Team",
-    }
-    ,
+        image: sayedImg,
+    },
     {
         name: "Norhan Gamal",
         role: "Backend Team",
-    }
-    ,
+        image: norhanImg,
+    },
     {
         name: "Youssef Ahmed",
         role: "Backend Team",
-    }
-    ,
+        image: yousefImg,
+    },
     {
         name: "Omar Samir",
-        role: "Material Presenting",
-    }
-    ,
+        role: "Material Formatting",
+        image: omarImg,
+    },
     {
         name: "Mahmoud Ramadan",
-        role: "Material Presenting",
-    }
-    ,
+        role: "Material Formatting",
+        image: mahmoudImg,
+    },
     {
         name: "Aya Pasha",
-        role: "Backend Team",
+        role: "Material Formatting",
+        image: ayaImg,
     }
 ];
+
 
 const About = () => {
     return (
@@ -110,10 +122,17 @@ const About = () => {
                 <div className="grid grid-cols-4 gap-6">
                     {teamMembers.map((member, idx) => (
                         <div key={idx} className="bg-[#1e1f22] p-6 rounded-xl text-center">
-
+                            {member.image && (
+                                <img
+                                    src={member.image}
+                                    alt={member.name}
+                                    className="w-24 h-24 object-cover rounded-full mx-auto mb-4"
+                                />
+                            )}
                             <h3 className="text-lg text-white font-semibold">{member.name}</h3>
                             <p className="text-gray-500">{member.role}</p>
                         </div>
+
                     ))}
                 </div>
             </div>
