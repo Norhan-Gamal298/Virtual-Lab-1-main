@@ -1,68 +1,36 @@
 import React, { useState, useEffect } from "react";
-import { MdKeyboardArrowRight } from "react-icons/md"; // Icon for arrow buttons
-import { FiCheckCircle } from "react-icons/fi"; // Icon for completed topics
-import rookieBadge from "../assets/rookie-badge.jpg"; // Badge image
-import { Link, useNavigate, useLocation } from "react-router-dom";
-// Component: UserAchievements
-// Displays user progress, completed topics, and quiz results
+import { MdKeyboardArrowRight } from "react-icons/md";
+import { FiCheckCircle } from "react-icons/fi";
+import rookieBadge from "../assets/rookie-badge.jpg";
+import { Link } from "react-router-dom";
+
 const UserAchievements = () => {
-  // States
-  const [quizzes, setQuizzes] = useState([]); // Store quizzes fetched from backend
-  const [animatedScores, setAnimatedScores] = useState({}); // For animated quiz progress
-  const [chapters, setChapters] = useState([]); // Store all chapters and topics
-  const [topicProgress, setTopicProgress] = useState({}); // User's completion status for each topic
-  const [completedTopicsCount, setCompletedTopicsCount] = useState(0); // Total number of completed topics
-  const navigate = useNavigate();
-  const location = useLocation();
-  // Get user email from localStorage (assumes user info is stored after login)
+  const [quizzes, setQuizzes] = useState([]);
+  const [animatedScores, setAnimatedScores] = useState({});
+  const [chapters, setChapters] = useState([]);
+  const [topicProgress, setTopicProgress] = useState({});
+  const [completedTopicsCount, setCompletedTopicsCount] = useState(0);
+
   const user = JSON.parse(localStorage.getItem("user"));
   const email = user?.email;
 
-  const handleDocsClick = async () => {
-    try {
-      const response = await fetch("http://localhost:8080/api/topics");
-      if (!response.ok) throw new Error("Failed to fetch topics");
-      const data = await response.json();
-
-      const sortedChapters = [...data].sort((a, b) => {
-        const numA = parseInt(a.chapter?.match(/^\d+/)?.[0] || "0", 10);
-        const numB = parseInt(b.chapter?.match(/^\d+/)?.[0] || "0", 10);
-        return numA - numB;
-      });
-
-      const allTopics = sortedChapters.flatMap((chapter) =>
-        [...chapter.topics].sort((a, b) => {
-          const getParts = (t) => {
-            const match = t.id.match(/^chapter_(\d+)_(\d+)_(\d+)_/);
-            return match
-              ? [parseInt(match[1]), parseInt(match[2]), parseInt(match[3])]
-              : [0, 0, 0];
-          };
-          const [a1, a2, a3] = getParts(a);
-          const [b1, b2, b3] = getParts(b);
-          return a1 - b1 || a2 - b2 || a3 - b3;
-        })
-      );
-
-      if (allTopics.length > 0) {
-        navigate(`/docs/${allTopics[0].id}`);
-      } else {
-        alert("No topics available.");
-      }
-    } catch (error) {
-      console.error("Error loading docs:", error);
-    }
-  };
-
-  // Fetch chapters and user progress when the component mounts
+  // FETCH CHAPTERS AND TOPICS DYNAMICALLY FROM BACKEND
   useEffect(() => {
-    // Fetch chapters/topics from static file
-    fetch("/topics.json")
+    fetch("http://localhost:8080/api/topics")
       .then((res) => res.json())
-      .then((data) => setChapters(data))
+      .then((data) => {
+        // Re-map the API response to match expected format
+        const formattedChapters = data.map((chapter) => ({
+          chapter: chapter.chapterTitle,
+          topics: chapter.topics,
+        }));
+        setChapters(formattedChapters);
+      })
       .catch((err) => console.error("Failed to load topics:", err));
+  }, []);
 
-    // Fetch user progress from the backend
+  // FETCH USER PROGRESS
+  useEffect(() => {
     const fetchUserProgress = async () => {
       try {
         if (!email) throw new Error("Email is missing");
@@ -72,20 +40,17 @@ const UserAchievements = () => {
         if (!response.ok) throw new Error("Failed to fetch user progress");
 
         const data = await response.json();
-        console.log("Fetched user progress:", data);
-
-        // Ensure the progress is in the correct format
         const progress = Array.isArray(data)
           ? data.reduce((acc, topic) => {
-            acc[topic.id] = topic.completed; // Map topic.id to its completed status
-            return acc;
-          }, {})
+              acc[topic.id] = topic.completed;
+              return acc;
+            }, {})
           : data;
 
         setTopicProgress(progress);
         setCompletedTopicsCount(
           Object.keys(progress).filter((id) => progress[id]).length
-        ); // Calculate total completed topics
+        );
       } catch (error) {
         console.error("Error fetching user progress:", error);
       }
@@ -93,12 +58,10 @@ const UserAchievements = () => {
 
     if (email) {
       fetchUserProgress();
-    } else {
-      console.error("Email is missing. Please log in again.");
     }
   }, [email]);
 
-  // Fetch quizzes results when email is available
+  // FETCH QUIZ RESULTS
   useEffect(() => {
     const fetchQuizResults = async () => {
       try {
@@ -108,8 +71,7 @@ const UserAchievements = () => {
         if (!response.ok) throw new Error("Failed to fetch quiz results");
 
         const data = await response.json();
-        console.log("Fetched quiz results:", data);
-        setQuizzes(data); // Store quizzes
+        setQuizzes(data);
       } catch (error) {
         console.error("Error fetching quiz results:", error);
       }
@@ -120,26 +82,24 @@ const UserAchievements = () => {
     }
   }, [email]);
 
-  // Animate the score circles after quizzes are fetched
+  // Animate scores
   useEffect(() => {
     const timeout = setTimeout(() => {
       setAnimatedScores(
         quizzes.reduce((acc, quiz) => {
-          acc[quiz._id] = quiz.score; // Store scores using quiz MongoDB _id
+          acc[quiz._id] = quiz.score;
           return acc;
         }, {})
       );
-    }, 100); // Delay for smooth animation
-
-    return () => clearTimeout(timeout); // Clean up the timeout
+    }, 100);
+    return () => clearTimeout(timeout);
   }, [quizzes]);
 
   return (
     <div className="flex flex-col py-4">
       {/* Achievements Card */}
-      <div className="userAchievements shadow-lg dark:bg-[#1a1a1a] p-6 w-auto dark:text-white flex h-[max-content] items-center gap-[1rem] justify-between rounded-[20px]">
-        {/* Learning Progress Section */}
-        <div className="learnProgressSection w-[80%] p-6 rounded-lg ">
+      <div className="userAchievements bg-[#1a1a1a] p-6 w-200 text-white flex h-[max-content] items-center gap-[1rem] justify-between rounded-[20px]">
+        <div className="learnProgressSection w-[80%] p-6 rounded-lg shadow-lg">
           <h2 className="text-lg font-semibold">Your Achievements</h2>
           <p className="text-sm mt-1 text-gray-400">
             Completed {completedTopicsCount} topics across{" "}
@@ -150,19 +110,19 @@ const UserAchievements = () => {
             topics
           </p>
 
-          {/* Progress Bar */}
           <div className="relative w-[80%] bg-gray-700 h-[20px] rounded-full mt-2">
             <div
               className="absolute top-0 left-0 h-[20px] bg-purple-500 rounded-full"
               style={{
-                width: `${(Object.keys(topicProgress).filter((id) => topicProgress[id])
-                  .length /
-                  chapters.reduce(
-                    (total, chapter) => total + chapter.topics.length,
-                    0
-                  )) *
-                  100 || 0
-                  }%`,
+                width: `${
+                  (Object.keys(topicProgress).filter((id) => topicProgress[id])
+                    .length /
+                    chapters.reduce(
+                      (total, chapter) => total + chapter.topics.length,
+                      0
+                    )) *
+                    100 || 0
+                }%`,
               }}
             ></div>
           </div>
@@ -171,16 +131,14 @@ const UserAchievements = () => {
             You're <span className="font-bold text-yellow-400">Rookie</span> now
           </p>
 
-          {/* Continue Learning Button */}
           <Link
-            onClick={handleDocsClick}
+            to="/docs/chapter_1_1_what_is_image_processing"
             className="mt-4 flex items-center gap-2 px-4 py-2 border-3 border-[#252525] rounded-lg hover:bg-gray-700 transition"
           >
             Continue learning <MdKeyboardArrowRight size={20} />
           </Link>
         </div>
 
-        {/* Achievement Badge */}
         <div className="achievementUserBadge">
           <div className="userBadge relative">
             <img
@@ -192,8 +150,8 @@ const UserAchievements = () => {
         </div>
       </div>
 
-      {/* Completed Topics Section */}
-      <div className="progressCard mt-6 shadow-lg dark:bg-[#1a1a1a] p-6 rounded-[20px] shadow-lg">
+      {/* Completed Topics */}
+      <div className="progressCard mt-6 bg-[#1a1a1a] p-6 rounded-[20px] shadow-lg">
         <h2 className="text-lg font-semibold mb-4">Completed Topics</h2>
         {chapters.map((chapter) => {
           const completedTopics = chapter.topics.filter(
@@ -222,7 +180,6 @@ const UserAchievements = () => {
           );
         })}
 
-        {/* Message if no user is logged in */}
         {!user && (
           <div className="text-gray-400 text-sm mt-4">
             Sign in to track your learning progress
@@ -230,33 +187,27 @@ const UserAchievements = () => {
         )}
       </div>
 
-      {/* Solved Quizzes Section */}
-      <div className="quizzesCard mt-6 shadow-lg dark:bg-[#1a1a1a] p-6 rounded-[20px] shadow-lg">
+      {/* Solved Quizzes */}
+      <div className="quizzesCard mt-6 bg-[#1a1a1a] p-6 rounded-[20px] shadow-lg">
         <h2 className="text-lg font-semibold mb-4">Solved Quizzes</h2>
         {quizzes.map((quiz) => (
           <div
             key={quiz._id}
             className="quiz-item border-1 border-[#393939] p-7 rounded-lg flex justify-between items-center mb-4"
           >
-            {/* Quiz Information */}
             <div>
               <h3 className="font-bold text-[1.3rem]">{quiz.quizId}</h3>
               <p className="text-[#878787] py-1">
                 You got {quiz.score * 10}% correct
               </p>
-              <button
-                className="mt-2 px-4 py-2 border-3 border-[#252525] text-sm rounded-md hover:bg-gray-700 flex items-center gap-2"
-                onClick={() => navigate(`/quizzes/${quiz.quizId.replace('chapter', '')}`)} // Navigate to quiz page
-              >
-                Retake the quiz
+              <button className="mt-2 px-4 py-2 border-3 border-[#252525] text-sm rounded-md hover:bg-gray-700 flex items-center gap-2">
+                Review your answers
                 <MdKeyboardArrowRight />
               </button>
             </div>
 
-            {/* Animated Circular Score Progress */}
             <div className="relative w-30 h-30">
               <svg className="w-full h-full" viewBox="0 0 36 36">
-                {/* Base circle (gray background) */}
                 <circle
                   className="text-gray-700"
                   strokeWidth="4"
@@ -266,12 +217,10 @@ const UserAchievements = () => {
                   cx="18"
                   cy="18"
                 ></circle>
-
-                {/* Animated score circle */}
                 <circle
                   className={
                     quiz.score * 10 > 50 ? "text-green-500" : "text-red-500"
-                  } // Green if good score, Red if low score
+                  }
                   strokeWidth="4"
                   stroke="currentColor"
                   fill="transparent"
@@ -283,8 +232,6 @@ const UserAchievements = () => {
                   style={{ transition: "stroke-dashoffset 1.5s ease-in-out" }}
                 ></circle>
               </svg>
-
-              {/* Percentage Text in the middle */}
               <span className="absolute inset-0 flex items-center justify-center text-[24px] font-bold">
                 {quiz.score * 10}%
               </span>
