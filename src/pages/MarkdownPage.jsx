@@ -93,6 +93,8 @@ export default function MarkdownPage() {
 
     const fetchMarkdown = async () => {
       try {
+
+
         setLoading(true);
         console.log(
           "allTopics",
@@ -116,6 +118,12 @@ export default function MarkdownPage() {
 
         setContent(text);
         extractHeadings(text);
+        if (text.toLowerCase().includes("<!doctype html>") || text.includes("Content missing")) {
+          setContent(`# 404 - Content Not Found\n\nThe requested content is missing.`);
+        } else {
+          setContent(text);
+        }
+
       } catch (error) {
         console.error("Error loading markdown:", error);
         setContent("# 404 - Topic Not Found");

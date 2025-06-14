@@ -1009,7 +1009,7 @@ app.post(
   "/api/topics",
   upload.fields([
     { name: "video", maxCount: 1 },
-    { name: "images", maxCount: 10 },
+    { name: "images", maxCount: 15 },
   ]),
   async (req, res) => {
     try {
