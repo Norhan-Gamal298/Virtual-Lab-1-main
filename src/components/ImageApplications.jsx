@@ -130,7 +130,7 @@ const ImageApplications = ({ features }) => {
 
                     <div className="flex flex-col md:flex-row gap-8 h-[60vh]">
                         {/* Features list */}
-                        <ul className="nexusAttributes flex-1 overflow-y-auto">
+                        <ul className="nexusAttributes flex-1 overflow-visible">
                             {features.map((feature, i) => (
                                 <li
                                     key={i}

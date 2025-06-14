@@ -55,6 +55,11 @@ const AdminSidebar = () => {
             icon: <TbNews size={28} />,
             path: '/admin/blogs'
         },
+        {
+            label: 'Quizzes Management',
+            icon: <TbSettings size={28} />, // You can replace this with a quiz-related icon if you like
+            path: '/admin/quizzes'
+        },
         /* {
             label: 'Settings',
             icon: <TbSettings size={28} />,
@@ -280,10 +285,9 @@ const AdminSidebar = () => {
 
             <div className="p-2 border-t border-gray-800 flex flex-col">
                 <motion.button
-                    className={`p-[12px] rounded-lg bg-[#F5F7FA] dark:bg-[#1f1f1f] dark:border-[#3b3b3b] transition-colors duration-300 border border-neutral-border mb-[10px] flex ${sidebarCollapsed ? '' : ''}`}
+                    className={`p-[12px] rounded-lg bg-[#1f1f1f] dark:bg-[#1f1f1f] dark:border-[#3b3b3b] transition-colors duration-300 border border-neutral-border mb-[10px] flex ${sidebarCollapsed ? '' : ''}`}
                     onClick={toggleTheme}
                     aria-label={`Switch to ${isDark ? "light" : "dark"} mode`}
-                    whileHover={{ backgroundColor: "#202323" }}
                     transition={hoverTransition}
                 >
                     <AnimatePresence mode="wait" initial={false}>
@@ -319,10 +323,9 @@ const AdminSidebar = () => {
                 <motion.button
                     onClick={handleLogout}
                     className={`p-[12px] flex rounded-lg bg-[#F5F7FA] dark:bg-[#1f1f1f] dark:border-[#3b3b3b] transition-colors duration-300 border border-neutral-border ${sidebarCollapsed ? '' : ''}`}
-                    whileHover={{ backgroundColor: "#202323" }}
                     transition={hoverTransition}
                 >
-                    <span className="text-xl"><TbLogout size={22} /></span>
+                    <span className="text-xl"><TbLogout className='text-[#000] dark:text-[#fff]' size={22} /></span>
                     <AnimatePresence>
                         {!sidebarCollapsed && (
                             <motion.span
