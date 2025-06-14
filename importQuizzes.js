@@ -34,11 +34,11 @@ const allQuizDocs = [];
 fs.readdirSync(quizzesDir)
   .filter((file) => file.endsWith(".json"))
   .sort((a, b) => {
-    // Extract chapter numbers and sort numerically
-    const numA = parseInt(a.match(/\d+/)?.[0], 10);
-    const numB = parseInt(b.match(/\d+/)?.[0], 10);
-    return numA - numB;
+    const [aMain, aSub] = a.match(/\d+/g).map(Number);
+    const [bMain, bSub] = b.match(/\d+/g).map(Number);
+    return aMain - bMain || (aSub ?? 0) - (bSub ?? 0);
   })
+
   .forEach((file) => {
     const chapterId = parseInt(file.match(/\d+/)?.[0], 10); // Extract chapter number
     const filePath = path.join(quizzesDir, file);
@@ -61,6 +61,7 @@ fs.readdirSync(quizzesDir)
 // 4. Insert all quizzes into the database
 (async () => {
   try {
+    await Quiz.deleteMany({});
     await Quiz.insertMany(allQuizDocs);
     console.log("All quizzes imported successfully!");
     process.exit(0);
