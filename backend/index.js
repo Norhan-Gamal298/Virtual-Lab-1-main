@@ -9,7 +9,7 @@ import util from 'util';
 const app = express();
 const execPromise = util.promisify(exec);
 
-const pythonPath = process.env.PYTHON_PATH || 'python';
+const pythonPath = process.env.PYTHON_PATH || 'py';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
