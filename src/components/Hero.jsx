@@ -49,7 +49,7 @@ const Hero = () => {
 
 
   return (
-    <div className="h-full heroSection my-[8rem] relative">
+    <div className="h-full heroSection h-screen relative">
       {/* Both images with theme-dependent opacity */}
       <img
         className="absolute bottom-[-8rem] w-full opacity-100 dark:opacity-0 transition-opacity duration-500"

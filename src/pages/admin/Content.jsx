@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from "react";
 import {
     Plus,
     Edit,
@@ -12,45 +12,66 @@ import {
     Upload,
     Download,
     Eye,
-    EyeOff
-} from 'lucide-react';
+    EyeOff,
+} from "lucide-react";
 
 // Simple Markdown Editor Component
-const MarkdownEditor = ({ value, onChange, placeholder = "Enter markdown content..." }) => {
+const MarkdownEditor = ({
+    value,
+    onChange,
+    placeholder = "Enter markdown content...",
+}) => {
     const [isPreview, setIsPreview] = useState(false);
     const textareaRef = useRef(null);
 
-    const insertMarkdown = (before, after = '') => {
+    const insertMarkdown = (before, after = "") => {
         const textarea = textareaRef.current;
         if (!textarea) return;
 
         const start = textarea.selectionStart;
         const end = textarea.selectionEnd;
         const selectedText = value.substring(start, end);
-        const newText = value.substring(0, start) + before + selectedText + after + value.substring(end);
+        const newText =
+            value.substring(0, start) +
+            before +
+            selectedText +
+            after +
+            value.substring(end);
 
         onChange(newText);
 
         // Reset cursor position
         setTimeout(() => {
             textarea.focus();
-            textarea.setSelectionRange(start + before.length, start + before.length + selectedText.length);
+            textarea.setSelectionRange(
+                start + before.length,
+                start + before.length + selectedText.length
+            );
         }, 0);
     };
 
     const renderMarkdown = (markdown) => {
         // Simple markdown to HTML conversion for preview
         return markdown
-            .replace(/^# (.*$)/gim, '<h1>$1</h1>')
-            .replace(/^## (.*$)/gim, '<h2>$1</h2>')
-            .replace(/^### (.*$)/gim, '<h3>$1</h3>')
-            .replace(/\*\*(.*)\*\*/gim, '<strong>$1</strong>')
-            .replace(/\*(.*)\*/gim, '<em>$1</em>')
+            .replace(/^# (.*$)/gim, "<h1>$1</h1>")
+            .replace(/^## (.*$)/gim, "<h2>$1</h2>")
+            .replace(/^### (.*$)/gim, "<h3>$1</h3>")
+            .replace(/\*\*(.*)\*\*/gim, "<strong>$1</strong>")
+            .replace(/\*(.*)\*/gim, "<em>$1</em>")
             .replace(/\[([^\]]+)\]\(([^\)]+)\)/gim, '<a href="$2">$1</a>')
-            .replace(/!\[([^\]]*)\]\(([^\)]+)\)/gim, '<img alt="$1" src="$2" style="max-width: 100%; height: auto;" />')
-            .replace(/```([^`]+)```/gim, '<pre style="background: #f4f4f4; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code>$1</code></pre>')
-            .replace(/`([^`]+)`/gim, '<code style="background: #f4f4f4; padding: 0.2rem 0.4rem; border-radius: 3px;">$1</code>')
-            .replace(/\n/gim, '<br>');
+            .replace(
+                /!\[([^\]]*)\]\(([^\)]+)\)/gim,
+                '<img alt="$1" src="$2" style="max-width: 100%; height: auto;" />'
+            )
+            .replace(
+                /```([^`]+)```/gim,
+                '<pre style="background: #f4f4f4; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code>$1</code></pre>'
+            )
+            .replace(
+                /`([^`]+)`/gim,
+                '<code style="background: #f4f4f4; padding: 0.2rem 0.4rem; border-radius: 3px;">$1</code>'
+            )
+            .replace(/\n/gim, "<br>");
     };
 
     return (
@@ -59,7 +80,7 @@ const MarkdownEditor = ({ value, onChange, placeholder = "Enter markdown content
             <div className="bg-gray-50 border-b border-gray-300 p-2 flex items-center gap-2 flex-wrap">
                 <button
                     type="button"
-                    onClick={() => insertMarkdown('# ', '')}
+                    onClick={() => insertMarkdown("# ", "")}
                     className="px-2 py-1 text-sm border border-gray-300 rounded hover:bg-gray-100"
                     title="Heading 1"
                 >
@@ -67,7 +88,7 @@ const MarkdownEditor = ({ value, onChange, placeholder = "Enter markdown content
                 </button>
                 <button
                     type="button"
-                    onClick={() => insertMarkdown('## ', '')}
+                    onClick={() => insertMarkdown("## ", "")}
                     className="px-2 py-1 text-sm border border-gray-300 rounded hover:bg-gray-100"
                     title="Heading 2"
                 >
@@ -75,7 +96,7 @@ const MarkdownEditor = ({ value, onChange, placeholder = "Enter markdown content
                 </button>
                 <button
                     type="button"
-                    onClick={() => insertMarkdown('**', '**')}
+                    onClick={() => insertMarkdown("**", "**")}
                     className="px-2 py-1 text-sm border border-gray-300 rounded hover:bg-gray-100 font-bold"
                     title="Bold"
                 >
@@ -83,7 +104,7 @@ const MarkdownEditor = ({ value, onChange, placeholder = "Enter markdown content
                 </button>
                 <button
                     type="button"
-                    onClick={() => insertMarkdown('*', '*')}
+                    onClick={() => insertMarkdown("*", "*")}
                     className="px-2 py-1 text-sm border border-gray-300 rounded hover:bg-gray-100 italic"
                     title="Italic"
                 >
@@ -91,7 +112,7 @@ const MarkdownEditor = ({ value, onChange, placeholder = "Enter markdown content
                 </button>
                 <button
                     type="button"
-                    onClick={() => insertMarkdown('[', '](url)')}
+                    onClick={() => insertMarkdown("[", "](url)")}
                     className="px-2 py-1 text-sm border border-gray-300 rounded hover:bg-gray-100"
                     title="Link"
                 >
@@ -99,7 +120,7 @@ const MarkdownEditor = ({ value, onChange, placeholder = "Enter markdown content
                 </button>
                 <button
                     type="button"
-                    onClick={() => insertMarkdown('![', '](image-url)')}
+                    onClick={() => insertMarkdown("![", "](image-url)")}
                     className="px-2 py-1 text-sm border border-gray-300 rounded hover:bg-gray-100"
                     title="Image"
                 >
@@ -107,7 +128,7 @@ const MarkdownEditor = ({ value, onChange, placeholder = "Enter markdown content
                 </button>
                 <button
                     type="button"
-                    onClick={() => insertMarkdown('```\n', '\n```')}
+                    onClick={() => insertMarkdown("```\n", "\n```")}
                     className="px-2 py-1 text-sm border border-gray-300 rounded hover:bg-gray-100"
                     title="Code Block"
                 >
@@ -120,7 +141,7 @@ const MarkdownEditor = ({ value, onChange, placeholder = "Enter markdown content
                         className="px-3 py-1 text-sm border border-gray-300 rounded hover:bg-gray-100 flex items-center gap-1"
                     >
                         {isPreview ? <EyeOff size={14} /> : <Eye size={14} />}
-                        {isPreview ? 'Edit' : 'Preview'}
+                        {isPreview ? "Edit" : "Preview"}
                     </button>
                 </div>
             </div>
@@ -139,7 +160,7 @@ const MarkdownEditor = ({ value, onChange, placeholder = "Enter markdown content
                         onChange={(e) => onChange(e.target.value)}
                         placeholder={placeholder}
                         className="w-full h-96 p-4 border-none outline-none resize-none font-mono text-sm leading-relaxed"
-                        style={{ minHeight: '400px' }}
+                        style={{ minHeight: "400px" }}
                     />
                 )}
             </div>
@@ -151,7 +172,7 @@ const Content = () => {
     const [chapters, setChapters] = useState([]);
     const [topics, setTopics] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [activeTab, setActiveTab] = useState('chapters');
+    const [activeTab, setActiveTab] = useState("chapters");
 
     // Modal states
     const [showChapterModal, setShowChapterModal] = useState(false);
@@ -160,14 +181,18 @@ const Content = () => {
     const [editingTopic, setEditingTopic] = useState(null);
 
     // Form states
-    const [chapterForm, setChapterForm] = useState({ id: '', title: '', order: 1 });
+    const [chapterForm, setChapterForm] = useState({
+        id: "",
+        title: "",
+        order: 1,
+    });
     const [topicForm, setTopicForm] = useState({
-        id: '',
-        title: '',
-        chapterId: '',
-        content: '',
+        id: "",
+        title: "",
+        chapterId: "",
+        content: "",
         videoFile: null,
-        images: []
+        images: [],
     });
 
     // Load data
@@ -175,54 +200,54 @@ const Content = () => {
         loadData();
     }, []);
 
-    // Update loadData function
     // Updated loadData function
     const loadData = async () => {
         try {
             setLoading(true);
-            const response = await fetch('/api/topics');
-            if (!response.ok) throw new Error('Failed to load data');
+            const response = await fetch("/api/topics");
+            if (!response.ok) throw new Error("Failed to load data");
 
-            const data = await response.json();
+            const chaptersData = await response.json();
 
-            // Create chapter list directly from API response
-            const chapterList = data.map(ch => ({
-                id: `chapter-${ch.chapterId}`,
-                chapterId: ch.chapterId,
-                title: ch.chapter,  // Use 'chapter' property instead of 'chapterTitle'
-                order: ch.chapterId
-            })).sort((a, b) => a.order - b.order);
+            // Process chapters data
+            const processedChapters = chaptersData.map((chapter) => ({
+                id: `chapter-${chapter.chapterId}`,
+                chapterId: chapter.chapterId,
+                title: chapter.chapter, // Using 'chapter' from API response
+                order: chapter.chapterId,
+                topicsCount: chapter.topics.length,
+            }));
 
-            // Create topics list
-            const allTopics = data.flatMap(ch =>
-                ch.topics.map(t => ({
-                    ...t,
-                    id: t.id,
-                    chapterId: ch.chapterId,
-                    chapterTitle: ch.chapter,  // Use 'chapter' property
-                    title: t.title || 'Untitled Topic',
-                    videoPath: t.videoPath || null,
-                    images: t.images || []
+            // Process all topics
+            const allTopics = chaptersData.flatMap((chapter) =>
+                chapter.topics.map((topic) => ({
+                    ...topic,
+                    id: topic.id,
+                    chapterId: chapter.chapterId,
+                    chapterTitle: chapter.chapter,
+                    title: topic.title || "Untitled Topic",
+                    videoPath: topic.videoPath || null,
+                    images: topic.images || [],
                 }))
             );
 
-            setChapters(chapterList);
+            setChapters(processedChapters);
             setTopics(allTopics);
         } catch (error) {
-            console.error('Error loading data:', error);
+            console.error("Error loading data:", error);
         } finally {
             setLoading(false);
         }
     };
 
     /* const extractChapterNumber = (chapterTitle) => {
-        const match = chapterTitle.match(/^(\d+)/);
-        return match ? parseInt(match[1]) : 0;
-    }; */
+          const match = chapterTitle.match(/^(\d+)/);
+          return match ? parseInt(match[1]) : 0;
+      }; */
 
     // Chapter operations
     const handleAddChapter = () => {
-        setChapterForm({ id: '', title: '', order: chapters.length + 1 });
+        setChapterForm({ id: "", title: "", order: chapters.length + 1 });
         setEditingChapter(null);
         setShowChapterModal(true);
     };
@@ -237,44 +262,51 @@ const Content = () => {
         try {
             const url = editingChapter
                 ? `/api/chapters/${editingChapter.chapterId}`
-                : '/api/chapters';
+                : "/api/chapters";
 
-            const method = editingChapter ? 'PUT' : 'POST';
+            const method = editingChapter ? "PUT" : "POST";
 
             const response = await fetch(url, {
                 method,
-                headers: { 'Content-Type': 'application/json' },
+                headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
                     chapterId: chapterForm.order,
-                    chapterTitle: chapterForm.title
-                })
+                    chapterTitle: chapterForm.title,
+                }),
             });
 
-            if (!response.ok) throw new Error('Failed to save chapter');
+            if (!response.ok) throw new Error("Failed to save chapter");
 
-            loadData();  // Refresh data
+            loadData(); // Refresh data
             setShowChapterModal(false);
         } catch (error) {
-            console.error('Error saving chapter:', error);
+            console.error("Error saving chapter:", error);
+            alert(`Error: ${error.message}`);
         }
     };
-
     const handleDeleteChapter = async (chapterId) => {
-        if (window.confirm('Are you sure you want to delete this chapter and all its topics?')) {
-            setChapters(chapters.filter(ch => ch.id !== chapterId));
-            setTopics(topics.filter(topic => topic.chapterId !== chapterId));
+        if (
+            window.confirm(
+                "Are you sure you want to delete this chapter and all its topics?"
+            )
+        ) {
+            setChapters(chapters.filter((ch) => ch.id !== chapterId));
+            setTopics(topics.filter((topic) => topic.chapterId !== chapterId));
         }
     };
 
     const moveChapter = (chapterId, direction) => {
-        const index = chapters.findIndex(ch => ch.id === chapterId);
+        const index = chapters.findIndex((ch) => ch.id === chapterId);
         if (
-            (direction === 'up' && index > 0) ||
-            (direction === 'down' && index < chapters.length - 1)
+            (direction === "up" && index > 0) ||
+            (direction === "down" && index < chapters.length - 1)
         ) {
             const newChapters = [...chapters];
-            const targetIndex = direction === 'up' ? index - 1 : index + 1;
-            [newChapters[index], newChapters[targetIndex]] = [newChapters[targetIndex], newChapters[index]];
+            const targetIndex = direction === "up" ? index - 1 : index + 1;
+            [newChapters[index], newChapters[targetIndex]] = [
+                newChapters[targetIndex],
+                newChapters[index],
+            ];
 
             // Update order
             newChapters.forEach((ch, i) => {
@@ -288,20 +320,21 @@ const Content = () => {
     // Topic operations
     const handleAddTopic = (chapterId = null) => {
         // Ensure we have a valid chapter ID
-        const validChapterId = chapterId || (chapters.length > 0 ? chapters[0].id : null);
+        const validChapterId =
+            chapterId || (chapters.length > 0 ? chapters[0].id : null);
 
         if (!validChapterId) {
-            alert('Please create a chapter first');
+            alert("Please create a chapter first");
             return;
         }
 
         setTopicForm({
-            id: '',
-            title: '',
+            id: "",
+            title: "",
             chapterId: validChapterId,
-            content: '# New Topic\n\nStart writing your content here...',
+            content: "# New Topic\n\nStart writing your content here...",
             videoFile: null,
-            images: []
+            images: [],
         });
         setEditingTopic(null);
         setShowTopicModal(true);
@@ -315,29 +348,38 @@ const Content = () => {
 
             setTopicForm({
                 ...topic,
-                content: content
+                content: content,
             });
             setEditingTopic(topic);
             setShowTopicModal(true);
         } catch (error) {
-            console.error('Error loading topic content:', error);
+            console.error("Error loading topic content:", error);
         }
     };
 
     const handleSaveTopic = async () => {
         try {
-            // Get the chapter title
-            const chapter = chapters.find(ch => ch.id === topicForm.chapterId);
+            // Get the chapter data
+            const chapter = chapters.find(ch => ch.chapterId === parseInt(topicForm.chapterId));
+            if (!chapter) throw new Error('Invalid chapter selected');
 
-            if (!chapter) {
-                throw new Error('Invalid chapter selected');
+            // Prepare form data for file uploads
+            const formData = new FormData();
+            formData.append('chapterId', chapter.chapterId);
+            formData.append('chapterTitle', chapter.title);
+            formData.append('topicId', editingTopic?.id || `chapter_${chapter.chapterId}_${Date.now()}`);
+            formData.append('title', topicForm.title);
+            formData.append('markdownPath', `/docs/chapter_${chapter.chapterId}/${topicForm.title.replace(/\s+/g, '-')}.md`);
+
+            // Append files if they exist
+            if (topicForm.videoFile) {
+                formData.append('video', topicForm.videoFile);
             }
-
-            const payload = {
-                ...topicForm,
-                chapterTitle: chapter.title,
-                chapterId: chapter.id // Ensure chapterId is included
-            };
+            if (topicForm.images && topicForm.images.length > 0) {
+                topicForm.images.forEach((image, index) => {
+                    formData.append(`images`, image);
+                });
+            }
 
             const url = editingTopic
                 ? `/api/topics/${editingTopic.id}`
@@ -347,8 +389,9 @@ const Content = () => {
 
             const response = await fetch(url, {
                 method,
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
+                body: formData
+                // Note: Don't set Content-Type header when using FormData
+                // The browser will set it automatically with the correct boundary
             });
 
             if (!response.ok) throw new Error('Failed to save topic');
@@ -357,22 +400,22 @@ const Content = () => {
             setShowTopicModal(false);
         } catch (error) {
             console.error('Error saving topic:', error);
-            alert(`Error: ${error.message}`); // Show user-friendly error
+            alert(`Error: ${error.message}`);
         }
     };
 
     const handleDeleteTopic = async (topicId) => {
-        if (window.confirm('Are you sure you want to delete this topic?')) {
-            setTopics(topics.filter(topic => topic.id !== topicId));
+        if (window.confirm("Are you sure you want to delete this topic?")) {
+            setTopics(topics.filter((topic) => topic.id !== topicId));
         }
     };
 
     const handleFileUpload = (event, type) => {
         const files = Array.from(event.target.files);
 
-        if (type === 'video') {
+        if (type === "video") {
             setTopicForm({ ...topicForm, videoFile: files[0] });
-        } else if (type === 'images') {
+        } else if (type === "images") {
             setTopicForm({ ...topicForm, images: [...topicForm.images, ...files] });
         }
     };
@@ -394,20 +437,20 @@ const Content = () => {
             <div className="border-b border-gray-300 mb-6">
                 <nav className="-mb-px flex space-x-8">
                     <button
-                        onClick={() => setActiveTab('chapters')}
-                        className={`py-2 px-1 border-b-2 font-medium text-sm ${activeTab === 'chapters'
-                            ? 'border-blue-500 text-blue-600'
-                            : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                        onClick={() => setActiveTab("chapters")}
+                        className={`py-2 px-1 border-b-2 font-medium text-sm ${activeTab === "chapters"
+                                ? "border-blue-500 text-blue-600"
+                                : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
                             }`}
                     >
                         <Folder className="inline w-4 h-4 mr-1" />
                         Chapters
                     </button>
                     <button
-                        onClick={() => setActiveTab('topics')}
-                        className={`py-2 px-1 border-b-2 font-medium text-sm ${activeTab === 'topics'
-                            ? 'border-blue-500 text-blue-600'
-                            : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                        onClick={() => setActiveTab("topics")}
+                        className={`py-2 px-1 border-b-2 font-medium text-sm ${activeTab === "topics"
+                                ? "border-blue-500 text-blue-600"
+                                : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
                             }`}
                     >
                         <FileText className="inline w-4 h-4 mr-1" />
@@ -417,7 +460,7 @@ const Content = () => {
             </div>
 
             {/* Chapters Tab */}
-            {activeTab === 'chapters' && (
+            {activeTab === "chapters" && (
                 <div>
                     <div className="flex justify-between items-center mb-4">
                         <h2 className="text-xl font-semibold">Chapters</h2>
@@ -450,30 +493,33 @@ const Content = () => {
                             </thead>
                             <tbody className="bg-white divide-y divide-gray-200">
                                 {chapters.map((chapter) => (
-                                    <tr key={`chapter-${chapter.id}`}>
+                                    <tr key={`chapter-${chapter.chapterId}`}>
                                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                                             <div className="flex items-center gap-1">
                                                 {chapter.order}
                                                 <div className="flex flex-col">
                                                     <button
-                                                        onClick={() => moveChapter(chapter.id, 'up')}
+                                                        onClick={() => moveChapter(chapter.id, "up")}
                                                         className="text-gray-400 hover:text-gray-600"
                                                     >
                                                         <ChevronUp size={14} />
                                                     </button>
                                                     <button
-                                                        onClick={() => moveChapter(chapter.id, 'down')}
+                                                        onClick={() => moveChapter(chapter.id, "down")}
                                                         className="text-gray-400 hover:text-gray-600"
                                                     >
                                                         <ChevronDown size={14} />
                                                     </button>
                                                 </div>
                                             </div>
-                                        </td><td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                                        </td>
+                                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                                             {chapter.title}
-                                        </td><td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                            {topics.filter(topic => topic.chapterId === chapter.id).length} topics
-                                        </td><td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                        </td>
+                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                            {chapter.topicsCount} topics
+                                        </td>
+                                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                             <div className="flex items-center gap-2">
                                                 <button
                                                     onClick={() => handleAddTopic(chapter.id)}
@@ -507,7 +553,7 @@ const Content = () => {
             )}
 
             {/* Topics Tab */}
-            {activeTab === 'topics' && (
+            {activeTab === "topics" && (
                 <div>
                     <div className="flex justify-between items-center mb-4">
                         <h2 className="text-xl font-semibold">Topics</h2>
@@ -543,7 +589,9 @@ const Content = () => {
                             </thead>
                             <tbody className="bg-white divide-y divide-gray-200">
                                 {topics.map((topic) => (
-                                    <tr key={`topic-${topic.id}`}> {/* Add key here */}
+                                    <tr key={`topic-${topic.id}`}>
+                                        {" "}
+                                        {/* Add key here */}
                                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                             {topic.chapterTitle}
                                         </td>
@@ -551,7 +599,7 @@ const Content = () => {
                                             {topic.title}
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                            {topic.videoPath ? 'Yes' : 'No'}
+                                            {topic.videoPath ? "Yes" : "No"}
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                             {topic.images?.length || 0}
@@ -584,10 +632,10 @@ const Content = () => {
 
             {/* Chapter Modal */}
             {showChapterModal && (
-                <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50">
-                    <div className="rounded-lg p-6 w-full max-w-md bg-white dark:bg-[#0a0a0a]">
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                    <div className="bg-white rounded-lg p-6 w-full max-w-md">
                         <h3 className="text-lg font-semibold mb-4">
-                            {editingChapter ? 'Edit Chapter' : 'Add Chapter'}
+                            {editingChapter ? "Edit Chapter" : "Add Chapter"}
                         </h3>
 
                         <div className="space-y-4">
@@ -598,7 +646,9 @@ const Content = () => {
                                 <input
                                     type="text"
                                     value={chapterForm.title}
-                                    onChange={(e) => setChapterForm({ ...chapterForm, title: e.target.value })}
+                                    onChange={(e) =>
+                                        setChapterForm({ ...chapterForm, title: e.target.value })
+                                    }
                                     className="w-full border border-gray-300 rounded-lg px-3 py-2"
                                     placeholder="Chapter title"
                                 />
@@ -611,7 +661,12 @@ const Content = () => {
                                 <input
                                     type="number"
                                     value={chapterForm.order}
-                                    onChange={(e) => setChapterForm({ ...chapterForm, order: parseInt(e.target.value) })}
+                                    onChange={(e) =>
+                                        setChapterForm({
+                                            ...chapterForm,
+                                            order: parseInt(e.target.value),
+                                        })
+                                    }
                                     className="w-full border border-gray-300 rounded-lg px-3 py-2"
                                     min="1"
                                 />
@@ -642,7 +697,7 @@ const Content = () => {
                 <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
                     <div className="bg-white rounded-lg p-6 w-full max-w-4xl max-h-[90vh] overflow-y-auto">
                         <h3 className="text-lg font-semibold mb-4">
-                            {editingTopic ? 'Edit Topic' : 'Add Topic'}
+                            {editingTopic ? "Edit Topic" : "Add Topic"}
                         </h3>
 
                         <div className="space-y-4">
@@ -654,7 +709,9 @@ const Content = () => {
                                     <input
                                         type="text"
                                         value={topicForm.title}
-                                        onChange={(e) => setTopicForm({ ...topicForm, title: e.target.value })}
+                                        onChange={(e) =>
+                                            setTopicForm({ ...topicForm, title: e.target.value })
+                                        }
                                         className="w-full border border-gray-300 rounded-lg px-3 py-2"
                                         placeholder="Topic title"
                                     />
@@ -666,12 +723,16 @@ const Content = () => {
                                     </label>
                                     <select
                                         value={topicForm.chapterId}
-                                        onChange={(e) => setTopicForm({ ...topicForm, chapterId: e.target.value })}
+                                        onChange={(e) =>
+                                            setTopicForm({ ...topicForm, chapterId: e.target.value })
+                                        }
                                         className="w-full border border-gray-300 rounded-lg px-3 py-2"
                                         required
                                     >
                                         {chapters.length === 0 ? (
-                                            <option disabled value="">No chapters available</option>
+                                            <option disabled value="">
+                                                No chapters available
+                                            </option>
                                         ) : (
                                             chapters.map((chapter) => (
                                                 <option key={chapter.id} value={chapter.id}>
@@ -689,7 +750,9 @@ const Content = () => {
                                 </label>
                                 <MarkdownEditor
                                     value={topicForm.content}
-                                    onChange={(content) => setTopicForm({ ...topicForm, content })}
+                                    onChange={(content) =>
+                                        setTopicForm({ ...topicForm, content })
+                                    }
                                     placeholder="Enter your markdown content..."
                                 />
                             </div>
@@ -702,7 +765,7 @@ const Content = () => {
                                     <input
                                         type="file"
                                         accept="video/*"
-                                        onChange={(e) => handleFileUpload(e, 'video')}
+                                        onChange={(e) => handleFileUpload(e, "video")}
                                         className="w-full border border-gray-300 rounded-lg px-3 py-2"
                                     />
                                     {topicForm.videoFile && (
@@ -720,7 +783,7 @@ const Content = () => {
                                         type="file"
                                         accept="image/*"
                                         multiple
-                                        onChange={(e) => handleFileUpload(e, 'images')}
+                                        onChange={(e) => handleFileUpload(e, "images")}
                                         className="w-full border border-gray-300 rounded-lg px-3 py-2"
                                     />
                                     {topicForm.images.length > 0 && (

@@ -929,18 +929,21 @@ app.put("/api/topics/:id", async (req, res) => {
 
 // Fetch all topics/chapters from the database
 // Updated /api/topics endpoint
+// Fetch all topics/chapters from the database
+// Updated /api/topics endpoint
 app.get("/api/topics", async (req, res) => {
   try {
-    const topics = await Topic.find({}, { "images.data": 0, "video.data": 0 });
+    const topics = await Topic.find({}, { "images.data": 0, "video.data": 0 })
+      .sort({ chapterId: 1, topicId: 1 });
 
-    // Group topics by chapterId and chapterTitle
+    // Group topics by chapter
     const chaptersMap = new Map();
     topics.forEach((topic) => {
       const key = `${topic.chapterId}-${topic.chapterTitle}`;
       if (!chaptersMap.has(key)) {
         chaptersMap.set(key, {
           chapterId: topic.chapterId,
-          chapter: topic.chapterTitle, // Changed from chapterTitle to chapter
+          chapter: topic.chapterTitle,
           topics: [],
         });
       }
@@ -954,13 +957,16 @@ app.get("/api/topics", async (req, res) => {
     });
 
     // Convert to array and sort by chapterId
-    const chapters = Array.from(chaptersMap.values()).sort(
-      (a, b) => a.chapterId - b.chapterId
-    );
+    const chapters = Array.from(chaptersMap.values())
+      .sort((a, b) => a.chapterId - b.chapterId);
 
     res.json(chapters);
   } catch (err) {
-    res.status(500).json({ error: "Failed to fetch topics" });
+    console.error("Error fetching topics:", err);
+    res.status(500).json({
+      error: "Failed to fetch topics",
+      details: err.message
+    });
   }
 });
 

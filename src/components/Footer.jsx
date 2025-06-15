@@ -11,7 +11,7 @@ export default function Footer() {
     const isDark = theme === "dark";
 
     return (
-        <footer className="bg-white dark:bg-[#0f0f0f] border-t border-gray-200 dark:border-gray-700 mt-auto">
+        <footer className="bg-white dark:bg-[#0f0f0f] border-t border-gray-200 dark:border-gray-700 mt-auto transition-all duration-300">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
                     {/* Brand Section */}

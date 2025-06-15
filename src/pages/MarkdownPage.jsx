@@ -28,10 +28,10 @@ export default function MarkdownPage() {
         if (!response.ok) throw new Error("Failed to load chapters");
         const data = await response.json();
 
-        console.log(
+        /* console.log(
           "Fetched chapters:",
           data.map((ch) => ch.chapter)
-        );
+        ); */
 
         setChapters(data);
       } catch (error) {
@@ -96,11 +96,11 @@ export default function MarkdownPage() {
 
 
         setLoading(true);
-        console.log(
+        /* console.log(
           "allTopics",
           allTopics.map((t) => ({ id: t.id, title: t.title }))
         );
-        console.log("topicId", topicId);
+        console.log("topicId", topicId); */
         const topic = allTopics.find((t) => t.id === topicId);
 
         if (!topic) {

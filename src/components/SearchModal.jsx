@@ -1,30 +1,49 @@
-
 import React, { useState, useEffect, useRef } from "react";
-import { FiSearch } from "react-icons/fi";
+import { FiSearch, FiBook, FiFileText } from "react-icons/fi";
 import { IoCloseCircle } from "react-icons/io5";
 import { motion, AnimatePresence } from "framer-motion";
 import { useLocation, useNavigate } from 'react-router-dom';
 
-
 const SearchModal = ({ isOpen, onClose }) => {
-
     const [query, setQuery] = useState("");
     const [results, setResults] = useState([]);
-    const [topics, setTopics] = useState([]);
+    const [chapters, setChapters] = useState([]);
     const [showResults, setShowResults] = useState(false);
+    const [loading, setLoading] = useState(false);
     const resultsRef = useRef(null);
     const location = useLocation();
     const navigate = useNavigate();
 
+    // Fetch chapters and topics from backend
     useEffect(() => {
-        const fetchTopics = async () => {
-            const res = await fetch("/topics.json");
-            const data = await res.json();
-            setTopics(data);
-        };
-        fetchTopics();
-    }, []);
+        const fetchChapters = async () => {
+            try {
+                setLoading(true);
+                const response = await fetch("http://localhost:8080/api/topics");
+                if (!response.ok) throw new Error("Failed to load chapters");
+                const data = await response.json();
 
+                // Sort chapters by chapter ID
+                const sortedChapters = data.sort((a, b) => {
+                    const numA = a.chapterId || parseInt(a.chapter.match(/^\d+/)?.[0] || "0", 10);
+                    const numB = b.chapterId || parseInt(b.chapter.match(/^\d+/)?.[0] || "0", 10);
+                    return numA - numB;
+                });
+
+                setChapters(sortedChapters);
+            } catch (error) {
+                console.error("Error fetching chapters:", error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        if (isOpen && chapters.length === 0) {
+            fetchChapters();
+        }
+    }, [isOpen, chapters.length]);
+
+    // Search functionality
     useEffect(() => {
         if (!query.trim()) {
             setResults([]);
@@ -32,30 +51,95 @@ const SearchModal = ({ isOpen, onClose }) => {
             return;
         }
 
-        const allTopics = topics.flatMap(chapter => chapter.topics);
+        const searchQuery = query.toLowerCase();
+        const searchResults = [];
 
-        const filtered = allTopics.filter((topic) =>
-            topic.title.toLowerCase().includes(query.toLowerCase())
-        );
+        chapters.forEach(chapter => {
+            // Search in chapter titles
+            if (chapter.chapter.toLowerCase().includes(searchQuery)) {
+                searchResults.push({
+                    type: 'chapter',
+                    id: `chapter_${chapter.chapterId}`,
+                    title: chapter.chapter,
+                    chapterId: chapter.chapterId,
+                    matchType: 'Chapter'
+                });
+            }
 
-        setResults(filtered);
-        setShowResults(filtered.length > 0);
+            // Search in topics
+            if (chapter.topics) {
+                const sortedTopics = [...chapter.topics].sort((a, b) => {
+                    const getParts = (t) => {
+                        const match = t.id.match(/^chapter_(\d+)_(\d+)_(\d+)_/);
+                        return match
+                            ? [parseInt(match[1]), parseInt(match[2]), parseInt(match[3])]
+                            : [0, 0, 0];
+                    };
+                    const [a1, a2, a3] = getParts(a);
+                    const [b1, b2, b3] = getParts(b);
+                    return a1 - b1 || a2 - b2 || a3 - b3;
+                });
 
-    }, [query, topics])
+                sortedTopics.forEach(topic => {
+                    if (topic.title.toLowerCase().includes(searchQuery)) {
+                        searchResults.push({
+                            type: 'topic',
+                            id: topic.id,
+                            title: topic.title,
+                            chapterTitle: chapter.chapter,
+                            chapterId: chapter.chapterId,
+                            matchType: 'Topic'
+                        });
+                    }
+                });
+            }
+        });
 
-    const handleResultsShow = (id) => {
-        navigate(`/docs/${id}`);
+        setResults(searchResults);
+        setShowResults(searchResults.length > 0);
+
+    }, [query, chapters]);
+
+    const handleResultClick = (result) => {
+        if (result.type === 'chapter') {
+            // Navigate to first topic of the chapter
+            const chapter = chapters.find(ch => ch.chapterId === result.chapterId);
+            if (chapter && chapter.topics && chapter.topics.length > 0) {
+                const sortedTopics = [...chapter.topics].sort((a, b) => {
+                    const getParts = (t) => {
+                        const match = t.id.match(/^chapter_(\d+)_(\d+)_(\d+)_/);
+                        return match
+                            ? [parseInt(match[1]), parseInt(match[2]), parseInt(match[3])]
+                            : [0, 0, 0];
+                    };
+                    const [a1, a2, a3] = getParts(a);
+                    const [b1, b2, b3] = getParts(b);
+                    return a1 - b1 || a2 - b2 || a3 - b3;
+                });
+                navigate(`/docs/${sortedTopics[0].id}`);
+            }
+        } else {
+            // Navigate to specific topic
+            navigate(`/docs/${result.id}`);
+        }
+
         setShowResults(false);
         setQuery("");
-        onClose(true)
+        onClose(true);
     };
 
+    // Clear search when location changes
     useEffect(() => {
         setShowResults(false);
         setQuery("");
         setResults([]);
     }, [location.pathname]);
 
+    const clearSearch = () => {
+        setQuery("");
+        setResults([]);
+        setShowResults(false);
+    };
 
     return (
         <AnimatePresence>
@@ -72,56 +156,91 @@ const SearchModal = ({ isOpen, onClose }) => {
                         animate={{ scale: 1 }}
                         exit={{ scale: 0.95 }}
                         onClick={(e) => e.stopPropagation()}
-                        className="bg-[#0a0a0a] text-white rounded-[10px] w-[500px] max-w-full p-6 pb-0"
+                        className="bg-[#F9FAFB] dark:bg-[#0a0a0a] dark:text-white rounded-[10px] w-[500px] max-w-full p-6 pb-0"
                     >
                         <div className="flex items-center gap-4 mb-4">
                             <FiSearch size={22} />
                             <input
                                 type="text"
-                                placeholder="Search Docs..."
+                                placeholder="Search chapters and topics..."
                                 className="bg-transparent border-none outline-none text-lg w-full"
                                 value={query}
                                 onChange={(e) => setQuery(e.target.value)}
+                                autoFocus
                             />
-                            <button onClick={() => { setQuery("") }} className="text-white">
+                            <button
+                                onClick={clearSearch}
+                                className="dark:text-white hover:text-gray-300 transition-colors"
+                            >
                                 <IoCloseCircle size={26} />
                             </button>
                         </div>
-                        <div className="h-[1px] bg-white opacity-10 mb-4"></div>
-                        <motion.ul
-                            className="flex flex-col gap-1 overflow-auto scrollbar-none"
-                            style={styles.dialog}
+
+                        <div className="h-[1px] dark:bg-white bg-[#0f0f0f] opacity-10 mb-4"></div>
+
+                        {loading && (
+                            <div className="flex items-center justify-center py-8">
+                                <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-white"></div>
+                                <span className="ml-3 text-gray-400">Loading...</span>
+                            </div>
+                        )}
+
+                        <motion.div
+                            className="overflow-auto scrollbar-none"
+                            style={{ scrollbarWidth: 'none' }}
                             ref={resultsRef}
                             initial={false}
                             animate={{
                                 height: showResults ? "300px" : "0px",
                                 opacity: showResults ? 1 : 0,
                             }}
-                            transition={{ type: "spring", duration: 1.3 }}
+                            transition={{ type: "spring", duration: 0.3 }}
                         >
-                            {results.map((result) => (
-                                <li
-                                    key={result.id}
-                                    onClick={() => handleResultsShow(result.id)}
-                                    className="p-3 hover:bg-white/5 rounded-lg cursor-pointer"
-                                >
-                                    {result.title}
-                                </li>
-                            ))}
-                        </motion.ul>
-
+                            {results.length > 0 ? (
+                                <ul className="flex flex-col gap-1 pb-4">
+                                    {results.map((result, index) => (
+                                        <li key={`${result.id}-${index}`}>
+                                            <button
+                                                onClick={() => handleResultClick(result)}
+                                                className="w-full p-3 dark:hover:bg-white/5 rounded-lg cursor-pointer transition-colors duration-200 text-left flex items-center gap-3"
+                                            >
+                                                <div className="flex-shrink-0">
+                                                    {result.type === 'chapter' ? (
+                                                        <FiBook size={18} className="text-blue-400" />
+                                                    ) : (
+                                                        <FiFileText size={18} className="text-green-400" />
+                                                    )}
+                                                </div>
+                                                <div className="flex-1 min-w-0">
+                                                    <div className="text-[#1F2937] dark:text-[#F3F4F6] font-medium truncate">
+                                                        {result.title}
+                                                    </div>
+                                                    {result.type === 'topic' && (
+                                                        <div className="text-gray-400 text-sm truncate">
+                                                            {result.chapterTitle}
+                                                        </div>
+                                                    )}
+                                                </div>
+                                                <div className="flex-shrink-0">
+                                                    <span className="text-xs bg-white/10 px-2 py-1 rounded">
+                                                        {result.matchType}
+                                                    </span>
+                                                </div>
+                                            </button>
+                                        </li>
+                                    ))}
+                                </ul>
+                            ) : query.trim() && !loading && (
+                                <div className="flex items-center justify-center py-8 text-gray-400">
+                                    No results found for "{query}"
+                                </div>
+                            )}
+                        </motion.div>
                     </motion.div>
                 </motion.div>
             )}
         </AnimatePresence>
     );
 };
-
-const styles = {
-    dialog: {
-        scrollbarWidth: 'none'
-    }
-}
-
 
 export default SearchModal;
