@@ -11,7 +11,7 @@ export default function Footer() {
     const isDark = theme === "dark";
 
     return (
-        <footer className="bg-white dark:bg-[#0f0f0f] border-t border-gray-200 dark:border-gray-700 mt-auto transition-all duration-300 poppins-regular">
+        <footer className="bg-white dark:bg-[#0f0f0f] border-t border-gray-200 dark:border-[#323232] mt-auto transition-all duration-300 poppins-regular">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
                     {/* Brand Section */}
@@ -62,7 +62,7 @@ export default function Footer() {
                             <li>
                                 <Link
                                     to="/"
-                                    className="text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+                                    className="text-gray-600 dark:text-gray-400 hover:text-[#612EBE] transition-colors"
                                 >
                                     Home
                                 </Link>
@@ -70,7 +70,7 @@ export default function Footer() {
                             <li>
                                 <Link
                                     to="/docs"
-                                    className="text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+                                    className="text-gray-600 dark:text-gray-400 hover:text-[#612EBE] transition-colors"
                                 >
                                     Documentation
                                 </Link>
@@ -78,7 +78,7 @@ export default function Footer() {
                             <li>
                                 <Link
                                     to="/quizzes"
-                                    className="text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+                                    className="text-gray-600 dark:text-gray-400 hover:text-[#612EBE] transition-colors"
                                 >
                                     Quizzes
                                 </Link>
@@ -86,7 +86,7 @@ export default function Footer() {
                             <li>
                                 <Link
                                     to="/blogs"
-                                    className="text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+                                    className="text-gray-600 dark:text-gray-400 hover:text-[#612EBE] transition-colors"
                                 >
                                     Blog
                                 </Link>
@@ -103,7 +103,7 @@ export default function Footer() {
                             <li>
                                 <Link
                                     to="/community"
-                                    className="text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+                                    className="text-gray-600 dark:text-gray-400 hover:text-[#612EBE] transition-colors"
                                 >
                                     Community
                                 </Link>
@@ -111,7 +111,7 @@ export default function Footer() {
                             <li>
                                 <Link
                                     to="/about"
-                                    className="text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+                                    className="text-gray-600 dark:text-gray-400 hover:text-[#612EBE] transition-colors"
                                 >
                                     About Us
                                 </Link>
@@ -119,7 +119,7 @@ export default function Footer() {
                             <li>
                                 <Link
                                     to="/terminal-page"
-                                    className="text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+                                    className="text-gray-600 dark:text-gray-400 hover:text-[#612EBE] transition-colors"
                                 >
                                     Terminal
                                 </Link>
@@ -127,7 +127,7 @@ export default function Footer() {
                             <li>
                                 <Link
                                     to="/faq"
-                                    className="text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+                                    className="text-gray-600 dark:text-gray-400 hover:text-[#612EBE] transition-colors"
                                 >
                                     Support
                                 </Link>
@@ -137,7 +137,7 @@ export default function Footer() {
                 </div>
 
                 {/* Bottom Section */}
-                <div className="border-t border-gray-200 dark:border-gray-700 pt-8 mt-8">
+                <div className="border-t border-gray-200 dark:border-[#323232] pt-8 mt-8">
                     <div className="flex flex-col md:flex-row justify-between items-center">
                         <div className="flex items-center space-x-1 text-gray-600 dark:text-gray-400 mb-4 md:mb-0">
                             <span>Made with</span>
@@ -147,12 +147,12 @@ export default function Footer() {
                         <div className="flex flex-col md:flex-row items-center space-y-2 md:space-y-0 md:space-x-6 text-sm text-gray-600 dark:text-gray-400">
                             <p>&copy; {currentYear} Virtual Lab. All rights reserved.</p>
                             <div className="flex space-x-6">
-                                <a href="#" className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
+                                <Link to="/privacy" className="hover:text-[#612EBE] dark:hover:text-[#612EBE] transition-colors">
                                     Privacy Policy
-                                </a>
-                                <a href="#" className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
+                                </Link>
+                                <Link to="/terms" className="hover:text-[#612EBE] dark:hover:text-[#612EBE] transition-colors">
                                     Terms of Service
-                                </a>
+                                </Link>
                             </div>
                         </div>
                     </div>

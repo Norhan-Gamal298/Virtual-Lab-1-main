@@ -13,6 +13,7 @@ import BlogDetail from "./components/BlogDetail";
 import Blogs from "./pages/Blogs";
 import ResetPassword from "./pages/ResetPassword";
 import BlogsLayout from "./layout/BlogsLayout";
+import TermsAndPrivacy from "./pages/TermsAndPrivacy"; // New import
 // Admin imports
 import AdminLayout from "./layout/AdminLayout";
 import AdminDashboard from "./pages/admin/Dashboard";
@@ -35,6 +36,12 @@ function App() {
         <Route path="/community" element={<Community />} />
         <Route path="/about" element={<About />} />
         <Route path="/faq" element={<Faq />} />
+
+        {/* Terms and Privacy routes */}
+        <Route path="/terms" element={<TermsAndPrivacy />} />
+        <Route path="/privacy" element={<TermsAndPrivacy />} />
+        <Route path="/terms-and-privacy" element={<TermsAndPrivacy />} />
+
         <Route path="/docs/*" element={<DocsLayout />}>
           <Route index element={<MarkdownPage />} /> {/* This catches /docs */}
           <Route path=":topicId" element={<MarkdownPage />} />{" "}
