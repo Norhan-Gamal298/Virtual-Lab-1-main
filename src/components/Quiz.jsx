@@ -9,6 +9,9 @@ import {
   FiSend,
   FiLoader,
   FiAlertCircle,
+  FiEye,
+  FiRefreshCw,
+  FiHome,
 } from "react-icons/fi";
 
 const Quiz = ({ chapterId }) => {
@@ -20,6 +23,8 @@ const Quiz = ({ chapterId }) => {
   const [userAnswers, setUserAnswers] = useState([]);
   // State to indicate whether the quiz has been submitted
   const [isSubmitted, setIsSubmitted] = useState(false);
+  // State to track if user is viewing answers
+  const [viewingAnswers, setViewingAnswers] = useState(false);
   // Loading and error states
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -198,6 +203,16 @@ const Quiz = ({ chapterId }) => {
   // Get progress percentage
   const getProgress = () => ((current + 1) / questions.length) * 100;
 
+  // Reset quiz
+  const resetQuiz = () => {
+    setIsSubmitted(false);
+    setViewingAnswers(false);
+    setCurrent(0);
+    setUserAnswers(new Array(questions.length).fill(undefined));
+    setStartTime(Date.now());
+    setTimeElapsed(0);
+  };
+
   // Loading state
   if (isLoading) {
     return (
@@ -275,29 +290,33 @@ const Quiz = ({ chapterId }) => {
         <h2 className="text-4xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 dark:from-blue-400 dark:to-purple-400 bg-clip-text text-transparent mb-2">
           🧠 {quizTitle} Quiz
         </h2>
-        <div className="flex justify-center items-center gap-6 text-gray-600 dark:text-gray-300">
-          <div className="flex items-center gap-2">
-            <FiClock size={18} />
-            <span>{formatTime(timeElapsed)}</span>
+        {!isSubmitted && (
+          <div className="flex justify-center items-center gap-6 text-gray-600 dark:text-gray-300">
+            <div className="flex items-center gap-2">
+              <FiClock size={18} />
+              <span>{formatTime(timeElapsed)}</span>
+            </div>
+            <div className="text-sm">{questions.length} Questions</div>
           </div>
-          <div className="text-sm">{questions.length} Questions</div>
-        </div>
+        )}
       </motion.div>
 
-      {/* Progress Bar */}
-      <div className="mb-6">
-        <div className="flex justify-between text-sm text-gray-600 dark:text-gray-300 mb-2">
-          <span>Progress</span>
-          <span>{Math.round(getProgress())}%</span>
+      {/* Progress Bar - Only show during quiz */}
+      {!isSubmitted && (
+        <div className="mb-6">
+          <div className="flex justify-between text-sm text-gray-600 dark:text-gray-300 mb-2">
+            <span>Progress</span>
+            <span>{Math.round(getProgress())}%</span>
+          </div>
+          <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+            <motion.div
+              className="bg-gradient-to-r from-indigo-500 to-purple-500 dark:from-blue-500 dark:to-purple-500 h-2 rounded-full transition-all duration-500"
+              initial={{ width: 0 }}
+              animate={{ width: `${getProgress()}%` }}
+            />
+          </div>
         </div>
-        <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
-          <motion.div
-            className="bg-gradient-to-r from-indigo-500 to-purple-500 dark:from-blue-500 dark:to-purple-500 h-2 rounded-full transition-all duration-500"
-            initial={{ width: 0 }}
-            animate={{ width: `${getProgress()}%` }}
-          />
-        </div>
-      </div>
+      )}
 
       {/* Quiz Card */}
       <motion.div
@@ -315,13 +334,12 @@ const Quiz = ({ chapterId }) => {
                 {questions.map((_, idx) => (
                   <div
                     key={idx}
-                    className={`w-3 h-3 rounded-full transition-colors ${
-                      idx === current
+                    className={`w-3 h-3 rounded-full transition-colors ${idx === current
                         ? "bg-indigo-500 dark:bg-blue-500"
                         : userAnswers[idx] !== undefined
-                        ? "bg-green-400 dark:bg-green-500"
-                        : "bg-gray-200 dark:bg-gray-600"
-                    }`}
+                          ? "bg-green-400 dark:bg-green-500"
+                          : "bg-gray-200 dark:bg-gray-600"
+                      }`}
                   />
                 ))}
               </div>
@@ -352,19 +370,17 @@ const Quiz = ({ chapterId }) => {
                         whileHover={{ scale: 1.02 }}
                         whileTap={{ scale: 0.98 }}
                         onClick={() => handleAnswer(option)}
-                        className={`w-full text-left px-6 py-4 rounded-xl border-2 transition-all duration-300 ${
-                          isSelected
+                        className={`w-full text-left px-6 py-4 rounded-xl border-2 transition-all duration-300 ${isSelected
                             ? "bg-indigo-50 dark:bg-indigo-900/30 border-indigo-400 dark:border-indigo-500 text-indigo-800 dark:text-indigo-200 shadow-md"
                             : "bg-gray-50 dark:bg-gray-700 border-gray-200 dark:border-gray-600 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-600 hover:border-gray-300 dark:hover:border-gray-500"
-                        }`}
+                          }`}
                       >
                         <div className="flex items-center gap-3">
                           <div
-                            className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${
-                              isSelected
+                            className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${isSelected
                                 ? "border-indigo-500 dark:border-indigo-400 bg-indigo-500 dark:bg-indigo-400"
                                 : "border-gray-300 dark:border-gray-500"
-                            }`}
+                              }`}
                           >
                             {isSelected && (
                               <div className="w-2 h-2 bg-white rounded-full" />
@@ -416,6 +432,122 @@ const Quiz = ({ chapterId }) => {
               )}
             </div>
           </>
+        ) : viewingAnswers ? (
+          // Answer Review View
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="space-y-8"
+          >
+            <div className="text-center mb-8">
+              <h3 className="text-3xl font-bold text-gray-800 dark:text-gray-100 mb-2">
+                📋 Answer Review
+              </h3>
+              <p className="text-gray-600 dark:text-gray-300">
+                Review your answers and see the correct solutions
+              </p>
+            </div>
+
+            {questions.map((question, idx) => {
+              const userAnswer = userAnswers[idx];
+              const correctAnswer = question.answer;
+              const isCorrect = userAnswer === correctAnswer;
+
+              return (
+                <motion.div
+                  key={idx}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: idx * 0.1 }}
+                  className="bg-gray-50 dark:bg-gray-700/50 rounded-xl p-6 border border-gray-200 dark:border-gray-600"
+                >
+                  <div className="flex items-start gap-4 mb-4">
+                    <div
+                      className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center text-white font-bold ${isCorrect
+                          ? "bg-green-500 dark:bg-green-600"
+                          : "bg-red-500 dark:bg-red-600"
+                        }`}
+                    >
+                      {idx + 1}
+                    </div>
+                    <div className="flex-1">
+                      <h4 className="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4">
+                        {question.question}
+                      </h4>
+
+                      <div className="space-y-3">
+                        {question.options.map((option, optionIdx) => {
+                          const isUserAnswer = userAnswer === option;
+                          const isCorrectOption = correctAnswer === option;
+
+                          return (
+                            <div
+                              key={optionIdx}
+                              className={`p-3 rounded-lg border-2 transition-all ${isCorrectOption
+                                  ? "bg-green-50 dark:bg-green-900/30 border-green-400 dark:border-green-500 text-green-800 dark:text-green-200"
+                                  : isUserAnswer && !isCorrectOption
+                                    ? "bg-red-50 dark:bg-red-900/30 border-red-400 dark:border-red-500 text-red-800 dark:text-red-200"
+                                    : "bg-white dark:bg-gray-600 border-gray-200 dark:border-gray-500 text-gray-700 dark:text-gray-200"
+                                }`}
+                            >
+                              <div className="flex items-center gap-3">
+                                <div className="flex items-center gap-2">
+                                  {isCorrectOption && (
+                                    <FiCheckCircle className="text-green-600 dark:text-green-400" size={18} />
+                                  )}
+                                  {isUserAnswer && !isCorrectOption && (
+                                    <FiXCircle className="text-red-600 dark:text-red-400" size={18} />
+                                  )}
+                                </div>
+                                <span className="flex-1">{option}</span>
+                                <div className="flex gap-2 text-sm">
+                                  {isCorrectOption && (
+                                    <span className="bg-green-100 dark:bg-green-800 text-green-800 dark:text-green-200 px-2 py-1 rounded">
+                                      Correct
+                                    </span>
+                                  )}
+                                  {isUserAnswer && (
+                                    <span className="bg-blue-100 dark:bg-blue-800 text-blue-800 dark:text-blue-200 px-2 py-1 rounded">
+                                      Your Answer
+                                    </span>
+                                  )}
+                                </div>
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+
+                      {userAnswer === undefined && (
+                        <div className="mt-3 p-3 bg-yellow-50 dark:bg-yellow-900/30 border border-yellow-200 dark:border-yellow-700 rounded-lg">
+                          <p className="text-yellow-800 dark:text-yellow-200 text-sm">
+                            ⚠️ No answer provided for this question
+                          </p>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </motion.div>
+              );
+            })}
+
+            <div className="flex justify-center gap-4 pt-6">
+              <button
+                onClick={() => setViewingAnswers(false)}
+                className="flex items-center gap-2 px-6 py-3 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-xl hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+              >
+                <FiArrowLeft size={18} />
+                Back to Results
+              </button>
+              <button
+                onClick={resetQuiz}
+                className="flex items-center gap-2 px-6 py-3 bg-indigo-500 dark:bg-blue-600 text-white rounded-xl hover:bg-indigo-600 dark:hover:bg-blue-700 transition-colors"
+              >
+                <FiRefreshCw size={18} />
+                Retake Quiz
+              </button>
+            </div>
+          </motion.div>
         ) : (
           // Results View
           <motion.div
@@ -425,13 +557,12 @@ const Quiz = ({ chapterId }) => {
           >
             <div className="mb-8">
               <div
-                className={`inline-flex items-center justify-center w-20 h-20 rounded-full mb-4 ${
-                  getPercentage() >= 70
+                className={`inline-flex items-center justify-center w-20 h-20 rounded-full mb-4 ${getPercentage() >= 70
                     ? "bg-green-100 dark:bg-green-900/30"
                     : getPercentage() >= 50
-                    ? "bg-yellow-100 dark:bg-yellow-900/30"
-                    : "bg-red-100 dark:bg-red-900/30"
-                }`}
+                      ? "bg-yellow-100 dark:bg-yellow-900/30"
+                      : "bg-red-100 dark:bg-red-900/30"
+                  }`}
               >
                 {getPercentage() >= 70 ? (
                   <FiCheckCircle
@@ -482,8 +613,8 @@ const Quiz = ({ chapterId }) => {
                   {getPercentage() >= 70
                     ? "Excellent!"
                     : getPercentage() >= 50
-                    ? "Good job!"
-                    : "Keep practicing!"}
+                      ? "Good job!"
+                      : "Keep practicing!"}
                 </div>
               </div>
 
@@ -500,17 +631,28 @@ const Quiz = ({ chapterId }) => {
               </div>
             </div>
 
-            <div className="flex justify-center gap-4">
-              <button
-                onClick={() => window.location.reload()}
-                className="px-6 py-3 bg-indigo-500 dark:bg-blue-600 text-white rounded-xl hover:bg-indigo-600 dark:hover:bg-blue-700 transition-colors"
+            <div className="flex justify-center gap-4 flex-wrap">
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => setViewingAnswers(true)}
+                className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-500 to-blue-600 dark:from-blue-600 dark:to-blue-700 text-white rounded-xl hover:shadow-lg transition-all"
               >
+                <FiEye size={18} />
+                View Answers
+              </motion.button>
+              <button
+                onClick={resetQuiz}
+                className="flex items-center gap-2 px-6 py-3 bg-indigo-500 dark:bg-blue-600 text-white rounded-xl hover:bg-indigo-600 dark:hover:bg-blue-700 transition-colors"
+              >
+                <FiRefreshCw size={18} />
                 Retake Quiz
               </button>
               <button
                 onClick={() => window.history.back()}
-                className="px-6 py-3 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-xl hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+                className="flex items-center gap-2 px-6 py-3 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-xl hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
               >
+                <FiHome size={18} />
                 Back to Quizzes
               </button>
             </div>

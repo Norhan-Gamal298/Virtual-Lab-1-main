@@ -13,9 +13,49 @@ export default function Sidebar() {
   const [loadingContent, setLoadingContent] = useState({});
   const [sidebarCollapsed, setSidebarCollapsed] = useState(true);
   const [activeTab, setActiveTab] = useState("chapters");
-  const { user, topicProgress } = useSelector((state) => state.auth);
+  const [userTopicProgress, setUserTopicProgress] = useState({});
+  const { user } = useSelector((state) => state.auth);
   const location = useLocation();
   const navigate = useNavigate();
+
+  // Fetch user progress from backend
+  const fetchUserProgress = async () => {
+    if (!user?.email) return;
+
+    try {
+      const response = await fetch(`http://localhost:8080/api/user-progress/${user.email}`);
+      if (!response.ok) throw new Error("Failed to fetch user progress");
+
+      const data = await response.json();
+      const progress = Array.isArray(data)
+        ? data.reduce((acc, topic) => {
+          acc[topic.id] = topic.completed;
+          return acc;
+        }, {})
+        : data;
+
+      setUserTopicProgress(progress);
+    } catch (error) {
+      console.error("Error fetching user progress:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchUserProgress();
+  }, [user?.email]);
+
+  // Listen for topic completion events
+  useEffect(() => {
+    const handleTopicCompleted = () => {
+      fetchUserProgress();
+    };
+
+    window.addEventListener('topicCompleted', handleTopicCompleted);
+
+    return () => {
+      window.removeEventListener('topicCompleted', handleTopicCompleted);
+    };
+  }, []);
 
   useEffect(() => {
     fetch("http://localhost:8080/api/topics")
@@ -77,10 +117,14 @@ export default function Sidebar() {
 
   const getTopicStatusIcon = (topicId) => {
     if (!user) return null;
-    return topicProgress && topicProgress[topicId] ? (
-      <FiCheckCircle className="text-green-500 text-sm mr-2 shrink-0" />
+
+    // Check if topic is completed in user progress
+    const isCompleted = userTopicProgress[topicId];
+
+    return isCompleted ? (
+      <FiCheckCircle size={20} className="text-green-500 text-sm mr-2 shrink-0" />
     ) : (
-      <FiCircle className="text-gray-500 text-sm mr-2 shrink-0" />
+      <FiCircle size={20} className="text-gray-500 text-sm mr-2 shrink-0" />
     );
   };
 
@@ -218,8 +262,6 @@ export default function Sidebar() {
                                                 {getTopicStatusIcon(topic.id)}
                                                 <span className="topicSidebarTitle">{topic.title}</span>
                                               </Link>
-
-
                                             </div>
 
                                             {/* Topic Content */}
