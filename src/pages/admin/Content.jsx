@@ -279,16 +279,43 @@ const Content = () => {
         }
     };
 
-    const handleDeleteChapter = async (chapterId) => {
-        if (
-            window.confirm(
-                "Are you sure you want to delete this chapter and all its topics?"
-            )
-        ) {
-            setChapters(chapters.filter((ch) => ch.id !== chapterId));
-            setTopics(topics.filter((topic) => topic.chapterId !== chapterId));
+const handleDeleteChapter = async (chapterId) => {
+    try {
+        // Extract numeric ID from "chapter-13" format
+        const chapterIdNum = parseInt(chapterId.replace('chapter-', ''));
+        
+        if (isNaN(chapterIdNum)) {
+            throw new Error('Invalid chapter ID');
         }
-    };
+
+        if (!window.confirm("Are you sure you want to delete this chapter and all its topics?")) {
+            return;
+        }
+
+        const response = await fetch(`http://localhost:8080/api/chapters/${chapterIdNum}`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem('token')}` // Add if using auth
+            }
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new Error(errorData.error || 'Failed to delete chapter');
+        }
+
+        // Update UI state after successful deletion
+        setChapters(prev => prev.filter(ch => ch.id !== chapterId));
+        setTopics(prev => prev.filter(topic => 
+            parseInt(topic.chapterId) !== chapterIdNum
+        ));
+        
+    } catch (error) {
+        console.error("Error deleting chapter:", error);
+        alert(`Deletion failed: ${error.message}`);
+    }
+};
 
     const moveChapter = (chapterId, direction) => {
         const index = chapters.findIndex((ch) => ch.id === chapterId);
@@ -350,47 +377,60 @@ const Content = () => {
         }
     };
 
-    const handleSaveTopic = async () => {
-        try {
-            const chapter = chapters.find(ch => ch.chapterId === parseInt(topicForm.chapterId));
-            if (!chapter) throw new Error('Invalid chapter selected');
+const handleSaveTopic = async () => {
+    try {
+        // Extract numeric chapter ID from the string ID (e.g., "chapter-1" -> 1)
+        const chapterIdNumber = parseInt(topicForm.chapterId.split('-')[1]);
+        
+        const chapter = chapters.find(ch => ch.chapterId === chapterIdNumber);
+        if (!chapter) throw new Error('Invalid chapter selected');
 
-            const formData = new FormData();
-            formData.append('chapterId', chapter.chapterId);
-            formData.append('chapterTitle', chapter.title);
-            formData.append('topicId', editingTopic?.id || `chapter_${chapter.chapterId}_${Date.now()}`);
-            formData.append('title', topicForm.title);
-            formData.append('markdownPath', `/docs/chapter_${chapter.chapterId}/${topicForm.title.replace(/\s+/g, '-')}.md`);
+        const formData = new FormData();
+        
+        // Add all required fields
+        formData.append('chapterId', chapterIdNumber);
+        formData.append('chapterTitle', chapter.title);
+        
+        // Generate topic ID in the format your backend expects (e.g., "chapter_1_1")
+        const topicCount = topics.filter(t => t.chapterId === chapterIdNumber).length;
+        const topicId = editingTopic?.id || `chapter_${chapterIdNumber}_${topicCount + 1}`;
+        formData.append('topicId', topicId);
+        
+        formData.append('title', topicForm.title);
+        formData.append('markdownPath', `/docs/chapter_${chapterIdNumber}/${topicForm.title.replace(/\s+/g, '-')}.md`);
+        formData.append('content', topicForm.content);
 
-            if (topicForm.videoFile) {
-                formData.append('video', topicForm.videoFile);
-            }
-            if (topicForm.images && topicForm.images.length > 0) {
-                topicForm.images.forEach((image, index) => {
-                    formData.append(`images`, image);
-                });
-            }
-
-            const url = editingTopic
-                ? `/api/topics/${editingTopic.id}`
-                : '/api/topics';
-
-            const method = editingTopic ? 'PUT' : 'POST';
-
-            const response = await fetch(url, {
-                method,
-                body: formData
-            });
-
-            if (!response.ok) throw new Error('Failed to save topic');
-
-            loadData();
-            setShowTopicModal(false);
-        } catch (error) {
-            console.error('Error saving topic:', error);
-            alert(`Error: ${error.message}`);
+        // Handle file uploads
+        if (topicForm.videoFile) {
+            formData.append('video', topicForm.videoFile);
         }
-    };
+        
+        if (topicForm.images && topicForm.images.length > 0) {
+            topicForm.images.forEach((image) => {
+                formData.append('images', image);
+            });
+        }
+
+        const url = editingTopic ? `/api/topics/${editingTopic.id}` : '/api/topics';
+        const method = editingTopic ? 'PUT' : 'POST';
+
+        const response = await fetch(url, {
+            method,
+            body: formData
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.error || 'Failed to save topic');
+        }
+
+        loadData(); // Refresh the data
+        setShowTopicModal(false);
+    } catch (error) {
+        console.error('Error saving topic:', error);
+        alert(`Error: ${error.message}`);
+    }
+};
 
     const handleDeleteTopic = async (topicId) => {
         if (window.confirm("Are you sure you want to delete this topic?")) {

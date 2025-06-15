@@ -10,7 +10,7 @@ import { Buffer } from "buffer";
 import fs from "fs";
 import ExcelJS from 'exceljs';
 import PdfPrinter from 'pdfmake';
-import htmlPdf from 'html-pdf';
+// import htmlPdf from 'html-pdf';
 import path from "path";
 import nodemailer from "nodemailer";
 import crypto from "crypto";
@@ -25,7 +25,11 @@ const __dirname = path.dirname(__filename);
 const app = express();
 const PORT = 8080;
 // Middleware Setup
-app.use(cors()); // Enable Cross-Origin Resource Sharing
+app.use(cors({
+  origin: 'http://localhost:5173', // Your frontend URL
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+})); // Enable Cross-Origin Resource Sharing
 app.use(express.json()); // Parse incoming JSON requests
 app.use(bodyParser.json()); // Parse JSON body (redundant with express.json but kept)
 
@@ -285,19 +289,6 @@ const blogSchema = new mongoose.Schema({
 const Blog = mongoose.model("Blog", blogSchema);
 
 // Create a new blog
-// In your POST /api/blogs endpoint
-// Blog CRUD Endpoints
-
-
-
-
-
-
-
-
-
-
-
 
 app.post("/api/blogs", async (req, res) => {
   try {
@@ -318,8 +309,8 @@ app.post("/api/blogs", async (req, res) => {
 
     await blog.save();
     res.status(201).json(blog);
-  } catch (err) {
-    res.status(500).json({ error: "Failed to create blog" });
+  } catch (error) {
+    res.status(500).json({ error: "Failed to create blog", details: error.message });
   }
 });
 
@@ -352,8 +343,8 @@ app.get("/api/blogs", async (req, res) => {
   try {
     const blogs = await Blog.find().sort({ createdAt: -1 });
     res.json(blogs);
-  } catch (err) {
-    res.status(500).json({ error: "Failed to fetch blogs" });
+  } catch (error) {
+    res.status(500).json({ error: "Failed to fetch blogs", details: error.message });
   }
 });
 
@@ -373,8 +364,8 @@ app.put("/api/blogs/:id", async (req, res) => {
     );
     if (!blog) return res.status(404).json({ error: "Blog not found" });
     res.json(blog);
-  } catch (err) {
-    res.status(500).json({ error: "Failed to update blog" });
+  } catch (error) {
+    res.status(500).json({ error: "Failed to update blog", details: error.message });
   }
 });
 
@@ -383,8 +374,8 @@ app.get("/api/blogs/:id", async (req, res) => {
     const blog = await Blog.findOne({ id: Number(req.params.id) });
     if (!blog) return res.status(404).json({ error: "Blog not found" });
     res.json(blog);
-  } catch (err) {
-    res.status(500).json({ error: "Failed to fetch blog" });
+  } catch (error) {
+    res.status(500).json({ error: "Failed to fetch blog", details: error.message });
   }
 });
 
@@ -409,8 +400,8 @@ app.put("/api/blogs/:id", async (req, res) => {
     );
     if (!blog) return res.status(404).json({ error: "Blog not found" });
     res.json(blog);
-  } catch (err) {
-    res.status(500).json({ error: "Failed to update blog" });
+  } catch (error) {
+    res.status(500).json({ error: "Failed to update blog", details: error.message });
   }
 });
 
@@ -419,8 +410,8 @@ app.get("/api/blogs/:id", async (req, res) => {
     const blog = await Blog.findOne({ id: Number(req.params.id) });
     if (!blog) return res.status(404).json({ error: "Blog not found" });
     res.json(blog);
-  } catch (err) {
-    res.status(500).json({ error: "Failed to fetch blog" });
+  } catch (error) {
+    res.status(500).json({ error: "Failed to fetch blog", details: error.message });
   }
 });
 
@@ -441,7 +432,7 @@ const adminAuth = async (req, res, next) => {
     req.user = user;
     next();
   } catch (error) {
-    res.status(401).json({ error: "Invalid token" });
+    res.status(401).json({ error: "Invalid token", details: error.message });
   }
 };
 
@@ -662,6 +653,7 @@ app.get("/api/verify-email", async (req, res) => {
     await user.save();
     res.send("Email verified successfully! You can now log in.");
   } catch (error) {
+    console.error("Error during email verification:", error);
     res.status(500).send("Server error.");
   }
 });
@@ -838,7 +830,7 @@ app.get('/api/report/users', adminAuth, async (req, res) => {
     await generateReport(res, data, headers, 'users-report', format);
 
   } catch (error) {
-    res.status(500).json({ error: 'Failed to generate report' });
+    res.status(500).json({ error: 'Failed to generate report', details: error.message });
   }
 });
 
@@ -864,7 +856,7 @@ app.get('/api/report/content', adminAuth, async (req, res) => {
     await generateReport(res, data, headers, 'content-report', format);
 
   } catch (error) {
-    res.status(500).json({ error: 'Failed to generate report' });
+    res.status(500).json({ error: 'Failed to generate report', details: error.message });
   }
 });
 
@@ -889,7 +881,7 @@ app.get('/api/report/quiz', adminAuth, async (req, res) => {
     await generateReport(res, data, headers, 'quiz-report', format);
 
   } catch (error) {
-    res.status(500).json({ error: 'Failed to generate report' });
+    res.status(500).json({ error: 'Failed to generate report', details: error.message });
   }
 });
 
@@ -915,7 +907,7 @@ app.get('/api/report/blogs', adminAuth, async (req, res) => {
     await generateReport(res, data, headers, 'blogs-report', format);
 
   } catch (error) {
-    res.status(500).json({ error: 'Failed to generate report' });
+    res.status(500).json({ error: 'Failed to generate report', details: error.message });
   }
 });
 
@@ -1104,7 +1096,7 @@ app.get("/api/notes", async (req, res) => {
     }
     res.status(200).json(note);
   } catch (error) {
-    res.status(500).json({ error: "Internal server error" });
+    res.status(500).json({ error: "Internal server error", details: error.message });
   }
 });
 
@@ -1148,8 +1140,8 @@ app.get("/api/quizzes", async (req, res) => {
   try {
     const quizzes = await Quiz.find();
     res.json(quizzes);
-  } catch (err) {
-    res.status(500).json({ error: "Failed to fetch quizzes" });
+  } catch (error) {
+    res.status(500).json({ error: "Failed to fetch quizzes", details: error.message });
   }
 });
 
@@ -1158,8 +1150,8 @@ app.get("/api/quizzes/:chapterId", async (req, res) => {
   try {
     const questions = await Quiz.find({ chapterId: req.params.chapterId });
     res.json(questions);
-  } catch (err) {
-    res.status(500).json({ error: "Failed to fetch questions" });
+  } catch (error) {
+    res.status(500).json({ error: "Failed to fetch questions", details: error.message });
   }
 });
 
@@ -1187,8 +1179,8 @@ app.post("/api/quizs", async (req, res) => {
     const quiz = new Quiz({ chapterId, question, options, answer });
     await quiz.save();
     res.status(201).json(quiz);
-  } catch (err) {
-    res.status(500).json({ error: "Failed to add question" });
+  } catch (error) {
+    res.status(500).json({ error: "Failed to add question", details: error.message });
   }
 });
 
@@ -1203,8 +1195,8 @@ app.put("/api/quizzes/:id", async (req, res) => {
     );
     if (!quiz) return res.status(404).json({ error: "Question not found" });
     res.json(quiz);
-  } catch (err) {
-    res.status(500).json({ error: "Failed to update question" });
+  } catch (error) {
+    res.status(500).json({ error: "Failed to update question", details: error.message });
   }
 });
 
@@ -1214,8 +1206,8 @@ app.delete("/api/quizzes/:id", async (req, res) => {
     const quiz = await Quiz.findByIdAndDelete(req.params.id);
     if (!quiz) return res.status(404).json({ error: "Question not found" });
     res.json({ message: "Question deleted" });
-  } catch (err) {
-    res.status(500).json({ error: "Failed to delete question" });
+  } catch (error) {
+    res.status(500).json({ error: "Failed to delete question", details: error.message });
   }
 });
 
@@ -1266,8 +1258,8 @@ app.put("/api/topics/:id", async (req, res) => {
     );
 
     res.json(updated);
-  } catch (err) {
-    res.status(500).json({ error: "Failed to update topic" });
+  } catch (error) {
+    res.status(500).json({ error: "Failed to update topic", details: error.message });
   }
 });
 
@@ -1331,8 +1323,8 @@ app.post("/api/chapters", async (req, res) => {
     });
     await newTopic.save();
     res.status(201).json({ chapterId, chapterTitle });
-  } catch (err) {
-    res.status(500).json({ error: "Failed to create chapter" });
+  } catch (error) {
+    res.status(500).json({ error: "Failed to create chapter", details: error.message });
   }
 });
 
@@ -1400,8 +1392,8 @@ app.delete("/api/topics/:id", async (req, res) => {
     if (!result) return res.status(404).json({ error: "Topic not found" });
 
     res.status(204).send();
-  } catch (err) {
-    res.status(500).json({ error: "Failed to delete topic" });
+  } catch (error) {
+    res.status(500).json({ error: "Failed to delete topic", details: error.message });
   }
 });
 
@@ -1442,8 +1434,30 @@ app.get("/api/video/:topicId", async (req, res) => {
   }
 });
 
+// Delete chapter and all its topics
+app.delete("/api/chapters/:id", async (req, res) => {
+    try {
+        const { id } = req.params;
+        const chapterId = parseInt(id, 10);
 
+        if (isNaN(chapterId)) {
+            return res.status(400).json({ error: "Invalid chapter ID" });
+        }
 
+        // Delete all topics in this chapter first
+        const deleteResult = await Topic.deleteMany({ chapterId });
+        
+        console.log(`Deleted ${deleteResult.deletedCount} topics for chapter ${chapterId}`);
+        
+        res.status(204).send();
+    } catch (err) {
+        console.error("Error deleting chapter:", err);
+        res.status(500).json({ 
+            error: "Failed to delete chapter",
+            details: err.message 
+        });
+    }
+});
 
 // Add this to server.js
 const ensureDirectoryExistence = (filePath) => {
