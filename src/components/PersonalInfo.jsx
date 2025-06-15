@@ -1,86 +1,121 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { updateUser } from "../features/auth/authSlice";
-// import { authAPI } from "../features/auth/authAPI";
+
 const PersonalInfo = () => {
     const dispatch = useDispatch();
-    const { user } = useSelector((state) => state.auth); // Get the logged-in user from Redux
+    const { user } = useSelector((state) => state.auth);
 
     const [editing, setEditing] = useState(false);
-    const [errors, setErrors] = useState({}); // To store validation errors
+    const [errors, setErrors] = useState({});
     const [userInfo, setUserInfo] = useState({
-        FullName: "",
-        Email: "",
+        firstName: "",
+        lastName: "",
+        email: "",
     });
 
     const validateInput = (field, value) => {
         let error = "";
-
-        if (field === "FullName") {
-            if (!/^[a-zA-Z\s]{3,50}$/.test(value)) {
-                error = "Invalid name (only letters, min 3 chars)";
+        if (field === "firstName" || field === "lastName") {
+            if (!/^[a-zA-Z\s]{2,50}$/.test(value)) {
+                error = "Invalid name (only letters, min 2 chars)";
             }
-        } else if (field === "Email") {
+        } else if (field === "email") {
             if (!/^[\w.-]+@[a-zA-Z\d.-]+\.[a-zA-Z]{2,}$/.test(value)) {
                 error = "Invalid email format";
-            }
-        } else if (field === "Phone") {
-            if (!/^\+?\d{10,15}$/.test(value)) {
-                error = "Invalid phone number";
             }
         }
 
         setErrors((prev) => ({ ...prev, [field]: error }));
         return error === "";
     };
-    // Fetch user data from Redux or backend
+
     useEffect(() => {
         if (user) {
             setUserInfo({
-                FullName: `${user.firstName} ${user.lastName}`,
-                Email: user.email,
-                // Phone: user.phone || "", // Default to empty if phone is not available
+                firstName: user.firstName,
+                lastName: user.lastName,
+                email: user.email,
             });
         }
     }, [user]);
 
-    const handleChange = (e, field) => {
-        const newValue = e.target.innerText.trim();
-        setUserInfo({ ...userInfo, [field]: newValue });
-
-        validateInput(field, newValue);
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setUserInfo({ ...userInfo, [name]: value });
+        validateInput(name, value);
     };
 
-    const handleEdit = () => {
-        if (editing) {
+    const handleSubmit = () => {
+        // Validate all fields before submission
+        const isValid = Object.keys(userInfo).every(field =>
+            validateInput(field, userInfo[field])
+        );
+
+        if (isValid) {
             dispatch(updateUser(userInfo));
+            setEditing(false);
         }
-        setEditing(!editing);
     };
 
     return (
-        <div className="personalInfo mt-[2rem] poppins-medium">
-            <div className="flex justify-between mb-5">
-                <h3 className="inter-semi-bold">Personal Info</h3>
-                <button className="p-2 px-7 border border-[#252525] rounded-[8px] inter-medium" onClick={handleEdit}>
-                    {editing ? "Save" : "Edit"}
-                </button>
+        <div className="space-y-6">
+            <div className="flex justify-between items-center">
+                <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
+                    Personal Information
+                </h3>
+                {editing ? (
+                    <div className="flex gap-2">
+                        <button
+                            onClick={() => setEditing(false)}
+                            className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-[#323232] rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition"
+                        >
+                            Cancel
+                        </button>
+                        <button
+                            onClick={handleSubmit}
+                            className="px-4 py-2 text-sm font-medium text-white bg-purple-600 rounded-lg hover:bg-purple-700 transition"
+                        >
+                            Save Changes
+                        </button>
+                    </div>
+                ) : (
+                    <button
+                        onClick={() => setEditing(true)}
+                        className="px-4 py-2 text-sm font-medium text-white bg-purple-600 rounded-lg hover:bg-purple-700 transition"
+                    >
+                        Edit
+                    </button>
+                )}
             </div>
 
-            <div className="flex gap-9">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {Object.entries(userInfo).map(([key, value]) => (
-                    <div className="flex flex-col" key={key}>
-                        <span className="dark:text-[#ffffff80] transition-colors duration-200">{key.replace(/([A-Z])/g, " $1")}</span>
-                        <p
-                            contentEditable={editing}
-                            suppressContentEditableWarning={true}
-                            className={`editable pt-2 ${errors[key] ? "border-red-500" : "border-gray-300"
-                                }`}
-                            onBlur={(e) => handleChange(e, key)}
-                        >
-                            {value}
-                        </p>
-                        {errors[key] && <span className="text-red-500 text-sm">{errors[key]}</span>}
+                    <div key={key} className="space-y-1">
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                            {key.charAt(0).toUpperCase() + key.slice(1).replace(/([A-Z])/g, ' $1')}
+                        </label>
+                        {editing ? (
+                            <>
+                                <input
+                                    type={key === "email" ? "email" : "text"}
+                                    name={key}
+                                    value={value}
+                                    onChange={handleChange}
+                                    className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 ${errors[key]
+                                        ? "border-red-500 focus:ring-red-200 dark:focus:ring-red-900"
+                                        : "border-[#D1D5DB] bg-[#F3F4F6] dark:border-[#525252] focus:ring-purple-200 dark:focus:ring-purple-900 dark:bg-[#323232] text-[#4B5563] dark:text-white"
+                                        }`}
+                                />
+                                {errors[key] && (
+                                    <p className="text-sm text-red-600">{errors[key]}</p>
+                                )}
+                            </>
+                        ) : (
+                            <p className="px-3 py-2 bg-[#F3F4F6] dark:bg-[#323232] rounded-lg text-[#4B5563] dark:text-white">
+                                {value || "-"}
+                            </p>
+                        )}
                     </div>
                 ))}
             </div>

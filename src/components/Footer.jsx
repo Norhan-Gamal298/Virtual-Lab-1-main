@@ -11,7 +11,7 @@ export default function Footer() {
     const isDark = theme === "dark";
 
     return (
-        <footer className="bg-white dark:bg-[#0f0f0f] border-t border-gray-200 dark:border-gray-700 mt-auto transition-all duration-300">
+        <footer className="bg-white dark:bg-[#0f0f0f] border-t border-gray-200 dark:border-gray-700 mt-auto transition-all duration-300 poppins-regular">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
                     {/* Brand Section */}
@@ -142,10 +142,10 @@ export default function Footer() {
                         <div className="flex items-center space-x-1 text-gray-600 dark:text-gray-400 mb-4 md:mb-0">
                             <span>Made with</span>
                             <Heart className="w-4 h-4 text-red-500 fill-current" />
-                            <span>by Your Team</span>
+                            <span>by Virual Lab</span>
                         </div>
                         <div className="flex flex-col md:flex-row items-center space-y-2 md:space-y-0 md:space-x-6 text-sm text-gray-600 dark:text-gray-400">
-                            <p>&copy; {currentYear} Your App. All rights reserved.</p>
+                            <p>&copy; {currentYear} Virtual Lab. All rights reserved.</p>
                             <div className="flex space-x-6">
                                 <a href="#" className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
                                     Privacy Policy

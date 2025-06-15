@@ -121,9 +121,9 @@ const ImageApplications = ({ features }) => {
                 >
                     <div className="nexus__top flex flex-col items-start">
                         <div className="perspectiveTransition title textTitleSection mb-8">
-                            <h1 className="font-bold text-4xl md:text-7xl uppercase leading-[0.82]">
-                                <span className="block">the universe</span>
-                                <span className="block">powered by ZENT</span>
+                            <h1 className="font-bold text-4xl md:text-7xl uppercase leading-[0.82] text-left">
+                                <span className="block">the power</span>
+                                <span className="block">of Image Processing</span>
                             </h1>
                         </div>
                     </div>

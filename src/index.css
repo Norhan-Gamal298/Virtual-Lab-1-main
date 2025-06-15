@@ -463,6 +463,10 @@ button {
   will-change: width;
 }
 
+.sidebarViewport{
+  scrollbar-width: thin;
+}
+
 @media (min-width: 997px) {
   .markdownSidebar {
     clip-path: inset(0);

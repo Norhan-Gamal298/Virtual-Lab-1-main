@@ -79,7 +79,7 @@ const PasswordTab = () => {
             type={showPassword ? "text" : "password"}
             value={currentPassword}
             onChange={(e) => setCurrentPassword(e.target.value)}
-            className="w-128 dark:bg-[#252525] border border-gray-700 rounded-lg p-2 dark:text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+            className="w-128 dark:bg-[#252525] border border-[#D1D5DB] bg-[#F3F4F6] dark:border-[#525252] rounded-lg p-2 dark:text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
             required
           />
         </div>
@@ -89,7 +89,7 @@ const PasswordTab = () => {
             type={showPassword ? "text" : "password"}
             value={newPassword}
             onChange={(e) => setNewPassword(e.target.value)}
-            className="w-128 dark:bg-[#252525] border border-gray-700 rounded-lg p-2 dark:text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+            className="w-128 dark:bg-[#252525] dark:bg-[#252525] border border-[#D1D5DB] bg-[#F3F4F6] dark:border-[#525252] rounded-lg p-2 dark:text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
             required
           />
         </div>
@@ -99,7 +99,7 @@ const PasswordTab = () => {
             type={showPassword ? "text" : "password"}
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
-            className="w-128 dark:bg-[#252525] border border-gray-700 rounded-lg p-2 dark:text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+            className="w-128 dark:bg-[#252525] dark:bg-[#252525] border border-[#D1D5DB] bg-[#F3F4F6] dark:border-[#525252] rounded-lg p-2 dark:text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
             required
           />
           <button
