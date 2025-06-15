@@ -175,12 +175,12 @@ html {
 
 body {
   @apply m-0 flex place-items-center box-border transition-colors duration-300;
-  scrollbar-color: #0f0f0f transparent;
+  scrollbar-color: #0f0f0f white;
   transition: all 0.3s ease-in-out;
 }
 
 .dark body{
-  scrollbar-color: #fff transparent;
+  scrollbar-color: #fff #0f0f0f;
 
 }
 

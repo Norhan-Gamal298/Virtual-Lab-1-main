@@ -24,6 +24,7 @@ import AdminProfile from "./pages/admin/Profile";
 import AdminAdmins from "./pages/admin/Admins";
 import AdminLogin from "./pages/admin/Login";
 import AdminRoute from "./components/AdminRoute";
+import Faq from "./pages/Faq";
 
 function App() {
   return (
@@ -33,6 +34,7 @@ function App() {
         <Route index element={<Home />} />
         <Route path="/community" element={<Community />} />
         <Route path="/about" element={<About />} />
+        <Route path="/faq" element={<Faq />} />
         <Route path="/docs/*" element={<DocsLayout />}>
           <Route index element={<MarkdownPage />} /> {/* This catches /docs */}
           <Route path=":topicId" element={<MarkdownPage />} />{" "}

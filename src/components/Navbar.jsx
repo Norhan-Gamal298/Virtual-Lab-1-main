@@ -244,7 +244,7 @@ const Navbar = () => {
             </div>
           ) : (
             <button
-              className="px-5 py-2.5 rounded-lg bg-[#F5F7FA] dark:bg-[#1f1f1f] border border-neutral-border dark:border-[#3b3b3b] text-primary-text transition-colors font-medium"
+              className="px-7 py-3.5 rounded-lg bg-[#F5F7FA] dark:bg-[#1f1f1f] border border-neutral-border dark:border-[#3b3b3b] text-primary-text transition-colors font-medium"
               onClick={() => setActiveModal("signup")}
             >
               Sign Up
