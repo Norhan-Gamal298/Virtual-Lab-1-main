@@ -56,8 +56,8 @@ const Blogs = () => {
   return (
     <div className="p-6 max-w-7xl mx-auto">
       {/* Form */}
-      <div className="bg-gray-900 rounded-2xl p-8 mb-12 shadow-xl">
-        <h2 className="text-white text-3xl font-bold mb-6 flex items-center gap-2">
+      <div className="dark:bg-[#1f1f1f] bg-white rounded-2xl p-8 mb-12 shadow-xl border dark:border-[#3a3a3a] border-gray-200">
+        <h2 className="dark:text-white text-[#1f1f1f] text-3xl font-bold mb-6 flex items-center gap-2">
           {editingId ? <FiEdit /> : <FiPlus />}
           {editingId ? "Edit Blog" : "Add New Blog"}
         </h2>
@@ -67,7 +67,7 @@ const Blogs = () => {
             placeholder="Blog Title"
             value={form.title}
             onChange={handleChange}
-            className="w-full px-4 py-3 rounded-lg bg-gray-800 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            className="w-full px-4 py-3 rounded-lg dark:bg-[#2a2a2a] bg-gray-100 dark:text-white text-[#1f1f1f] placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 border dark:border-[#3a3a3a] border-gray-300"
             required
           />
           <input
@@ -75,7 +75,7 @@ const Blogs = () => {
             placeholder="Author Name"
             value={form.author}
             onChange={handleChange}
-            className="w-full px-4 py-3 rounded-lg bg-gray-800 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            className="w-full px-4 py-3 rounded-lg dark:bg-[#2a2a2a] bg-gray-100 dark:text-white text-[#1f1f1f] placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 border dark:border-[#3a3a3a] border-gray-300"
             required
           />
           <input
@@ -83,7 +83,7 @@ const Blogs = () => {
             placeholder="Image URL (optional)"
             value={form.image}
             onChange={handleChange}
-            className="w-full px-4 py-3 rounded-lg bg-gray-800 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            className="w-full px-4 py-3 rounded-lg dark:bg-[#2a2a2a] bg-gray-100 dark:text-white text-[#1f1f1f] placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 border dark:border-[#3a3a3a] border-gray-300"
           />
           <div data-color-mode="dark">
             <MDEditor
@@ -106,7 +106,7 @@ const Blogs = () => {
                   setForm(initialForm);
                   setEditingId(null);
                 }}
-                className="bg-gray-700 hover:bg-gray-600 text-white px-5 py-2 rounded-lg transition font-medium flex items-center gap-2"
+                className="dark:bg-[#3a3a3a] bg-gray-200 dark:hover:bg-[#4a4a4a] hover:bg-gray-300 dark:text-white text-[#1f1f1f] px-5 py-2 rounded-lg transition font-medium flex items-center gap-2"
               >
                 <FiX />
                 Cancel
@@ -117,12 +117,12 @@ const Blogs = () => {
       </div>
 
       {/* Blog List */}
-      <h2 className="text-2xl text-white font-semibold mb-6">All Blogs</h2>
+      <h2 className="text-2xl dark:text-white text-[#1f1f1f] font-semibold mb-6">All Blogs</h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
         {blogs.map((blog) => (
           <div
             key={blog._id}
-            className="relative bg-gray-900 rounded-xl overflow-hidden shadow-md hover:shadow-lg transition-all duration-300 group"
+            className="relative dark:bg-[#1f1f1f] bg-white rounded-xl overflow-hidden shadow-md hover:shadow-lg transition-all duration-300 group border dark:border-[#3a3a3a] border-gray-200"
           >
             {blog.image && (
               <div className="relative">
@@ -141,14 +141,14 @@ const Blogs = () => {
               </div>
             )}
             <div className="p-5 flex flex-col h-full">
-              <h3 className="text-white text-xl font-semibold mb-2">
+              <h3 className="dark:text-white text-[#1f1f1f] text-xl font-semibold mb-2">
                 {blog.title}
               </h3>
-              <p className="text-gray-400 text-sm mb-4 line-clamp-3">
+              <p className="dark:text-gray-400 text-gray-600 text-sm mb-4 line-clamp-3">
                 {blog.content?.replace(/\n/g, ' ').slice(0, 200) +
                   (blog.content?.length > 200 ? "..." : "")}
               </p>
-              <div className="flex justify-between items-center mt-auto text-sm text-gray-400">
+              <div className="flex justify-between items-center mt-auto text-sm dark:text-gray-400 text-gray-500">
                 <span className="font-medium">{blog.author}</span>
                 <span className="text-xs opacity-70">• Posted recently</span>
               </div>

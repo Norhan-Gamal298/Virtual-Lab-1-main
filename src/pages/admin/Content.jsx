@@ -53,35 +53,35 @@ const MarkdownEditor = ({
     const renderMarkdown = (markdown) => {
         // Simple markdown to HTML conversion for preview
         return markdown
-            .replace(/^# (.*$)/gim, "<h1>$1</h1>")
-            .replace(/^## (.*$)/gim, "<h2>$1</h2>")
-            .replace(/^### (.*$)/gim, "<h3>$1</h3>")
-            .replace(/\*\*(.*)\*\*/gim, "<strong>$1</strong>")
-            .replace(/\*(.*)\*/gim, "<em>$1</em>")
-            .replace(/\[([^\]]+)\]\(([^\)]+)\)/gim, '<a href="$2">$1</a>')
+            .replace(/^# (.*$)/gim, "<h1 class='dark:text-white text-[#1f1f1f]'>$1</h1>")
+            .replace(/^## (.*$)/gim, "<h2 class='dark:text-white text-[#1f1f1f]'>$1</h2>")
+            .replace(/^### (.*$)/gim, "<h3 class='dark:text-white text-[#1f1f1f]'>$1</h3>")
+            .replace(/\*\*(.*)\*\*/gim, "<strong class='dark:text-white text-[#1f1f1f]'>$1</strong>")
+            .replace(/\*(.*)\*/gim, "<em class='dark:text-white text-[#1f1f1f]'>$1</em>")
+            .replace(/\[([^\]]+)\]\(([^\)]+)\)/gim, '<a href="$2" class="text-blue-500 hover:underline">$1</a>')
             .replace(
                 /!\[([^\]]*)\]\(([^\)]+)\)/gim,
-                '<img alt="$1" src="$2" style="max-width: 100%; height: auto;" />'
+                '<img alt="$1" src="$2" class="max-w-full h-auto rounded-lg my-2" />'
             )
             .replace(
                 /```([^`]+)```/gim,
-                '<pre style="background: #f4f4f4; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code>$1</code></pre>'
+                '<pre class="dark:bg-[#2a2a2a] bg-gray-100 p-4 rounded-lg overflow-x-auto my-2"><code class="dark:text-gray-300 text-gray-800">$1</code></pre>'
             )
             .replace(
                 /`([^`]+)`/gim,
-                '<code style="background: #f4f4f4; padding: 0.2rem 0.4rem; border-radius: 3px;">$1</code>'
+                '<code class="dark:bg-[#2a2a2a] bg-gray-100 px-2 py-1 rounded text-sm dark:text-gray-300 text-gray-800">$1</code>'
             )
             .replace(/\n/gim, "<br>");
     };
 
     return (
-        <div className="border border-gray-300 rounded-lg overflow-hidden">
+        <div className="border dark:border-[#3a3a3a] border-gray-300 rounded-lg overflow-hidden">
             {/* Toolbar */}
-            <div className="bg-gray-50 border-b border-gray-300 p-2 flex items-center gap-2 flex-wrap">
+            <div className="dark:bg-[#2a2a2a] bg-gray-100 border-b dark:border-[#3a3a3a] border-gray-300 p-2 flex items-center gap-2 flex-wrap">
                 <button
                     type="button"
                     onClick={() => insertMarkdown("# ", "")}
-                    className="px-2 py-1 text-sm border border-gray-300 rounded hover:bg-gray-100"
+                    className="px-2 py-1 text-sm border dark:border-[#3a3a3a] border-gray-300 rounded dark:hover:bg-[#3a3a3a] hover:bg-gray-200 dark:text-gray-300 text-gray-800"
                     title="Heading 1"
                 >
                     H1
@@ -89,7 +89,7 @@ const MarkdownEditor = ({
                 <button
                     type="button"
                     onClick={() => insertMarkdown("## ", "")}
-                    className="px-2 py-1 text-sm border border-gray-300 rounded hover:bg-gray-100"
+                    className="px-2 py-1 text-sm border dark:border-[#3a3a3a] border-gray-300 rounded dark:hover:bg-[#3a3a3a] hover:bg-gray-200 dark:text-gray-300 text-gray-800"
                     title="Heading 2"
                 >
                     H2
@@ -97,7 +97,7 @@ const MarkdownEditor = ({
                 <button
                     type="button"
                     onClick={() => insertMarkdown("**", "**")}
-                    className="px-2 py-1 text-sm border border-gray-300 rounded hover:bg-gray-100 font-bold"
+                    className="px-2 py-1 text-sm border dark:border-[#3a3a3a] border-gray-300 rounded dark:hover:bg-[#3a3a3a] hover:bg-gray-200 dark:text-gray-300 text-gray-800 font-bold"
                     title="Bold"
                 >
                     B
@@ -105,7 +105,7 @@ const MarkdownEditor = ({
                 <button
                     type="button"
                     onClick={() => insertMarkdown("*", "*")}
-                    className="px-2 py-1 text-sm border border-gray-300 rounded hover:bg-gray-100 italic"
+                    className="px-2 py-1 text-sm border dark:border-[#3a3a3a] border-gray-300 rounded dark:hover:bg-[#3a3a3a] hover:bg-gray-200 dark:text-gray-300 text-gray-800 italic"
                     title="Italic"
                 >
                     I
@@ -113,7 +113,7 @@ const MarkdownEditor = ({
                 <button
                     type="button"
                     onClick={() => insertMarkdown("[", "](url)")}
-                    className="px-2 py-1 text-sm border border-gray-300 rounded hover:bg-gray-100"
+                    className="px-2 py-1 text-sm border dark:border-[#3a3a3a] border-gray-300 rounded dark:hover:bg-[#3a3a3a] hover:bg-gray-200 dark:text-gray-300 text-gray-800"
                     title="Link"
                 >
                     Link
@@ -121,7 +121,7 @@ const MarkdownEditor = ({
                 <button
                     type="button"
                     onClick={() => insertMarkdown("![", "](image-url)")}
-                    className="px-2 py-1 text-sm border border-gray-300 rounded hover:bg-gray-100"
+                    className="px-2 py-1 text-sm border dark:border-[#3a3a3a] border-gray-300 rounded dark:hover:bg-[#3a3a3a] hover:bg-gray-200 dark:text-gray-300 text-gray-800"
                     title="Image"
                 >
                     Img
@@ -129,7 +129,7 @@ const MarkdownEditor = ({
                 <button
                     type="button"
                     onClick={() => insertMarkdown("```\n", "\n```")}
-                    className="px-2 py-1 text-sm border border-gray-300 rounded hover:bg-gray-100"
+                    className="px-2 py-1 text-sm border dark:border-[#3a3a3a] border-gray-300 rounded dark:hover:bg-[#3a3a3a] hover:bg-gray-200 dark:text-gray-300 text-gray-800"
                     title="Code Block"
                 >
                     Code
@@ -138,7 +138,7 @@ const MarkdownEditor = ({
                     <button
                         type="button"
                         onClick={() => setIsPreview(!isPreview)}
-                        className="px-3 py-1 text-sm border border-gray-300 rounded hover:bg-gray-100 flex items-center gap-1"
+                        className="px-3 py-1 text-sm border dark:border-[#3a3a3a] border-gray-300 rounded dark:hover:bg-[#3a3a3a] hover:bg-gray-200 flex items-center gap-1 dark:text-gray-300 text-gray-800"
                     >
                         {isPreview ? <EyeOff size={14} /> : <Eye size={14} />}
                         {isPreview ? "Edit" : "Preview"}
@@ -150,7 +150,7 @@ const MarkdownEditor = ({
             <div className="min-h-96">
                 {isPreview ? (
                     <div
-                        className="p-4 prose max-w-none"
+                        className="p-4 prose max-w-none dark:prose-invert"
                         dangerouslySetInnerHTML={{ __html: renderMarkdown(value) }}
                     />
                 ) : (
@@ -159,7 +159,7 @@ const MarkdownEditor = ({
                         value={value}
                         onChange={(e) => onChange(e.target.value)}
                         placeholder={placeholder}
-                        className="w-full h-96 p-4 border-none outline-none resize-none font-mono text-sm leading-relaxed"
+                        className="w-full h-96 p-4 border-none outline-none resize-none font-mono text-sm leading-relaxed dark:bg-[#1f1f1f] bg-white dark:text-gray-300 text-gray-800"
                         style={{ minHeight: "400px" }}
                     />
                 )}
@@ -200,7 +200,6 @@ const Content = () => {
         loadData();
     }, []);
 
-    // Updated loadData function
     const loadData = async () => {
         try {
             setLoading(true);
@@ -213,7 +212,7 @@ const Content = () => {
             const processedChapters = chaptersData.map((chapter) => ({
                 id: `chapter-${chapter.chapterId}`,
                 chapterId: chapter.chapterId,
-                title: chapter.chapter, // Using 'chapter' from API response
+                title: chapter.chapter,
                 order: chapter.chapterId,
                 topicsCount: chapter.topics.length,
             }));
@@ -239,11 +238,6 @@ const Content = () => {
             setLoading(false);
         }
     };
-
-    /* const extractChapterNumber = (chapterTitle) => {
-          const match = chapterTitle.match(/^(\d+)/);
-          return match ? parseInt(match[1]) : 0;
-      }; */
 
     // Chapter operations
     const handleAddChapter = () => {
@@ -277,13 +271,14 @@ const Content = () => {
 
             if (!response.ok) throw new Error("Failed to save chapter");
 
-            loadData(); // Refresh data
+            loadData();
             setShowChapterModal(false);
         } catch (error) {
             console.error("Error saving chapter:", error);
             alert(`Error: ${error.message}`);
         }
     };
+
     const handleDeleteChapter = async (chapterId) => {
         if (
             window.confirm(
@@ -319,7 +314,6 @@ const Content = () => {
 
     // Topic operations
     const handleAddTopic = (chapterId = null) => {
-        // Ensure we have a valid chapter ID
         const validChapterId =
             chapterId || (chapters.length > 0 ? chapters[0].id : null);
 
@@ -342,7 +336,6 @@ const Content = () => {
 
     const handleEditTopic = async (topic) => {
         try {
-            // Load the markdown content
             const response = await fetch(`/api/docs/${topic.id}`);
             const content = await response.text();
 
@@ -359,11 +352,9 @@ const Content = () => {
 
     const handleSaveTopic = async () => {
         try {
-            // Get the chapter data
             const chapter = chapters.find(ch => ch.chapterId === parseInt(topicForm.chapterId));
             if (!chapter) throw new Error('Invalid chapter selected');
 
-            // Prepare form data for file uploads
             const formData = new FormData();
             formData.append('chapterId', chapter.chapterId);
             formData.append('chapterTitle', chapter.title);
@@ -371,7 +362,6 @@ const Content = () => {
             formData.append('title', topicForm.title);
             formData.append('markdownPath', `/docs/chapter_${chapter.chapterId}/${topicForm.title.replace(/\s+/g, '-')}.md`);
 
-            // Append files if they exist
             if (topicForm.videoFile) {
                 formData.append('video', topicForm.videoFile);
             }
@@ -390,8 +380,6 @@ const Content = () => {
             const response = await fetch(url, {
                 method,
                 body: formData
-                // Note: Don't set Content-Type header when using FormData
-                // The browser will set it automatically with the correct boundary
             });
 
             if (!response.ok) throw new Error('Failed to save topic');
@@ -423,24 +411,24 @@ const Content = () => {
     if (loading) {
         return (
             <div className="p-6 max-w-6xl mx-auto">
-                <h1 className="text-2xl font-bold mb-6">Content Management</h1>
-                <div className="text-center py-8">Loading...</div>
+                <h1 className="text-2xl font-bold mb-6 dark:text-white text-[#1f1f1f]">Content Management</h1>
+                <div className="text-center py-8 dark:text-gray-400 text-gray-600">Loading...</div>
             </div>
         );
     }
 
     return (
         <div className="p-6 max-w-6xl mx-auto">
-            <h1 className="text-2xl font-bold mb-6">Content Management</h1>
+            <h1 className="text-2xl font-bold mb-6 dark:text-white text-[#1f1f1f]">Content Management</h1>
 
             {/* Tab Navigation */}
-            <div className="border-b border-gray-300 mb-6">
+            <div className="border-b dark:border-[#3a3a3a] border-gray-300 mb-6">
                 <nav className="-mb-px flex space-x-8">
                     <button
                         onClick={() => setActiveTab("chapters")}
                         className={`py-2 px-1 border-b-2 font-medium text-sm ${activeTab === "chapters"
-                                ? "border-blue-500 text-blue-600"
-                                : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+                            ? "border-indigo-500 dark:text-white text-[#1f1f1f]"
+                            : "border-transparent dark:text-gray-400 text-gray-500 hover:dark:text-gray-300 hover:text-gray-700 hover:border-gray-300"
                             }`}
                     >
                         <Folder className="inline w-4 h-4 mr-1" />
@@ -449,8 +437,8 @@ const Content = () => {
                     <button
                         onClick={() => setActiveTab("topics")}
                         className={`py-2 px-1 border-b-2 font-medium text-sm ${activeTab === "topics"
-                                ? "border-blue-500 text-blue-600"
-                                : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+                            ? "border-indigo-500 dark:text-white text-[#1f1f1f]"
+                            : "border-transparent dark:text-gray-400 text-gray-500 hover:dark:text-gray-300 hover:text-gray-700 hover:border-gray-300"
                             }`}
                     >
                         <FileText className="inline w-4 h-4 mr-1" />
@@ -463,81 +451,81 @@ const Content = () => {
             {activeTab === "chapters" && (
                 <div>
                     <div className="flex justify-between items-center mb-4">
-                        <h2 className="text-xl font-semibold">Chapters</h2>
+                        <h2 className="text-xl font-semibold dark:text-white text-[#1f1f1f]">Chapters</h2>
                         <button
                             onClick={handleAddChapter}
-                            className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 flex items-center gap-2"
+                            className="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 flex items-center gap-2"
                         >
                             <Plus size={16} />
                             Add Chapter
                         </button>
                     </div>
 
-                    <div className="bg-white rounded-lg shadow overflow-hidden">
+                    <div className="dark:bg-[#1f1f1f] bg-white rounded-lg shadow overflow-hidden border dark:border-[#3a3a3a] border-gray-200">
                         <table className="w-full">
-                            <thead className="bg-gray-50">
+                            <thead className="dark:bg-[#2a2a2a] bg-gray-50">
                                 <tr>
-                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    <th className="px-6 py-3 text-left text-xs font-medium dark:text-gray-300 text-gray-500 uppercase tracking-wider">
                                         Order
                                     </th>
-                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    <th className="px-6 py-3 text-left text-xs font-medium dark:text-gray-300 text-gray-500 uppercase tracking-wider">
                                         Title
                                     </th>
-                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    <th className="px-6 py-3 text-left text-xs font-medium dark:text-gray-300 text-gray-500 uppercase tracking-wider">
                                         Topics
                                     </th>
-                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    <th className="px-6 py-3 text-left text-xs font-medium dark:text-gray-300 text-gray-500 uppercase tracking-wider">
                                         Actions
                                     </th>
                                 </tr>
                             </thead>
-                            <tbody className="bg-white divide-y divide-gray-200">
+                            <tbody className="divide-y dark:divide-[#3a3a3a] divide-gray-200">
                                 {chapters.map((chapter) => (
-                                    <tr key={`chapter-${chapter.chapterId}`}>
-                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                    <tr key={`chapter-${chapter.chapterId}`} className="dark:hover:bg-[#2a2a2a] hover:bg-gray-50">
+                                        <td className="px-6 py-4 whitespace-nowrap text-sm dark:text-gray-300 text-gray-900">
                                             <div className="flex items-center gap-1">
                                                 {chapter.order}
                                                 <div className="flex flex-col">
                                                     <button
                                                         onClick={() => moveChapter(chapter.id, "up")}
-                                                        className="text-gray-400 hover:text-gray-600"
+                                                        className="dark:text-gray-400 text-gray-500 hover:dark:text-gray-300 hover:text-gray-700"
                                                     >
                                                         <ChevronUp size={14} />
                                                     </button>
                                                     <button
                                                         onClick={() => moveChapter(chapter.id, "down")}
-                                                        className="text-gray-400 hover:text-gray-600"
+                                                        className="dark:text-gray-400 text-gray-500 hover:dark:text-gray-300 hover:text-gray-700"
                                                     >
                                                         <ChevronDown size={14} />
                                                     </button>
                                                 </div>
                                             </div>
                                         </td>
-                                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium dark:text-white text-[#1f1f1f]">
                                             {chapter.title}
                                         </td>
-                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                        <td className="px-6 py-4 whitespace-nowrap text-sm dark:text-gray-400 text-gray-500">
                                             {chapter.topicsCount} topics
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                             <div className="flex items-center gap-2">
                                                 <button
                                                     onClick={() => handleAddTopic(chapter.id)}
-                                                    className="text-green-600 hover:text-green-900"
+                                                    className="text-green-600 hover:text-green-800 dark:hover:text-green-400"
                                                     title="Add Topic"
                                                 >
                                                     <Plus size={16} />
                                                 </button>
                                                 <button
                                                     onClick={() => handleEditChapter(chapter)}
-                                                    className="text-blue-600 hover:text-blue-900"
+                                                    className="text-blue-600 hover:text-blue-800 dark:hover:text-blue-400"
                                                     title="Edit Chapter"
                                                 >
                                                     <Edit size={16} />
                                                 </button>
                                                 <button
                                                     onClick={() => handleDeleteChapter(chapter.id)}
-                                                    className="text-red-600 hover:text-red-900"
+                                                    className="text-red-600 hover:text-red-800 dark:hover:text-red-400"
                                                     title="Delete Chapter"
                                                 >
                                                     <Trash2 size={16} />
@@ -556,66 +544,64 @@ const Content = () => {
             {activeTab === "topics" && (
                 <div>
                     <div className="flex justify-between items-center mb-4">
-                        <h2 className="text-xl font-semibold">Topics</h2>
+                        <h2 className="text-xl font-semibold dark:text-white text-[#1f1f1f]">Topics</h2>
                         <button
                             onClick={() => handleAddTopic()}
-                            className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 flex items-center gap-2"
+                            className="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 flex items-center gap-2"
                         >
                             <Plus size={16} />
                             Add Topic
                         </button>
                     </div>
 
-                    <div className="bg-white rounded-lg shadow overflow-hidden">
+                    <div className="dark:bg-[#1f1f1f] bg-white rounded-lg shadow overflow-hidden border dark:border-[#3a3a3a] border-gray-200">
                         <table className="w-full">
-                            <thead className="bg-gray-50">
+                            <thead className="dark:bg-[#2a2a2a] bg-gray-50">
                                 <tr>
-                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    <th className="px-6 py-3 text-left text-xs font-medium dark:text-gray-300 text-gray-500 uppercase tracking-wider">
                                         Chapter
                                     </th>
-                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    <th className="px-6 py-3 text-left text-xs font-medium dark:text-gray-300 text-gray-500 uppercase tracking-wider">
                                         Title
                                     </th>
-                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    <th className="px-6 py-3 text-left text-xs font-medium dark:text-gray-300 text-gray-500 uppercase tracking-wider">
                                         Has Video
                                     </th>
-                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    <th className="px-6 py-3 text-left text-xs font-medium dark:text-gray-300 text-gray-500 uppercase tracking-wider">
                                         Images
                                     </th>
-                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    <th className="px-6 py-3 text-left text-xs font-medium dark:text-gray-300 text-gray-500 uppercase tracking-wider">
                                         Actions
                                     </th>
                                 </tr>
                             </thead>
-                            <tbody className="bg-white divide-y divide-gray-200">
+                            <tbody className="divide-y dark:divide-[#3a3a3a] divide-gray-200">
                                 {topics.map((topic) => (
-                                    <tr key={`topic-${topic.id}`}>
-                                        {" "}
-                                        {/* Add key here */}
-                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                    <tr key={`topic-${topic.id}`} className="dark:hover:bg-[#2a2a2a] hover:bg-gray-50">
+                                        <td className="px-6 py-4 whitespace-nowrap text-sm dark:text-gray-400 text-gray-500">
                                             {topic.chapterTitle}
                                         </td>
-                                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium dark:text-white text-[#1f1f1f]">
                                             {topic.title}
                                         </td>
-                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                        <td className="px-6 py-4 whitespace-nowrap text-sm dark:text-gray-400 text-gray-500">
                                             {topic.videoPath ? "Yes" : "No"}
                                         </td>
-                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                        <td className="px-6 py-4 whitespace-nowrap text-sm dark:text-gray-400 text-gray-500">
                                             {topic.images?.length || 0}
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                             <div className="flex items-center gap-2">
                                                 <button
                                                     onClick={() => handleEditTopic(topic)}
-                                                    className="text-blue-600 hover:text-blue-900"
+                                                    className="text-blue-600 hover:text-blue-800 dark:hover:text-blue-400"
                                                     title="Edit Topic"
                                                 >
                                                     <Edit size={16} />
                                                 </button>
                                                 <button
                                                     onClick={() => handleDeleteTopic(topic.id)}
-                                                    className="text-red-600 hover:text-red-900"
+                                                    className="text-red-600 hover:text-red-800 dark:hover:text-red-400"
                                                     title="Delete Topic"
                                                 >
                                                     <Trash2 size={16} />
@@ -633,14 +619,14 @@ const Content = () => {
             {/* Chapter Modal */}
             {showChapterModal && (
                 <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-                    <div className="bg-white rounded-lg p-6 w-full max-w-md">
-                        <h3 className="text-lg font-semibold mb-4">
+                    <div className="dark:bg-[#1f1f1f] bg-white rounded-lg p-6 w-full max-w-md border dark:border-[#3a3a3a] border-gray-200">
+                        <h3 className="text-lg font-semibold mb-4 dark:text-white text-[#1f1f1f]">
                             {editingChapter ? "Edit Chapter" : "Add Chapter"}
                         </h3>
 
                         <div className="space-y-4">
                             <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1">
+                                <label className="block text-sm font-medium dark:text-gray-300 text-gray-700 mb-1">
                                     Title
                                 </label>
                                 <input
@@ -649,13 +635,13 @@ const Content = () => {
                                     onChange={(e) =>
                                         setChapterForm({ ...chapterForm, title: e.target.value })
                                     }
-                                    className="w-full border border-gray-300 rounded-lg px-3 py-2"
+                                    className="w-full border dark:border-[#3a3a3a] border-gray-300 rounded-lg px-3 py-2 dark:bg-[#2a2a2a] bg-white dark:text-gray-300 text-gray-800"
                                     placeholder="Chapter title"
                                 />
                             </div>
 
                             <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1">
+                                <label className="block text-sm font-medium dark:text-gray-300 text-gray-700 mb-1">
                                     Order
                                 </label>
                                 <input
@@ -667,7 +653,7 @@ const Content = () => {
                                             order: parseInt(e.target.value),
                                         })
                                     }
-                                    className="w-full border border-gray-300 rounded-lg px-3 py-2"
+                                    className="w-full border dark:border-[#3a3a3a] border-gray-300 rounded-lg px-3 py-2 dark:bg-[#2a2a2a] bg-white dark:text-gray-300 text-gray-800"
                                     min="1"
                                 />
                             </div>
@@ -676,13 +662,13 @@ const Content = () => {
                         <div className="flex justify-end gap-2 mt-6">
                             <button
                                 onClick={() => setShowChapterModal(false)}
-                                className="px-4 py-2 text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-50"
+                                className="px-4 py-2 dark:text-gray-300 text-gray-600 border dark:border-[#3a3a3a] border-gray-300 rounded-lg dark:hover:bg-[#3a3a3a] hover:bg-gray-50"
                             >
                                 Cancel
                             </button>
                             <button
                                 onClick={handleSaveChapter}
-                                className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 flex items-center gap-2"
+                                className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 flex items-center gap-2"
                             >
                                 <Save size={16} />
                                 Save
@@ -695,15 +681,15 @@ const Content = () => {
             {/* Topic Modal */}
             {showTopicModal && (
                 <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-                    <div className="bg-white rounded-lg p-6 w-full max-w-4xl max-h-[90vh] overflow-y-auto">
-                        <h3 className="text-lg font-semibold mb-4">
+                    <div className="dark:bg-[#1f1f1f] bg-white rounded-lg p-6 w-full max-w-4xl max-h-[90vh] overflow-y-auto border dark:border-[#3a3a3a] border-gray-200">
+                        <h3 className="text-lg font-semibold mb-4 dark:text-white text-[#1f1f1f]">
                             {editingTopic ? "Edit Topic" : "Add Topic"}
                         </h3>
 
                         <div className="space-y-4">
                             <div className="grid grid-cols-2 gap-4">
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                                    <label className="block text-sm font-medium dark:text-gray-300 text-gray-700 mb-1">
                                         Title
                                     </label>
                                     <input
@@ -712,13 +698,13 @@ const Content = () => {
                                         onChange={(e) =>
                                             setTopicForm({ ...topicForm, title: e.target.value })
                                         }
-                                        className="w-full border border-gray-300 rounded-lg px-3 py-2"
+                                        className="w-full border dark:border-[#3a3a3a] border-gray-300 rounded-lg px-3 py-2 dark:bg-[#2a2a2a] bg-white dark:text-gray-300 text-gray-800"
                                         placeholder="Topic title"
                                     />
                                 </div>
 
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                                    <label className="block text-sm font-medium dark:text-gray-300 text-gray-700 mb-1">
                                         Chapter
                                     </label>
                                     <select
@@ -726,7 +712,7 @@ const Content = () => {
                                         onChange={(e) =>
                                             setTopicForm({ ...topicForm, chapterId: e.target.value })
                                         }
-                                        className="w-full border border-gray-300 rounded-lg px-3 py-2"
+                                        className="w-full border dark:border-[#3a3a3a] border-gray-300 rounded-lg px-3 py-2 dark:bg-[#2a2a2a] bg-white dark:text-gray-300 text-gray-800"
                                         required
                                     >
                                         {chapters.length === 0 ? (
@@ -745,7 +731,7 @@ const Content = () => {
                             </div>
 
                             <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1">
+                                <label className="block text-sm font-medium dark:text-gray-300 text-gray-700 mb-1">
                                     Content (Markdown)
                                 </label>
                                 <MarkdownEditor
@@ -759,24 +745,24 @@ const Content = () => {
 
                             <div className="grid grid-cols-2 gap-4">
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                                    <label className="block text-sm font-medium dark:text-gray-300 text-gray-700 mb-1">
                                         Video File
                                     </label>
                                     <input
                                         type="file"
                                         accept="video/*"
                                         onChange={(e) => handleFileUpload(e, "video")}
-                                        className="w-full border border-gray-300 rounded-lg px-3 py-2"
+                                        className="w-full border dark:border-[#3a3a3a] border-gray-300 rounded-lg px-3 py-2 dark:bg-[#2a2a2a] bg-white dark:text-gray-300 text-gray-800"
                                     />
                                     {topicForm.videoFile && (
-                                        <p className="text-sm text-gray-500 mt-1">
+                                        <p className="text-sm dark:text-gray-400 text-gray-500 mt-1">
                                             Selected: {topicForm.videoFile.name}
                                         </p>
                                     )}
                                 </div>
 
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                                    <label className="block text-sm font-medium dark:text-gray-300 text-gray-700 mb-1">
                                         Images
                                     </label>
                                     <input
@@ -784,10 +770,10 @@ const Content = () => {
                                         accept="image/*"
                                         multiple
                                         onChange={(e) => handleFileUpload(e, "images")}
-                                        className="w-full border border-gray-300 rounded-lg px-3 py-2"
+                                        className="w-full border dark:border-[#3a3a3a] border-gray-300 rounded-lg px-3 py-2 dark:bg-[#2a2a2a] bg-white dark:text-gray-300 text-gray-800"
                                     />
                                     {topicForm.images.length > 0 && (
-                                        <p className="text-sm text-gray-500 mt-1">
+                                        <p className="text-sm dark:text-gray-400 text-gray-500 mt-1">
                                             {topicForm.images.length} image(s) selected
                                         </p>
                                     )}
@@ -798,13 +784,13 @@ const Content = () => {
                         <div className="flex justify-end gap-2 mt-6">
                             <button
                                 onClick={() => setShowTopicModal(false)}
-                                className="px-4 py-2 text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-50"
+                                className="px-4 py-2 dark:text-gray-300 text-gray-600 border dark:border-[#3a3a3a] border-gray-300 rounded-lg dark:hover:bg-[#3a3a3a] hover:bg-gray-50"
                             >
                                 Cancel
                             </button>
                             <button
                                 onClick={handleSaveTopic}
-                                className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 flex items-center gap-2"
+                                className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 flex items-center gap-2"
                             >
                                 <Save size={16} />
                                 Save

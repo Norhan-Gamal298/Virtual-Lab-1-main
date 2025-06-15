@@ -500,7 +500,7 @@ export default function MarkdownPage() {
                     <div className="text-neutral-text-secondary text-sm">
                       Previous
                     </div>
-                    <div className="paginationLabel break-normal text-primary font-medium mt-1">
+                    <div className="paginationLabel break-all text-primary font-medium mt-1">
                       {prevTopic.title}
                     </div>
                   </button>
@@ -516,7 +516,7 @@ export default function MarkdownPage() {
                     <div className="text-neutral-text-secondary text-sm">
                       Next
                     </div>
-                    <div className="paginationLabel break-normal text-primary font-medium mt-1">
+                    <div className="paginationLabel break-all text-primary font-medium mt-1">
                       {nextTopic.title}
                     </div>
                   </button>

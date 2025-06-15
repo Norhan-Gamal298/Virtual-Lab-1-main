@@ -114,23 +114,23 @@ export default function QuizQuestionsAdmin() {
     };
 
     return (
-        <div className="min-h-screen w-full bg-gradient-to-br from-slate-50 to-blue-50 p-6">
+        <div className="min-h-screen w-full p-6">
             <div className="max-w-6xl mx-auto">
                 {/* Header */}
-                <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6 mb-6">
+                <div className="dark:bg-[#2a2a2a] bg-white rounded-xl shadow-sm border dark:border-[#3a3a3a] border-gray-200 p-6 mb-6">
                     <div className="flex items-center justify-between">
                         <div className="flex items-center space-x-3">
-                            <div className="p-2 bg-blue-100 rounded-lg">
-                                <HelpCircle className="h-6 w-6 text-blue-600" />
+                            <div className="p-2 bg-indigo-100 dark:bg-indigo-900 rounded-lg">
+                                <HelpCircle className="h-6 w-6 text-indigo-600 dark:text-indigo-300" />
                             </div>
                             <div>
-                                <h1 className="text-2xl font-bold text-slate-900">Quiz Management</h1>
-                                <p className="text-slate-600 mt-1">Create and manage quiz questions</p>
+                                <h1 className="text-2xl font-bold dark:text-white text-gray-900">Quiz Management</h1>
+                                <p className="dark:text-gray-400 text-gray-600 mt-1">Create and manage quiz questions</p>
                             </div>
                         </div>
                         <button
                             onClick={() => setShowForm(true)}
-                            className="inline-flex items-center space-x-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors duration-200 shadow-sm"
+                            className="inline-flex items-center space-x-2 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg transition-colors duration-200 shadow-sm"
                         >
                             <Plus className="h-4 w-4" />
                             <span>Add Question</span>
@@ -140,28 +140,28 @@ export default function QuizQuestionsAdmin() {
 
                 {/* Add/Edit Form */}
                 {showForm && (
-                    <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6 mb-6">
+                    <div className="dark:bg-[#2a2a2a] bg-white rounded-xl shadow-sm border dark:border-[#3a3a3a] border-gray-200 p-6 mb-6">
                         <div className="flex items-center justify-between mb-6">
-                            <h2 className="text-xl font-semibold text-slate-900 flex items-center space-x-2">
-                                <Edit3 className="h-5 w-5 text-blue-600" />
+                            <h2 className="text-xl font-semibold dark:text-white text-gray-900 flex items-center space-x-2">
+                                <Edit3 className="h-5 w-5 text-indigo-600 dark:text-indigo-400" />
                                 <span>{editingId ? "Edit Question" : "Add New Question"}</span>
                             </h2>
                             <button
                                 onClick={handleCancel}
-                                className="p-2 hover:bg-slate-100 rounded-lg transition-colors duration-200"
+                                className="p-2 dark:hover:bg-[#3a3a3a] hover:bg-gray-100 rounded-lg transition-colors duration-200"
                             >
-                                <X className="h-5 w-5 text-slate-500" />
+                                <X className="h-5 w-5 dark:text-gray-400 text-gray-500" />
                             </button>
                         </div>
 
                         <div className="space-y-6">
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div>
-                                    <label className="block text-sm font-medium text-slate-700 mb-2">
+                                    <label className="block text-sm font-medium dark:text-gray-300 text-gray-700 mb-2">
                                         Chapter ID
                                     </label>
                                     <input
-                                        className="w-full border border-slate-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 px-4 py-3 rounded-lg transition-all duration-200"
+                                        className="w-full border dark:border-[#3a3a3a] border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 dark:focus:ring-indigo-800 px-4 py-3 rounded-lg transition-all duration-200 dark:bg-[#1f1f1f] bg-white dark:text-gray-300 text-gray-800"
                                         name="chapterId"
                                         placeholder="e.g., CH001"
                                         value={form.chapterId}
@@ -169,26 +169,14 @@ export default function QuizQuestionsAdmin() {
                                         required
                                     />
                                 </div>
-                                {/* <div>
-                                    <label className="block text-sm font-medium text-slate-700 mb-2">
-                                        Chapter Title
-                                    </label>
-                                    <input
-                                        className="w-full border border-slate-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 px-4 py-3 rounded-lg transition-all duration-200"
-                                        name="chapterTitle"
-                                        placeholder="Chapter title (optional)"
-                                        value={form.chapterTitle}
-                                        onChange={handleChange}
-                                    />
-                                </div> */}
                             </div>
 
                             <div>
-                                <label className="block text-sm font-medium text-slate-700 mb-2">
+                                <label className="block text-sm font-medium dark:text-gray-300 text-gray-700 mb-2">
                                     Question
                                 </label>
                                 <textarea
-                                    className="w-full border border-slate-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 px-4 py-3 rounded-lg transition-all duration-200 resize-none"
+                                    className="w-full border dark:border-[#3a3a3a] border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 dark:focus:ring-indigo-800 px-4 py-3 rounded-lg transition-all duration-200 resize-none dark:bg-[#1f1f1f] bg-white dark:text-gray-300 text-gray-800"
                                     name="question"
                                     placeholder="Enter your question here..."
                                     value={form.question}
@@ -199,20 +187,20 @@ export default function QuizQuestionsAdmin() {
                             </div>
 
                             <div>
-                                <label className="block text-sm font-medium text-slate-700 mb-3">
+                                <label className="block text-sm font-medium dark:text-gray-300 text-gray-700 mb-3">
                                     Answer Options
                                 </label>
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     {form.options.map((opt, idx) => (
                                         <div key={idx} className="relative">
                                             <input
-                                                className="w-full border border-slate-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 px-4 py-3 pl-12 rounded-lg transition-all duration-200"
+                                                className="w-full border dark:border-[#3a3a3a] border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 dark:focus:ring-indigo-800 px-4 py-3 pl-12 rounded-lg transition-all duration-200 dark:bg-[#1f1f1f] bg-white dark:text-gray-300 text-gray-800"
                                                 placeholder={`Option ${String.fromCharCode(65 + idx)}`}
                                                 value={opt}
                                                 onChange={e => handleOptionChange(idx, e.target.value)}
                                                 required
                                             />
-                                            <div className="absolute left-4 top-1/2 transform -translate-y-1/2 w-6 h-6 bg-slate-100 rounded-full flex items-center justify-center text-sm font-medium text-slate-600">
+                                            <div className="absolute left-4 top-1/2 transform -translate-y-1/2 w-6 h-6 dark:bg-[#3a3a3a] bg-gray-100 rounded-full flex items-center justify-center text-sm font-medium dark:text-gray-300 text-gray-600">
                                                 {String.fromCharCode(65 + idx)}
                                             </div>
                                         </div>
@@ -221,11 +209,11 @@ export default function QuizQuestionsAdmin() {
                             </div>
 
                             <div>
-                                <label className="block text-sm font-medium text-slate-700 mb-2">
+                                <label className="block text-sm font-medium dark:text-gray-300 text-gray-700 mb-2">
                                     Correct Answer
                                 </label>
                                 <select
-                                    className="w-full border border-slate-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 px-4 py-3 rounded-lg transition-all duration-200"
+                                    className="w-full border dark:border-[#3a3a3a] border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 dark:focus:ring-indigo-800 px-4 py-3 rounded-lg transition-all duration-200 dark:bg-[#1f1f1f] bg-white dark:text-gray-300 text-gray-800"
                                     name="answer"
                                     value={form.answer}
                                     onChange={handleChange}
@@ -242,7 +230,7 @@ export default function QuizQuestionsAdmin() {
                                 <button
                                     type="button"
                                     onClick={handleSubmit}
-                                    className="inline-flex items-center space-x-2 bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg transition-colors duration-200 shadow-sm"
+                                    className="inline-flex items-center space-x-2 bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-lg transition-colors duration-200 shadow-sm"
                                 >
                                     <Save className="h-4 w-4" />
                                     <span>{editingId ? "Update Question" : "Add Question"}</span>
@@ -250,7 +238,7 @@ export default function QuizQuestionsAdmin() {
                                 <button
                                     type="button"
                                     onClick={handleCancel}
-                                    className="inline-flex items-center space-x-2 bg-slate-200 hover:bg-slate-300 text-slate-700 px-6 py-3 rounded-lg transition-colors duration-200"
+                                    className="inline-flex items-center space-x-2 dark:bg-[#3a3a3a] bg-gray-200 dark:hover:bg-[#4a4a4a] hover:bg-gray-300 dark:text-gray-300 text-gray-700 px-6 py-3 rounded-lg transition-colors duration-200"
                                 >
                                     <X className="h-4 w-4" />
                                     <span>Cancel</span>
@@ -261,22 +249,22 @@ export default function QuizQuestionsAdmin() {
                 )}
 
                 {/* Search and Filter */}
-                <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6 mb-6">
+                <div className="dark:bg-[#2a2a2a] bg-white rounded-xl shadow-sm border dark:border-[#3a3a3a] border-gray-200 p-6 mb-6">
                     <div className="flex flex-col md:flex-row md:items-center space-y-4 md:space-y-0 md:space-x-4">
                         <div className="flex-1 relative">
-                            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-slate-400" />
+                            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 dark:text-gray-500 text-gray-400" />
                             <input
                                 type="text"
                                 placeholder="Search questions..."
-                                className="w-full pl-10 pr-4 py-3 border border-slate-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 rounded-lg transition-all duration-200"
+                                className="w-full pl-10 pr-4 py-3 border dark:border-[#3a3a3a] border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 dark:focus:ring-indigo-800 rounded-lg transition-all duration-200 dark:bg-[#1f1f1f] bg-white dark:text-gray-300 text-gray-800"
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
                             />
                         </div>
-                        {/* <div className="relative">
-                            <Filter className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-slate-400" />
+                        <div className="relative">
+                            <Filter className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 dark:text-gray-500 text-gray-400" />
                             <select
-                                className="pl-10 pr-8 py-3 border border-slate-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 rounded-lg transition-all duration-200 bg-white"
+                                className="pl-10 pr-8 py-3 border dark:border-[#3a3a3a] border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 dark:focus:ring-indigo-800 rounded-lg transition-all duration-200 dark:bg-[#1f1f1f] bg-white dark:text-gray-300 text-gray-800"
                                 value={filterChapter}
                                 onChange={(e) => setFilterChapter(e.target.value)}
                             >
@@ -285,56 +273,56 @@ export default function QuizQuestionsAdmin() {
                                     <option key={chapter} value={chapter}>Chapter {chapter}</option>
                                 ))}
                             </select>
-                        </div> */}
+                        </div>
                     </div>
                 </div>
 
                 {/* Questions List */}
-                <div className="bg-white rounded-xl shadow-sm border border-slate-200">
-                    <div className="p-6 border-b border-slate-200">
+                <div className="dark:bg-[#2a2a2a] bg-white rounded-xl shadow-sm border dark:border-[#3a3a3a] border-gray-200">
+                    <div className="p-6 border-b dark:border-[#3a3a3a] border-gray-200">
                         <div className="flex items-center justify-between">
-                            <h2 className="text-xl font-semibold text-slate-900 flex items-center space-x-2">
-                                <BookOpen className="h-5 w-5 text-blue-600" />
+                            <h2 className="text-xl font-semibold dark:text-white text-gray-900 flex items-center space-x-2">
+                                <BookOpen className="h-5 w-5 text-indigo-600 dark:text-indigo-400" />
                                 <span>Questions ({filteredQuestions.length})</span>
                             </h2>
                         </div>
                     </div>
 
-                    <div className="divide-y divide-slate-200">
+                    <div className="divide-y dark:divide-[#3a3a3a] divide-gray-200">
                         {filteredQuestions.length === 0 ? (
                             <div className="p-8 text-center">
-                                <HelpCircle className="mx-auto h-12 w-12 text-slate-400 mb-4" />
-                                <p className="text-slate-500 text-lg">No questions found</p>
-                                <p className="text-slate-400 mt-2">
+                                <HelpCircle className="mx-auto h-12 w-12 dark:text-gray-600 text-gray-400 mb-4" />
+                                <p className="dark:text-gray-400 text-gray-500 text-lg">No questions found</p>
+                                <p className="dark:text-gray-500 text-gray-400 mt-2">
                                     {questions.length === 0 ? "Start by adding your first question" : "Try adjusting your search or filter"}
                                 </p>
                             </div>
                         ) : (
                             filteredQuestions.map((q, index) => (
-                                <div key={q._id} className="p-6 hover:bg-slate-50 transition-colors duration-200">
+                                <div key={q._id} className="p-6 dark:hover:bg-[#3a3a3a] hover:bg-gray-50 transition-colors duration-200">
                                     <div className="flex items-start justify-between mb-4">
                                         <div className="flex-1">
                                             <div className="flex items-center space-x-3 mb-2">
-                                                <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                                                <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-indigo-100 dark:bg-indigo-900 text-indigo-800 dark:text-indigo-300">
                                                     Chapter {q.chapterId}
                                                 </span>
                                                 {q.chapterTitle && (
-                                                    <span className="text-sm text-slate-600">{q.chapterTitle}</span>
+                                                    <span className="text-sm dark:text-gray-400 text-gray-600">{q.chapterTitle}</span>
                                                 )}
                                             </div>
-                                            <h3 className="text-lg font-medium text-slate-900 mb-3">{q.question}</h3>
+                                            <h3 className="text-lg font-medium dark:text-white text-gray-900 mb-3">{q.question}</h3>
                                         </div>
                                         <div className="flex items-center space-x-2 ml-4">
                                             <button
                                                 onClick={() => handleEdit(q)}
-                                                className="p-2 text-slate-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all duration-200"
+                                                className="p-2 dark:text-gray-400 text-gray-600 dark:hover:text-indigo-400 hover:text-indigo-600 dark:hover:bg-[#3a3a3a] hover:bg-indigo-50 rounded-lg transition-all duration-200"
                                                 title="Edit question"
                                             >
                                                 <Edit3 className="h-4 w-4" />
                                             </button>
                                             <button
                                                 onClick={() => handleDelete(q._id)}
-                                                className="p-2 text-slate-600 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all duration-200"
+                                                className="p-2 dark:text-gray-400 text-gray-600 dark:hover:text-red-400 hover:text-red-600 dark:hover:bg-[#3a3a3a] hover:bg-red-50 rounded-lg transition-all duration-200"
                                                 title="Delete question"
                                             >
                                                 <Trash2 className="h-4 w-4" />
@@ -347,29 +335,29 @@ export default function QuizQuestionsAdmin() {
                                             <div
                                                 key={i}
                                                 className={`flex items-center space-x-3 p-3 rounded-lg border-2 transition-all duration-200 ${opt === q.answer
-                                                    ? 'border-green-200 bg-green-50'
-                                                    : 'border-slate-200 bg-slate-50'
+                                                    ? 'dark:border-green-800 border-green-200 dark:bg-green-900/30 bg-green-50'
+                                                    : 'dark:border-[#3a3a3a] border-gray-200 dark:bg-[#1f1f1f] bg-gray-50'
                                                     }`}
                                             >
                                                 <div className={`w-6 h-6 rounded-full flex items-center justify-center text-sm font-medium ${opt === q.answer
                                                     ? 'bg-green-500 text-white'
-                                                    : 'bg-slate-300 text-slate-700'
+                                                    : 'dark:bg-[#3a3a3a] bg-gray-300 dark:text-gray-300 text-gray-700'
                                                     }`}>
                                                     {String.fromCharCode(65 + i)}
                                                 </div>
-                                                <span className={`flex-1 ${opt === q.answer ? 'font-medium text-green-900' : 'text-slate-700'}`}>
+                                                <span className={`flex-1 ${opt === q.answer ? 'font-medium dark:text-green-300 text-green-900' : 'dark:text-gray-300 text-gray-700'}`}>
                                                     {opt}
                                                 </span>
                                                 {opt === q.answer && (
-                                                    <CheckCircle className="h-5 w-5 text-green-500" />
+                                                    <CheckCircle className="h-5 w-5 text-green-500 dark:text-green-400" />
                                                 )}
                                             </div>
                                         ))}
                                     </div>
 
-                                    <div className="flex items-center space-x-2 text-sm text-slate-500">
-                                        <CheckCircle className="h-4 w-4 text-green-500" />
-                                        <span>Correct Answer: <span className="font-medium text-green-700">{q.answer}</span></span>
+                                    <div className="flex items-center space-x-2 text-sm dark:text-gray-400 text-gray-500">
+                                        <CheckCircle className="h-4 w-4 text-green-500 dark:text-green-400" />
+                                        <span>Correct Answer: <span className="font-medium dark:text-green-400 text-green-700">{q.answer}</span></span>
                                     </div>
                                 </div>
                             ))

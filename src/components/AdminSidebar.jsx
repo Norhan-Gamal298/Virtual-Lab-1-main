@@ -31,7 +31,7 @@ const AdminSidebar = () => {
         }, */
         {
             label: 'Users Management',
-            icon: <TbUsers size={28} />,
+            icon: <TbUsers className='text-[#1F2937] dark:text-[#fff]' size={22} />,
             path: '/admin/users',
             hasSubItems: true,
             subItems: [
@@ -48,17 +48,17 @@ const AdminSidebar = () => {
         },
         {
             label: 'Course Management',
-            icon: <TbBook size={28} />,
+            icon: <TbBook className='text-[#1F2937] dark:text-[#fff]' size={22} />,
             path: '/admin/content'
         },
         {
             label: 'Blogs Management',
-            icon: <TbNews size={28} />,
+            icon: <TbNews className='text-[#1F2937] dark:text-[#fff]' size={22} />,
             path: '/admin/blogs'
         },
         {
             label: 'Quizzes Management',
-            icon: <PiExamFill size={28} />, // You can replace this with a quiz-related icon if you like
+            icon: <PiExamFill className='text-[#1F2937] dark:text-[#fff]' size={22} />, // You can replace this with a quiz-related icon if you like
             path: '/admin/quizzes'
         },
         /* {
@@ -147,14 +147,13 @@ const AdminSidebar = () => {
             animate={sidebarCollapsed ? "collapsed" : "expanded"}
             variants={sidebarVariants}
             transition={{ duration: 0.5, ease: "easeInOut" }}
-            className="h-full bg-[#1a1a1a] text-white sticky top-0 z-40 overflow-hidden shadow-lg flex flex-col"
+            className="h-full bg-[#fff] dark:bg-[#1a1a1a] text-[#1F2937] sticky top-0 z-40 overflow-hidden shadow-lg flex flex-col transition-colors duration-300"
         >
             <div className="flex-1 flex flex-col">
                 <div className="p-2 border-b border-gray-800">
                     <motion.button
                         onClick={() => setSidebarCollapsed(prev => !prev)}
-                        className="p-2 bg-[#202323] hover:bg-[#202323] rounded-lg w-full flex justify-center"
-                        whileHover={{ backgroundColor: "#202323" }}
+                        className="p-2 text-[#1F2937] dark:text-[#ffffff] bg-[#F5F7FA] dark:bg-[#1f1f1f] border border-[#323232] dark:border-[#3b3b3b] rounded-lg w-full flex justify-center transition-colors duration-300"
                         transition={hoverTransition}
                     >
                         {sidebarCollapsed ? (
@@ -172,15 +171,15 @@ const AdminSidebar = () => {
                                 {item.hasSubItems ? (
                                     <motion.div
                                         layout
-                                        className={`rounded-lg w-full mr-auto flex flex-col whitespace-nowrap ${isActive(item.path) ? 'bg-[#202323]' : ''}`}
+                                        className={`rounded-lg w-full mr-auto flex flex-col whitespace-nowrap border border-[#525252] text-[#1F2937] dark:text-[#ffffff] bg-[#F5F7FA] dark:bg-[#1f1f1f] dark:border-[#3b3b3b] transition-colors duration-300 ${isActive(item.path) ? '' : ''}`}
                                     >
                                         <motion.button
                                             onClick={() => !sidebarCollapsed && toggleItemExpansion(item.label)}
-                                            className={`flex items-center p-2 w-full rounded-lg justify-between   ${sidebarCollapsed ? 'justify-between' : 'justify-between'}`}
-                                            whileHover={{ backgroundColor: "#202323" }}
+                                            className={`flex items-center p-2 w-full rounded-lg  justify-between transition-all duration-900  ${sidebarCollapsed ? 'justify-start' : 'justify-between'}`}
                                             transition={hoverTransition}
+
                                         >
-                                            <div className="flex items-center">
+                                            <div className="flex items-center ">
                                                 <span className="text-xl">{item.icon}</span>
                                                 <AnimatePresence>
                                                     {!sidebarCollapsed && (
@@ -224,14 +223,13 @@ const AdminSidebar = () => {
                                                         return (
                                                             <li key={subItem.label}>
                                                                 <motion.div
-                                                                    whileHover={{ backgroundColor: "#202323" }}
                                                                     transition={hoverTransition}
-                                                                    className="rounded-lg w-full"
+                                                                    className="rounded-lg w-full "
                                                                 >
                                                                     <NavLink
                                                                         to={subItem.path}
                                                                         className={({ isActive }) =>
-                                                                            `flex items-center p-2 text-sm rounded-lg w-full whitespace-nowrap ${isActive ? 'bg-[#202323]' : ''}`
+                                                                            `flex items-center p-2 justify-start text-sm rounded-lg w-full whitespace-nowrap mb-1  ${isActive ? 'bg-[#00000008]' : ''}`
                                                                         }
                                                                     >
                                                                         <motion.span
@@ -250,7 +248,7 @@ const AdminSidebar = () => {
                                     </motion.div>
                                 ) : (
                                     <motion.div
-                                        whileHover={{ backgroundColor: "#202323" }}
+                                        whileHover={{ backgroundColor: "#9CA3AF" }}
                                         transition={hoverTransition}
                                         className="rounded-lg w-full mr-auto flex"
                                     >
@@ -258,7 +256,7 @@ const AdminSidebar = () => {
                                             to={item.path}
                                             end={item.exact}
                                             className={({ isActive }) =>
-                                                `flex items-center p-2 rounded-lg w-full justify-start whitespace-nowrap ${isActive ? 'bg-[#202323]' : ''} ${sidebarCollapsed ? 'justify-center' : ''}`
+                                                `flex items-center text-[#1F2937] dark:text-[#ffffff] bg-[#F5F7FA] dark:bg-[#1f1f1f] border border-[#323232] dark:border-[#3b3b3b] transition-colors duration-300 p-[12px] rounded-lg w-full whitespace-nowrap ${isActive ? 'bg-[#9CA3AF]' : ''} ${sidebarCollapsed ? "justify-center" : "justify-start "}`
                                             }
                                         >
                                             <span className="text-xl">{item.icon}</span>
@@ -286,7 +284,7 @@ const AdminSidebar = () => {
 
             <div className="p-2 border-t border-gray-800 flex flex-col">
                 <motion.button
-                    className={`p-[12px] rounded-lg bg-[#1f1f1f] dark:bg-[#1f1f1f] dark:border-[#3b3b3b] transition-colors duration-300 border border-neutral-border mb-[10px] flex ${sidebarCollapsed ? '' : ''}`}
+                    className={`p-[12px] text-[#1F2937] dark:text-[#ffffff] rounded-lg bg-[#F5F7FA] dark:bg-[#1f1f1f] dark:border-[#3b3b3b] transition-colors duration-300 border border-[#525252] mb-[10px] flex ${sidebarCollapsed ? '' : ''}`}
                     onClick={toggleTheme}
                     aria-label={`Switch to ${isDark ? "light" : "dark"} mode`}
                     transition={hoverTransition}
@@ -323,10 +321,10 @@ const AdminSidebar = () => {
 
                 <motion.button
                     onClick={handleLogout}
-                    className={`p-[12px] flex rounded-lg bg-[#F5F7FA] dark:bg-[#1f1f1f] dark:border-[#3b3b3b] transition-colors duration-300 border border-neutral-border ${sidebarCollapsed ? '' : ''}`}
+                    className="p-[12px] text-[#1F2937] dark:text-[#ffffff] flex rounded-lg bg-[#F5F7FA] dark:bg-[#1f1f1f] dark:border-[#3b3b3b] transition-colors duration-300 border border-[#525252]"
                     transition={hoverTransition}
                 >
-                    <span className="text-xl"><TbLogout className='text-[#000] dark:text-[#fff]' size={22} /></span>
+                    <span className="text-xl"><TbLogout className='' size={22} /></span>
                     <AnimatePresence>
                         {!sidebarCollapsed && (
                             <motion.span

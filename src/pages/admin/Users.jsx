@@ -5,10 +5,95 @@ import { useSelector } from 'react-redux';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import CssBaseline from "@mui/material/CssBaseline";
 
-// Create a dark theme for MUI components
-const darkTheme = createTheme({
+// Light theme configuration
+const theme = createTheme({
     palette: {
-        mode: "dark",
+        mode: "light",
+        primary: {
+            main: "#6366f1",
+            light: "#818cf8",
+            dark: "#4f46e5"
+        },
+        secondary: {
+            main: "#f59e0b",
+            light: "#fbbf24",
+            dark: "#d97706"
+        },
+        background: {
+            default: "#f8fafc",
+            paper: "#ffffff"
+        },
+        text: {
+            primary: "#1e293b",
+            secondary: "#64748b"
+        },
+        divider: "#e2e8f0",
+        success: {
+            main: "#10b981",
+            light: "#34d399",
+            dark: "#059669"
+        },
+        error: {
+            main: "#ef4444",
+            light: "#f87171",
+            dark: "#dc2626"
+        }
+    },
+    components: {
+        MuiDataGrid: {
+            styleOverrides: {
+                root: {
+                    borderRadius: '16px',
+                    border: '1px solid #e2e8f0',
+                    overflow: 'hidden',
+                    backgroundColor: '#fff',
+                    boxShadow: 'none',
+                    "& .MuiDataGrid-columnHeaders": {
+                        backgroundColor: "#ffffff",
+                        borderBottom: "1px solid #e2e8f0",
+                        fontWeight: 600,
+                        fontSize: '0.875rem',
+                        color: '#1e293b'
+                    },
+                    "& .MuiDataGrid-columnHeaderTitle": {
+                        fontWeight: 600,
+                    },
+                    "& .MuiDataGrid-footerContainer": {
+                        backgroundColor: "#f8fafc",
+                        borderTop: "1px solid #e2e8f0",
+                    },
+                    "& .MuiDataGrid-row": {
+                        transition: 'all 0.2s ease',
+                        "&:hover": {
+                            backgroundColor: "#f1f5f9",
+                            transform: 'translateY(-1px)',
+                        },
+                    },
+                    "& .MuiDataGrid-cell": {
+                        display: "flex",
+                        alignItems: "center",
+                        borderBottom: "1px solid #e2e8f0",
+                        fontSize: '0.875rem',
+                        padding: '12px 16px',
+                    },
+                    "& .MuiCheckbox-root": {
+                        color: "#6366f1",
+                        "&.Mui-checked": {
+                            color: "#6366f1",
+                        }
+                    },
+                    "& .MuiDataGrid-selectedRowCount": {
+                        color: "#64748b",
+                    },
+                    "& .MuiDataGrid-row.Mui-selected": {
+                        backgroundColor: 'rgba(99, 102, 241, 0.08)',
+                        '&:hover': {
+                            backgroundColor: 'rgba(99, 102, 241, 0.12)',
+                        },
+                    },
+                },
+            },
+        },
     },
 });
 
@@ -16,44 +101,88 @@ export default function Users() {
     const [users, setUsers] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [actionLoading, setActionLoading] = useState(null);
     const { type } = useParams();
     const { token, user } = useSelector(state => state.auth);
 
     const columns = [
-        { field: 'id', headerName: 'ID', width: 90, headerClassName: 'dark-header' },
-        { field: 'email', headerName: 'Email', width: 200, headerClassName: 'dark-header' },
-        { field: 'firstName', headerName: 'First Name', width: 150, headerClassName: 'dark-header' },
-        { field: 'lastName', headerName: 'Last Name', width: 150, headerClassName: 'dark-header' },
-        /* {
+        {
+            field: 'id',
+            headerName: 'ID',
+            width: 100,
+            renderCell: (params) => (
+                <span className="font-mono text-slate-600 text-sm px-2 py-1 rounded">
+                    #{params.value.slice(-6)}
+                </span>
+            )
+        },
+        {
+            field: 'email',
+            headerName: 'Email',
+            width: 280,
+            renderCell: (params) => (
+                <div className="flex items-center space-x-3">
+                    <div className="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white text-sm font-semibold shadow">
+                        {params.value?.charAt(0).toUpperCase()}
+                    </div>
+                    <span className="text-slate-800 font-medium">{params.value}</span>
+                </div>
+            )
+        },
+        {
+            field: 'firstName',
+            headerName: 'First Name',
+            width: 160,
+            renderCell: (params) => (
+                <span className="text-slate-800 font-medium">{params.value}</span>
+            )
+        },
+        {
+            field: 'lastName',
+            headerName: 'Last Name',
+            width: 160,
+            renderCell: (params) => (
+                <span className="text-slate-800 font-medium">{params.value}</span>
+            )
+        },
+        {
             field: 'role',
             headerName: 'Role',
             width: 120,
-            headerClassName: 'dark-header',
-            valueGetter: (params) => {
-                const role = params.row?.role || 'user';
-                return typeof role === 'string' ? role.toUpperCase() : 'UNKNOWN';
-            }
-        }, */
-        /* {
+            renderCell: (params) => (
+                <div className={`inline-flex items-center px-3 py-1.5 rounded-full text-xs font-semibold uppercase tracking-wide ${params.value === 'admin'
+                    ? 'bg-gradient-to-r from-amber-100 to-orange-100 text-amber-800 border border-amber-200 shadow'
+                    : 'bg-gradient-to-r from-blue-100 to-indigo-100 text-blue-800 border border-blue-200 shadow'
+                    }`}>
+                    {params.value?.charAt(0).toUpperCase() + params.value?.slice(1)}
+                </div>
+            )
+        },
+        {
             field: 'actions',
             headerName: 'Actions',
-            width: 120,
-            headerClassName: 'dark-header',
+            width: 140,
             renderCell: (params) => (
                 <button
                     onClick={() => handleBlockUser(params.row.id)}
-                    className={`px-2 py-1 rounded ${params.row.isBlocked
-                        ? 'bg-green-600 hover:bg-green-700'
-                        : 'bg-red-600 hover:bg-red-700'
-                        } text-white transition-colors`}
+                    disabled={actionLoading === params.row.id}
+                    className={`inline-flex items-center justify-center px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300 transform hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed shadow ${params.row.isBlocked
+                        ? 'bg-gradient-to-r from-emerald-100 to-green-100 hover:from-emerald-200 hover:to-green-200 text-emerald-800 border border-emerald-200'
+                        : 'bg-gradient-to-r from-red-100 to-rose-100 hover:from-red-200 hover:to-rose-200 text-red-800 border border-red-200'
+                        }`}
                 >
-                    {params.row.isBlocked ? 'Unblock' : 'Block'}
+                    {actionLoading === params.row.id ? (
+                        <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
+                    ) : (
+                        params.row.isBlocked ? 'Unblock' : 'Block'
+                    )}
                 </button>
             )
-        } */
+        }
     ];
 
     const handleBlockUser = async (userId) => {
+        setActionLoading(userId);
         try {
             const response = await fetch(`http://localhost:8080/api/admin/users/${userId}/block`, {
                 method: 'PATCH',
@@ -73,6 +202,8 @@ export default function Users() {
         } catch (error) {
             console.error('Error blocking/unblocking user:', error);
             setError('Failed to block/unblock user');
+        } finally {
+            setActionLoading(null);
         }
     };
 
@@ -96,7 +227,6 @@ export default function Users() {
             try {
                 const roleFilter = type === 'admins' ? 'admin' : 'user';
                 const authToken = token;
-
 
                 const response = await fetch(`http://localhost:8080/api/admin/users?role=${roleFilter}`, {
                     headers: {
@@ -127,74 +257,151 @@ export default function Users() {
     }, [type, user, token]);
 
     if (loading) {
-        return <div className="flex justify-center items-center h-64 text-gray-300">Loading users...</div>;
+        return (
+            <div className="min-h-screen flex items-center justify-center">
+                <div className="flex flex-col items-center space-y-6">
+                    <div className="relative">
+                        <div className="w-20 h-20 border-4 border-indigo-100 border-t-indigo-600 rounded-full animate-spin"></div>
+                        <div className="absolute inset-0 w-20 h-20 border-4 border-transparent border-r-purple-500 rounded-full animate-spin" style={{ animationDelay: '0.15s' }}></div>
+                    </div>
+                    <div className="text-center">
+                        <p className="text-2xl font-semibold text-slate-800 mb-2">Loading Users</p>
+                        <p className="text-slate-500">Please wait while we fetch the data...</p>
+                    </div>
+                </div>
+            </div>
+        );
     }
 
     if (error) {
         return (
-            <div className="text-red-400 bg-red-900 bg-opacity-30 p-4 rounded border border-red-700 max-w-md mx-auto mt-8">
-                {error}
+            <div className="min-h-screen flex items-center justify-center p-6 bg-white">
+                <div className="bg-red-50 border border-red-200 rounded-3xl p-10 max-w-md mx-auto text-center shadow-lg">
+                    <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <svg className="w-8 h-8 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                    </div>
+                    <h3 className="text-2xl font-bold text-red-600 mb-3">Oops! Something went wrong</h3>
+                    <p className="text-red-500 leading-relaxed">{error}</p>
+                </div>
             </div>
         );
     }
 
     return (
-        <ThemeProvider theme={darkTheme}>
+        <ThemeProvider theme={theme}>
             <CssBaseline />
-            <div className="min-h-screen w-full py-6">
-                <div className="mb-6">
-                    <h1 className="text-2xl font-bold text-white">
-                        {type === 'admins' ? 'Administrators' : 'Students'} Management
-                    </h1>
-                    {users.length === 0 && !loading && !error && (
-                        <div className="bg-yellow-900 bg-opacity-30 border border-yellow-700 text-yellow-300 p-3 rounded mt-4 max-w-md">
-                            No {type === 'admins' ? 'administrators' : 'students'} found.
+            <div className="min-h-screen p-6 ">
+                <div className="max-w-7xl mx-auto">
+                    {/* Enhanced Header Section */}
+                    <div className="mb-10">
+                        <div className="flex items-center space-x-4 mb-8">
+                            {type === 'admins' ? (
+                                <div className="p-4 bg-gradient-to-br from-amber-100 to-orange-100 rounded-2xl border border-amber-200 shadow-lg">
+                                    <svg className="w-10 h-10 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.031 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                                    </svg>
+                                </div>
+                            ) : (
+                                <div className="p-4 bg-gradient-to-br from-blue-100 to-indigo-100 rounded-2xl border border-blue-200 shadow-lg">
+                                    <svg className="w-10 h-10 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z" />
+                                    </svg>
+                                </div>
+                            )}
+                            <div>
+                                <h1 className="text-4xl font-bold bg-clip-text mb-2">
+                                    {type === 'admins' ? 'Administrators' : 'Students'} Management
+                                </h1>
+                                <p className="text-lg">
+                                    Manage {type === 'admins' ? 'administrator' : 'student'} accounts and permissions
+                                </p>
+                            </div>
+                        </div>
+
+                        {/* Enhanced Stats Cards */}
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                            <div className="bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 border border-indigo-100 rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+                                <div className="flex items-center justify-between">
+                                    <div>
+                                        <p className="text-slate-500 text-sm font-medium uppercase tracking-wider">Total Users</p>
+                                        <p className="text-3xl font-bold text-slate-800 mt-2">{users.length}</p>
+                                        <p className="text-indigo-600 text-sm mt-1">Active accounts</p>
+                                    </div>
+                                    <div className="p-3 bg-indigo-100 rounded-xl">
+                                        <svg className="w-8 h-8 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z" />
+                                        </svg>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="bg-gradient-to-br from-emerald-50 via-teal-50 to-cyan-50 border border-emerald-100 rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+                                <div className="flex items-center justify-between">
+                                    <div>
+                                        <p className="text-slate-500 text-sm font-medium uppercase tracking-wider">Active</p>
+                                        <p className="text-3xl font-bold text-slate-800 mt-2">{users.filter(u => !u.isBlocked).length}</p>
+                                        <p className="text-emerald-600 text-sm mt-1">Unblocked users</p>
+                                    </div>
+                                    <div className="p-3 bg-emerald-100 rounded-xl">
+                                        <svg className="w-8 h-8 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                        </svg>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="bg-gradient-to-br from-red-50 via-rose-50 to-pink-50 border border-red-100 rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+                                <div className="flex items-center justify-between">
+                                    <div>
+                                        <p className="text-slate-500 text-sm font-medium uppercase tracking-wider">Blocked</p>
+                                        <p className="text-3xl font-bold text-slate-800 mt-2">{users.filter(u => u.isBlocked).length}</p>
+                                        <p className="text-red-600 text-sm mt-1">Restricted access</p>
+                                    </div>
+                                    <div className="p-3 bg-red-100 rounded-xl">
+                                        <svg className="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728L5.636 5.636m12.728 12.728L18.364 5.636M5.636 18.364l12.728-12.728" />
+                                        </svg>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {users.length === 0 && !loading && !error && (
+                            <div className="bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-100 rounded-2xl p-8 text-center shadow-lg">
+                                <div className="w-16 h-16 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                                    <svg className="w-8 h-8 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z" />
+                                    </svg>
+                                </div>
+                                <h3 className="text-xl font-semibold text-amber-700 mb-2">No Users Found</h3>
+                                <p className="text-amber-600">
+                                    No {type === 'admins' ? 'administrators' : 'students'} found in the system.
+                                </p>
+                            </div>
+                        )}
+                    </div>
+
+                    {/* Enhanced Data Grid */}
+                    {users.length > 0 && (
+                        <div className="h-[calc(100vh-400px)] min-h-[600px]">
+                            <DataGrid
+                                rows={users}
+                                columns={columns}
+                                initialState={{
+                                    pagination: {
+                                        paginationModel: {
+                                            pageSize: 15,
+                                        },
+                                    },
+                                }}
+                                pageSizeOptions={[5, 10, 15, 25, 50]}
+                                checkboxSelection
+                                disableRowSelectionOnClick
+                            />
                         </div>
                     )}
-                </div>
-                <div className="h-[calc(100vh-180px)] w-full">
-                    <DataGrid
-                        rows={users}
-                        columns={columns}
-                        initialState={{
-                            pagination: {
-                                paginationModel: {
-                                    pageSize: 15,
-                                },
-                            },
-                        }}
-                        pageSizeOptions={[5, 10, 15]}
-                        checkboxSelection
-                        disableRowSelectionOnClick
-                        sx={{
-                            '& .dark-header': {
-                                backgroundColor: '#1A1A1A',
-                                color: '#FFFFFF',
-                            },
-                            '& .MuiDataGrid-cell': {
-                                borderBottom: '1px solid #333',
-                                color: '#E0E0E0',
-                            },
-                            '& .MuiDataGrid-row:hover': {
-                                backgroundColor: '#2A2A2A',
-                            },
-                            '& .MuiCheckbox-root': {
-                                color: '#B0B0B0',
-                            },
-                            '& .MuiDataGrid-footerContainer': {
-                                backgroundColor: '#1A1A1A',
-                                borderTop: '1px solid #333',
-                            },
-                            '& .MuiTablePagination-root': {
-                                color: '#B0B0B0',
-                            },
-                            '& .MuiDataGrid-toolbarContainer': {
-                                backgroundColor: '#1A1A1A',
-                            },
-                            backgroundColor: '#1E1E1E',
-                            borderColor: '#333',
-                        }}
-                    />
                 </div>
             </div>
         </ThemeProvider>
