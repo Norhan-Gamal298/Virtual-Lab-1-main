@@ -4,12 +4,15 @@ import fs from "fs";
 import path from "path";
 
 // 1. Define the Blog schema
+// Update your blog schema
 const blogSchema = new mongoose.Schema({
   id: { type: Number, required: true },
   title: { type: String, required: true },
   author: { type: String, required: true },
   createdAt: { type: Date, required: true },
   content: { type: String, required: true },
+  formattedContent: { type: String },
+  excerpt: { type: String },
   image: { type: String, required: true },
 });
 const Blog = mongoose.model("Blog", blogSchema);

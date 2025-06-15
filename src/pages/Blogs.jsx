@@ -42,10 +42,10 @@ export default function Blogs() {
                         className="w-[360px] border border-[#3a3a3a] rounded-[10px] cursor-pointer overflow-hidden bg-[#1f1f1f]"
                     >
                         {post.image && <img src={post.image} alt={post.title} className="w-full h-[240px] object-cover" />}
-                        <div className="flex flex-col gap-3 mt-4 px-7 py-2">
-                            <div className="poppins-regular text-[22px] leading-6">{post.title}</div>
-                            <div className="text-[14px] text-[#CBD5E1]">
-                                {post.content.length > 0 ? post.content.slice(0, 120) + '...' : post.content}
+                        <div className="flex flex-col gap-3 mt-4 px-7 py-2 h-[180px]">
+                            <div className="poppins-regular text-[22px] leading-6 line-clamp-2">{post.title}</div>
+                            <div className="text-[14px] text-[#CBD5E1] line-clamp-3">
+                                {post.content.replace(/\n/g, ' ').slice(0, 120) + (post.content.length > 120 ? '...' : '')}
                             </div>
                         </div>
                         <div className='authorIdentity my-2 flex items-center gap-3 px-7 py-1'>

@@ -1,27 +1,22 @@
 import { useParams, Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 
 export default function BlogDetail() {
-  console.log("BlogDetail component rendered");
   const { id } = useParams();
-  console.log("BlogDetail id param:", id);
   const [blog, setBlog] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    console.log("Fetching blog with id:", id);
     fetch(`http://localhost:8080/api/blogs/${id}`)
       .then((res) => res.json())
       .then((data) => {
-        console.log("Fetched data:", data);
         setBlog(data);
         setLoading(false);
       })
-      .catch((err) => {
-        console.log("Fetch error:", err);
-        setLoading(false);
-      });
+      .catch(() => setLoading(false));
   }, [id]);
 
   const formatPostTime = (createdAt) => {
@@ -39,7 +34,6 @@ export default function BlogDetail() {
     return `Posted on ${postDate.toLocaleDateString('en-US', options)}`;
   };
 
-  // Animated loading state
   if (loading) {
     return (
       <motion.div
@@ -48,12 +42,11 @@ export default function BlogDetail() {
         animate={{ opacity: 1 }}
         transition={{ duration: 0.6 }}
       >
-        <div className="text-2xl font-semibold ">Loading...</div>
+        <div className="text-2xl font-semibold">Loading...</div>
       </motion.div>
     );
   }
 
-  // Animated not found state
   if (!blog) {
     return (
       <motion.div
@@ -62,7 +55,7 @@ export default function BlogDetail() {
         animate={{ opacity: 1 }}
         transition={{ duration: 0.6 }}
       >
-        <h2 className="text-2xl font-semibold ">Blog not found.</h2>
+        <h2 className="text-2xl font-semibold">Blog not found.</h2>
         <Link to="/blogs" className="mt-4 inline-block hover:underline">
           ← Back to Blogs
         </Link>
@@ -72,9 +65,8 @@ export default function BlogDetail() {
 
   return (
     <div className="max-w-4xl mx-auto p-4 sm:p-8">
-      {/* Animated Title */}
       <motion.h1
-        className="text-3xl sm:text-5xl font-bold mb-6 leading-tight poppins-bold text-[#1F2937] dark:text-[#F3F4F6] transition-color duration-200"
+        className="text-3xl sm:text-5xl font-bold mb-6 leading-tight poppins-bold text-[#1F2937] dark:text-[#F3F4F6]"
         initial={{ y: -50, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.8 }}
@@ -82,7 +74,6 @@ export default function BlogDetail() {
         {blog.title}
       </motion.h1>
 
-      {/* Animated Meta */}
       <motion.div
         className="text-gray-500 text-sm sm:text-base mb-6"
         initial={{ opacity: 0 }}
@@ -92,7 +83,6 @@ export default function BlogDetail() {
         By <span className="font-semibold">{blog.author}</span> • {formatPostTime(blog.createdAt)}
       </motion.div>
 
-      {/* Animated Image */}
       {blog.image && (
         <motion.div
           className="flex justify-center mb-8"
@@ -108,17 +98,17 @@ export default function BlogDetail() {
         </motion.div>
       )}
 
-      {/* Animated Content */}
       <motion.div
-        className="prose prose-lg max-w-none poppins-regular mb-8 text-[#4B5563] dark:text-[#D1D5DB] transition-color duration-200"
+        className="prose prose-lg max-w-none poppins-regular mb-8 text-[#4B5563] dark:text-[#D1D5DB]"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.8, delay: 0.6 }}
       >
-        {blog.content}
+        <ReactMarkdown remarkPlugins={[remarkGfm]}>
+          {blog.content}
+        </ReactMarkdown>
       </motion.div>
 
-      {/* Back Link */}
       <motion.div
         className="mt-8"
         initial={{ opacity: 0 }}

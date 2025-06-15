@@ -39,6 +39,17 @@ mongoose
     throw new Error("MongoDB connection failed");
   });
 
+
+// Add this function to your server
+function formatContent(content) {
+  // Simple markdown to HTML conversion
+  return content
+    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>') // bold
+    .replace(/\*(.*?)\*/g, '<em>$1</em>') // italic
+    .replace(/\n/g, '<br>') // line breaks
+    .replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2" target="_blank">$1</a>'); // links
+}
+
 // Define User Schema
 const userSchema = new mongoose.Schema({
   firstName: { type: String, required: true },
@@ -126,25 +137,94 @@ const blogSchema = new mongoose.Schema({
 const Blog = mongoose.model("Blog", blogSchema);
 
 // Create a new blog
+// In your POST /api/blogs endpoint
+// Blog CRUD Endpoints
 app.post("/api/blogs", async (req, res) => {
   try {
     const { title, author, content, image } = req.body;
     if (!title || !author || !content) {
-      return res
-        .status(400)
-        .json({ error: "Title, author, and content are required" });
+      return res.status(400).json({ error: "Title, author, and content are required" });
     }
+
     const blog = new Blog({
       title,
       author,
       content,
+      formattedContent: content, // You can format this if needed
+      excerpt: content.replace(/\n/g, ' ').slice(0, 120) + (content.length > 120 ? '...' : ''),
       image,
       createdAt: new Date(),
     });
+
     await blog.save();
     res.status(201).json(blog);
   } catch (err) {
     res.status(500).json({ error: "Failed to create blog" });
+  }
+});
+
+// Configure multer for image uploads
+const blogImageStorage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, 'uploads/blog-images/');
+  },
+  filename: (req, file, cb) => {
+    cb(null, `${Date.now()}-${file.originalname}`);
+  }
+});
+
+const blogImageUpload = multer({ storage: blogImageStorage });
+
+// Add this endpoint for image uploads
+app.post('/api/upload-blog-image', blogImageUpload.single('image'), (req, res) => {
+  if (!req.file) {
+    return res.status(400).json({ error: 'No file uploaded' });
+  }
+  res.json({
+    url: `/uploads/blog-images/${req.file.filename}`
+  });
+});
+
+// Make sure to serve static files
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
+app.get("/api/blogs", async (req, res) => {
+  try {
+    const blogs = await Blog.find().sort({ createdAt: -1 });
+    res.json(blogs);
+  } catch (err) {
+    res.status(500).json({ error: "Failed to fetch blogs" });
+  }
+});
+
+app.put("/api/blogs/:id", async (req, res) => {
+  try {
+    const { title, author, content, image } = req.body;
+    const blog = await Blog.findByIdAndUpdate(
+      req.params.id,
+      {
+        title,
+        author,
+        content,
+        excerpt: content.replace(/\n/g, ' ').slice(0, 120) + (content.length > 120 ? '...' : ''),
+        image
+      },
+      { new: true }
+    );
+    if (!blog) return res.status(404).json({ error: "Blog not found" });
+    res.json(blog);
+  } catch (err) {
+    res.status(500).json({ error: "Failed to update blog" });
+  }
+});
+
+app.get("/api/blogs/:id", async (req, res) => {
+  try {
+    const blog = await Blog.findOne({ id: Number(req.params.id) });
+    if (!blog) return res.status(404).json({ error: "Blog not found" });
+    res.json(blog);
+  } catch (err) {
+    res.status(500).json({ error: "Failed to fetch blog" });
   }
 });
 
