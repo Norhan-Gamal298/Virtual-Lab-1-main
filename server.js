@@ -8,6 +8,9 @@ import bodyParser from "body-parser";
 import jwt from "jsonwebtoken";
 import { Buffer } from "buffer";
 import fs from "fs";
+import ExcelJS from 'exceljs';
+import PdfPrinter from 'pdfmake';
+import htmlPdf from 'html-pdf';
 import path from "path";
 import nodemailer from "nodemailer";
 import crypto from "crypto";
@@ -16,6 +19,7 @@ import multer from 'multer';
 const upload = multer({ dest: 'uploads/' });
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+
 
 // Initialize Express App
 const app = express();
@@ -49,6 +53,150 @@ function formatContent(content) {
     .replace(/\n/g, '<br>') // line breaks
     .replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2" target="_blank">$1</a>'); // links
 }
+
+
+const generateReport = async (res, data, headers, fileName, format) => {
+  if (format === 'xlsx') {
+    // Excel generation
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet('Report');
+
+    worksheet.columns = headers.map(header => ({
+      header: header.label,
+      key: header.key,
+      width: header.width
+    }));
+
+    data.forEach(item => worksheet.addRow(item));
+
+    res.setHeader(
+      'Content-Type',
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    );
+    res.setHeader(
+      'Content-Disposition',
+      `attachment; filename=${fileName}.xlsx`
+    );
+
+    await workbook.xlsx.write(res);
+    res.end();
+
+  } else if (format === 'pdf') {
+    // PDF generation
+    const fonts = {
+      Roboto: {
+        normal: 'Helvetica',
+        bold: 'Helvetica-Bold',
+        italics: 'Helvetica-Oblique',
+        bolditalics: 'Helvetica-BoldOblique'
+      }
+    };
+
+    const printer = new PdfPrinter(fonts);
+
+    // Calculate column widths based on header lengths
+    const colWidths = headers.map(h => {
+      const headerLength = h.label.length;
+      // Base width + extra space for content
+      return Math.max(headerLength * 7, 80);
+    });
+
+    // Prepare data rows with proper formatting
+    const bodyRows = data.map(row =>
+      headers.map(h => {
+        const value = row[h.key];
+        // Format dates and long text
+        if (h.key.includes('Date') || h.key.includes('At')) {
+          return { text: value, style: 'dateCell' };
+        } else if (value.length > 30) {
+          return { text: value, style: 'wrapCell' };
+        }
+        return value;
+      })
+    );
+
+    const docDefinition = {
+      pageOrientation: 'landscape',
+      pageMargins: [40, 40, 40, 40], // Increased page width
+      content: [
+        {
+          text: fileName,
+          style: 'header',
+          margin: [0, 0, 0, 20] // Reduced margin for the title
+        },
+        {
+          table: {
+            headerRows: 1,
+            widths: colWidths,
+            body: [
+              headers.map(h => ({
+                text: h.label,
+                style: 'tableHeader',
+                margin: [5, 4, 5, 4] // Add padding to header cells
+              })),
+              ...bodyRows.map(row =>
+                row.map(cell => ({
+                  text: typeof cell === 'object' ? cell.text : cell,
+                  style: typeof cell === 'object' ? cell.style : 'tableCell',
+                  margin: [5, 4, 5, 4] // Add padding to body cells
+                }))
+              )
+            ]
+          },
+          layout: {
+            fillColor: (rowIndex) => rowIndex === 0 ? '#dddddd' : null,
+            hLineWidth: () => 0.5,
+            vLineWidth: () => 0.5
+          }
+        }
+      ],
+      styles: {
+        header: {
+          fontSize: 18,
+          bold: true,
+          alignment: 'center'
+        },
+        tableHeader: {
+          bold: true,
+          fontSize: 10
+        },
+        tableCell: {
+          fontSize: 9,
+          lineHeight: 1.2
+        },
+        dateCell: {
+          fontSize: 9
+        },
+        wrapCell: {
+          fontSize: 8,
+          lineHeight: 1.1
+        },
+        defaultStyle: {
+          fontSize: 10
+        }
+      }
+    };
+
+
+    const pdfDoc = printer.createPdfKitDocument(docDefinition);
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader('Content-Disposition', `attachment; filename=${fileName}.pdf`);
+    pdfDoc.pipe(res);
+    pdfDoc.end();
+  }
+};
+
+// Users Report
+
+
+// Example for UsersManagement.jsx
+const downloadReport = (format) => {
+  const url = `http://localhost:8080/api/report/users?format=${format}`;
+  window.open(url, '_blank');
+};
+
+
+
 
 // Define User Schema
 const userSchema = new mongoose.Schema({
@@ -139,6 +287,18 @@ const Blog = mongoose.model("Blog", blogSchema);
 // Create a new blog
 // In your POST /api/blogs endpoint
 // Blog CRUD Endpoints
+
+
+
+
+
+
+
+
+
+
+
+
 app.post("/api/blogs", async (req, res) => {
   try {
     const { title, author, content, image } = req.body;
@@ -651,6 +811,111 @@ app.get("/api/profile", async (req, res) => {
     });
   } catch (error) {
     res.status(500).json({ error: error.message });
+  }
+});
+
+
+app.get('/api/report/users', adminAuth, async (req, res) => {
+  try {
+    const format = req.query.format || 'pdf';
+    const users = await User.find().select('-password -verificationToken').lean();
+
+    const headers = [
+      { key: 'firstName', label: 'First Name', width: 15 },
+      { key: 'lastName', label: 'Last Name', width: 15 },
+      { key: 'email', label: 'Email', width: 30 },
+      { key: 'role', label: 'Role', width: 10 },
+      { key: 'createdAt', label: 'Created At', width: 20 },
+      { key: 'isBlocked', label: 'Blocked', width: 10 }
+    ];
+
+    const data = users.map(user => ({
+      ...user,
+      createdAt: new Date(user.createdAt).toLocaleString(),
+      isBlocked: user.isBlocked ? 'Yes' : 'No'
+    }));
+
+    await generateReport(res, data, headers, 'users-report', format);
+
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to generate report' });
+  }
+});
+
+// Content Report
+app.get('/api/report/content', adminAuth, async (req, res) => {
+  try {
+    const format = req.query.format || 'pdf';
+    const topics = await Topic.find().lean();
+
+    const headers = [
+      { key: 'chapterId', label: 'Chapter ID', width: 10 },
+      { key: 'chapterTitle', label: 'Chapter Title', width: 25 },
+      { key: 'title', label: 'Topic Title', width: 25 },
+      { key: 'topicId', label: 'Topic ID', width: 15 },
+      { key: 'createdAt', label: 'Created At', width: 20 }
+    ];
+
+    const data = topics.map(topic => ({
+      ...topic,
+      createdAt: new Date(topic.createdAt).toLocaleString()
+    }));
+
+    await generateReport(res, data, headers, 'content-report', format);
+
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to generate report' });
+  }
+});
+
+// Quiz Report
+app.get('/api/report/quiz', adminAuth, async (req, res) => {
+  try {
+    const format = req.query.format || 'pdf';
+    const quizzes = await Quiz.find().lean();
+
+    const headers = [
+      { key: 'chapterId', label: 'Chapter ID', width: 10 },
+      { key: 'question', label: 'Question', width: 40 },
+      { key: 'options', label: 'Options', width: 30 },
+      { key: 'answer', label: 'Answer', width: 20 }
+    ];
+
+    const data = quizzes.map(quiz => ({
+      ...quiz,
+      options: quiz.options.join(', ')
+    }));
+
+    await generateReport(res, data, headers, 'quiz-report', format);
+
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to generate report' });
+  }
+});
+
+// Blogs Report
+app.get('/api/report/blogs', adminAuth, async (req, res) => {
+  try {
+    const format = req.query.format || 'pdf';
+    const blogs = await Blog.find().lean();
+
+    const headers = [
+      { key: 'title', label: 'Title', width: 30 },
+      { key: 'author', label: 'Author', width: 20 },
+      { key: 'createdAt', label: 'Created At', width: 20 },
+      { key: 'excerpt', label: 'Excerpt', width: 40 }
+    ];
+
+    const data = blogs.map(blog => ({
+      ...blog,
+      createdAt: new Date(blog.createdAt).toLocaleString(),
+      excerpt: blog.excerpt || blog.content.substring(0, 100) + '...'
+    }));
+
+    await generateReport(res, data, headers, 'blogs-report', format);
+
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to generate report' });
   }
 });
 

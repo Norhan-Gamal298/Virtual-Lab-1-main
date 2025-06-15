@@ -4,6 +4,40 @@ import { useParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import CssBaseline from "@mui/material/CssBaseline";
+import { FaDownload } from "react-icons/fa";
+
+
+
+const downloadReport = async (format) => {
+    const token = localStorage.getItem('token');
+    const url = `http://localhost:8080/api/report/users?format=${format}`;
+
+    try {
+        const response = await fetch(url, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+
+        if (!response.ok) {
+            throw new Error(`Failed to download: ${response.status}`);
+        }
+
+        const blob = await response.blob();
+        const downloadUrl = window.URL.createObjectURL(blob);
+
+        const a = document.createElement('a');
+        a.href = downloadUrl;
+        a.download = `users-report.${format}`;
+        document.body.appendChild(a);
+        a.click();
+
+        // Cleanup
+        window.URL.revokeObjectURL(downloadUrl);
+        document.body.removeChild(a);
+    } catch (err) {
+        console.error('Download error:', err);
+        // Add user notification here if needed
+    }
+};
 
 // Light theme configuration
 const theme = createTheme({
@@ -296,30 +330,53 @@ export default function Users() {
                 <div className="max-w-7xl mx-auto">
                     {/* Enhanced Header Section */}
                     <div className="mb-10">
-                        <div className="flex items-center space-x-4 mb-8">
-                            {type === 'admins' ? (
-                                <div className="p-4 bg-gradient-to-br from-amber-100 to-orange-100 rounded-2xl border border-amber-200 shadow-lg">
-                                    <svg className="w-10 h-10 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.031 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-                                    </svg>
+                        <div className='flex items-center justify-between'>
+                            <div className="flex items-center space-x-4 mb-8">
+                                {type === 'admins' ? (
+                                    <div className="p-4 bg-gradient-to-br from-amber-100 to-orange-100 rounded-2xl border border-amber-200 shadow-lg">
+                                        <svg className="w-10 h-10 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.031 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                                        </svg>
+                                    </div>
+                                ) : (
+                                    <div className="p-4 bg-gradient-to-br from-blue-100 to-indigo-100 rounded-2xl border border-blue-200 shadow-lg">
+                                        <svg className="w-10 h-10 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z" />
+                                        </svg>
+                                    </div>
+                                )}
+                                <div>
+
+                                    <div>
+                                        <h1 className="text-4xl font-bold bg-clip-text mb-2">
+                                            {type === 'admins' ? 'Administrators' : 'Students'} Management
+                                        </h1>
+                                        <p className="text-lg">
+                                            Manage {type === 'admins' ? 'administrator' : 'student'} accounts and permissions
+                                        </p>
+                                    </div>
                                 </div>
-                            ) : (
-                                <div className="p-4 bg-gradient-to-br from-blue-100 to-indigo-100 rounded-2xl border border-blue-200 shadow-lg">
-                                    <svg className="w-10 h-10 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z" />
-                                    </svg>
+
+                            </div>
+                            <div className="flex justify-end mb-6">
+                                <div className="flex gap-3">
+                                    <button
+                                        onClick={() => downloadReport('pdf')}
+                                        className="bg-white border border-gray-300 hover:border-gray-400 text-gray-700 hover:text-gray-900 px-4 py-2 rounded-lg shadow-sm hover:shadow-md transition-all duration-200 flex items-center gap-2 font-medium"
+                                    >
+                                        <FaDownload className="text-gray-600" size={14} />
+                                        Export PDF
+                                    </button>
+                                    <button
+                                        onClick={() => downloadReport('xlsx')}
+                                        className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg shadow-sm hover:shadow-md transition-all duration-200 flex items-center gap-2 font-medium"
+                                    >
+                                        <FaDownload size={14} />
+                                        Export Excel
+                                    </button>
                                 </div>
-                            )}
-                            <div>
-                                <h1 className="text-4xl font-bold bg-clip-text mb-2">
-                                    {type === 'admins' ? 'Administrators' : 'Students'} Management
-                                </h1>
-                                <p className="text-lg">
-                                    Manage {type === 'admins' ? 'administrator' : 'student'} accounts and permissions
-                                </p>
                             </div>
                         </div>
-
                         {/* Enhanced Stats Cards */}
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
                             <div className="bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 border border-indigo-100 rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
