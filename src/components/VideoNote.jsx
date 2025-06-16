@@ -90,7 +90,7 @@ const VideoNote = React.memo(({ videoPath, topicId, userEmail }) => {
                 />
                 <button
                     onClick={handleAddNote}
-                    className="bg-primary hover:bg-primary-hover text-primary-text-on-primary px-4 py-2 rounded transition"
+                    className="text-[#fff] bg-[#1F2937] dark:bg-[#612EBE]  hover:bg-primary-hover text-primary-text-on-primary px-4 py-2 rounded transition"
                 >
                     Add Note
                 </button>

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { X } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 const SignUpModal = ({ onClose, switchToSignIn }) => {
     const [userData, setUserData] = useState({
@@ -188,8 +189,16 @@ const SignUpModal = ({ onClose, switchToSignIn }) => {
 
                     <p className="text-sm sm:col-span-6 text-center text-[#a1a1a1] mt-2">
                         By joining, you agree to our{" "}
-                        <span className="text-[#1F2937] dark:text-white underline">Terms of Service</span> and{" "}
-                        <span className="text-[#1F2937] dark:text-white underline">Privacy Policy</span>
+                        <span className="text-[#1F2937] dark:text-white underline" onClick={onClose}>
+                            <Link to="/terms">
+                                Terms of Service
+                            </Link>
+                        </span> and{" "}
+                        <span className="text-[#1F2937] dark:text-white underline" onClick={onClose}>
+                            <Link to="/privacy">
+                                Privacy Policy
+                            </Link>
+                        </span>
                     </p>
                 </div>
 

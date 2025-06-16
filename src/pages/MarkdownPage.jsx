@@ -368,7 +368,7 @@ export default function MarkdownPage() {
                             </pre>
                             <div className="mt-3">
                               <button
-                                className="bg-primary hover:bg-primary-hover text-primary-on px-4 py-2 rounded-lg transition-colors duration-200 font-medium"
+                                className="text-[#fff] bg-[#1F2937] dark:bg-[#612EBE] hover:bg-primary-hover text-primary-on px-4 py-2 rounded-lg transition-colors duration-200 poppins-regular"
                                 onClick={() =>
                                   navigate(
                                     `/terminal-page?code=${encodedCode}`,
@@ -401,7 +401,7 @@ export default function MarkdownPage() {
                                 href="https://www.mathworks.com/products/matlab-online.html"
                                 target="_blank"
                                 rel="noopener noreferrer nofollow"
-                                className="inline-block bg-primary hover:bg-primary-hover text-primary-on px-4 py-2 rounded-lg transition-colors duration-200 font-medium"
+                                className="inline-block bg-primary text-[#fff] bg-[#1F2937] dark:bg-[#612EBE] hover:bg-primary-hover text-primary-on px-4 py-2 rounded-lg transition-colors duration-200 font-medium"
                               >
                                 Try on MATLAB Online
                               </a>
