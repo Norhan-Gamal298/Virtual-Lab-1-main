@@ -1,14 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { AiOutlineClose } from 'react-icons/ai';
-import { authAPI } from "../features/auth/authAPI";
-import { useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
-import { setCredentials } from "../features/auth/authSlice";
+import { X } from 'lucide-react';
 
 const SignUpModal = ({ onClose, switchToSignIn }) => {
-    const navigate = useNavigate();
-    const dispatch = useDispatch();
-
     const [userData, setUserData] = useState({
         firstName: "",
         lastName: "",
@@ -19,6 +12,7 @@ const SignUpModal = ({ onClose, switchToSignIn }) => {
 
     const [errors, setErrors] = useState([]);
     const [visible, setVisible] = useState(false);
+    const [showNotification, setShowNotification] = useState(false);
 
     const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
@@ -74,14 +68,21 @@ const SignUpModal = ({ onClose, switchToSignIn }) => {
 
         if (validateForm()) {
             try {
-                const response = await authAPI.register(userData);
-                dispatch(setCredentials({ user: response.user, token: response.token }));
-                onClose();
-                navigate("/profile");
+                // Simulate API call
+                console.log('Registering user:', userData);
+                // const response = await authAPI.register(userData);
+                // dispatch(setCredentials({ user: response.user, token: response.token }));
+                setShowNotification(true);
             } catch (error) {
                 setErrors({ apiError: error.message });
             }
         }
+    };
+
+    const handleNotificationClose = () => {
+        setShowNotification(false);
+        onClose();
+        // navigate("/profile");
     };
 
     return (
@@ -95,14 +96,14 @@ const SignUpModal = ({ onClose, switchToSignIn }) => {
                     onClick={onClose}
                     className="absolute top-4 right-4 text-[#1F2937] dark:text-white bg-transparent border-0 cursor-pointer"
                 >
-                    <AiOutlineClose size={24} />
+                    <X size={24} />
                 </button>
 
                 <h2 className="text-4xl text-[#1F2937] dark:text-[#F3F4F6] font-bold text-center mt-16">
                     Your road to master is <br /> just a sign-up away
                 </h2>
 
-                <form
+                <div
                     onSubmit={handleSubmit}
                     className="mt-8 grid grid-cols-1 gap-x-6 gap-y-4 sm:grid-cols-6 px-8 pb-6"
                 >
@@ -179,7 +180,7 @@ const SignUpModal = ({ onClose, switchToSignIn }) => {
                     </div>
 
                     <button
-                        type="submit"
+                        onClick={handleSubmit}
                         className="sm:col-span-6 w-full mt-4 rounded-lg bg-[#1F2937] dark:bg-[#F9FAFB] text-white dark:text-black py-3 text-sm font-semibold transition-colors dark:hover:bg-[#929292] dark:hover:text-white hover:bg-[#3d526f] "
                     >
                         Start Learning
@@ -190,7 +191,7 @@ const SignUpModal = ({ onClose, switchToSignIn }) => {
                         <span className="text-[#1F2937] dark:text-white underline">Terms of Service</span> and{" "}
                         <span className="text-[#1F2937] dark:text-white underline">Privacy Policy</span>
                     </p>
-                </form>
+                </div>
 
                 <div>
                     <p
@@ -202,6 +203,44 @@ const SignUpModal = ({ onClose, switchToSignIn }) => {
                     </p>
                 </div>
             </div>
+
+            {/* Email Verification Notification */}
+            {showNotification && (
+                <div className="fixed inset-0 bg-[#000000]/75 bg-opacity-70 flex items-center justify-center z-60">
+                    <div className="relative w-[480px] bg-white dark:bg-[#0a0a0a] rounded-[18px] p-8 transform transition-all duration-300 ease-in-out">
+                        <button
+                            onClick={handleNotificationClose}
+                            className="absolute top-4 right-4 text-[#1F2937] dark:text-white bg-transparent border-0 cursor-pointer"
+                        >
+                            <X size={20} />
+                        </button>
+
+                        <div className="text-center">
+                            <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-green-100 dark:bg-green-900/20 mb-4">
+                                <svg className="h-6 w-6 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
+                                </svg>
+                            </div>
+
+                            <h3 className="text-2xl font-bold text-[#1F2937] dark:text-[#F3F4F6] mb-3">
+                                Account Created Successfully!
+                            </h3>
+
+                            <p className="text-sm text-[#A1A1A1] mb-6 leading-relaxed">
+                                We've sent a verification email to <span className="text-[#1F2937] dark:text-white font-medium">{userData.email}</span>.
+                                Please check your inbox and click the verification link to activate your account.
+                            </p>
+
+                            <button
+                                onClick={handleNotificationClose}
+                                className="w-full rounded-lg bg-[#1F2937] dark:bg-[#F9FAFB] text-white dark:text-black py-3 text-sm font-semibold transition-colors dark:hover:bg-[#929292] dark:hover:text-white hover:bg-[#3d526f]"
+                            >
+                                Ok
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };
