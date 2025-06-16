@@ -72,10 +72,10 @@ const Hero = () => {
         <div className="flex justify-center gap-[40px] mt-[3rem]">
           <button
             onClick={handleDocsClick}
-            className="bg-[#1F2937] dark:bg-[#F9FAFB] dark:text-[#121212] py-[14px] px-[33px] text-[14px] text-text-inverse rounded-[11px] z-1">
+            className="bg-[#1F2937] hover:bg-[#374151] dark:bg-[#F9FAFB] dark:text-[#121212] py-[14px] px-[33px] text-[14px] text-text-inverse rounded-[11px] z-1 tranistion-colors duration-200">
             Get Started
           </button>
-          <a href="#siteIdentity" className="bg-[#F9FAFB] text-[#1F2937] dark:bg-[#1E1E1E] dark:text-[#F3F4F6]  py-[14px] px-[33px] text-[14px] border-[1px] border-[#E5E7EB] rounded-[11px] dark:border-[#323232]">
+          <a href="#siteIdentity" className="bg-[#F9FAFB] hover:bg-[#E5E7EB] text-[#1F2937] dark:bg-[#1E1E1E] dark:text-[#F3F4F6]  py-[14px] px-[33px] text-[14px] border-[1px] border-[#E5E7EB] rounded-[11px] dark:border-[#323232]">
             Learn more
           </a>
         </div>
