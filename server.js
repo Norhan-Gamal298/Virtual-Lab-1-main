@@ -27,7 +27,7 @@ const PORT = 8080;
 // Middleware Setup
 app.use(cors({
   origin: 'http://localhost:5173', // Your frontend URL
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
 })); // Enable Cross-Origin Resource Sharing
 app.use(express.json()); // Parse incoming JSON requests
@@ -274,6 +274,17 @@ const topicSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
+const tokenBlacklist = new Set();
+
+// Middleware to check blacklisted tokens
+const checkBlacklist = (req, res, next) => {
+  const token = req.headers.authorization?.split(" ")[1];
+  if (token && tokenBlacklist.has(token)) {
+    return res.status(401).json({ error: "Token revoked" });
+  }
+  next();
+};
+
 const Topic = mongoose.models.Topic || mongoose.model("Topic", topicSchema);
 
 // 1. Define the Blog schema
@@ -417,7 +428,7 @@ app.get("/api/blogs/:id", async (req, res) => {
 
 // ---------------- Routes ---------------- //
 
-const adminAuth = async (req, res, next) => {
+const adminAuth = [checkBlacklist, async (req, res, next) => {
   const token = req.headers.authorization?.split(" ")[1];
   if (!token) return res.status(401).json({ error: "Unauthorized" });
 
@@ -425,7 +436,14 @@ const adminAuth = async (req, res, next) => {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     const user = await User.findById(decoded.id);
 
-    if (!user || !["admin", "root"].includes(user.role)) {
+    if (!user) {
+      return res.status(403).json({ error: "User not found" });
+    }
+    if (user.isBlocked) {
+      return res.status(403).json({ error: "Account is blocked" });
+    }
+
+    if (!["admin", "root"].includes(user.role)) {
       return res.status(403).json({ error: "Access denied" });
     }
 
@@ -434,7 +452,7 @@ const adminAuth = async (req, res, next) => {
   } catch (error) {
     res.status(401).json({ error: "Invalid token", details: error.message });
   }
-};
+}];
 
 // Temporary admin creation route (remove after use!)
 // Add this with your other routes in server.js
@@ -521,18 +539,23 @@ app.post("/api/admin/login", async (req, res) => {
       return res.status(401).json({ error: "Invalid credentials" });
     }
 
-    // 2. Check password
+    // 2. Check if account is blocked
+    if (user.isBlocked) {
+      return res.status(403).json({ error: "Account is blocked" });
+    }
+
+    // 3. Check password
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
       return res.status(401).json({ error: "Invalid credentials" });
     }
 
-    // 3. Verify admin role
+    // 4. Verify admin role
     if (!["admin", "root"].includes(user.role)) {
       return res.status(403).json({ error: "Admin privileges required" });
     }
 
-    // 4. Create JWT token
+    // 5. Create JWT token
     const token = jwt.sign(
       {
         id: user._id,
@@ -543,7 +566,7 @@ app.post("/api/admin/login", async (req, res) => {
       { expiresIn: "1h" }
     );
 
-    // 5. Send response
+    // 6. Send response
     res.json({
       user: {
         id: user._id,
@@ -563,8 +586,21 @@ app.post("/api/admin/login", async (req, res) => {
 app.patch("/api/admin/users/:id/block", adminAuth, async (req, res) => {
   try {
     const user = await User.findById(req.params.id);
+
+    // Prevent blocking root admin
+    if (user.role === "root") {
+      return res.status(403).json({ error: "Cannot block root administrator" });
+    }
+
     user.isBlocked = !user.isBlocked;
     await user.save();
+
+    // Add token to blacklist if blocking
+    if (user.isBlocked) {
+      const token = req.headers.authorization.split(' ')[1];
+      tokenBlacklist.add(token);
+    }
+
     res.json(user);
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -1436,27 +1472,27 @@ app.get("/api/video/:topicId", async (req, res) => {
 
 // Delete chapter and all its topics
 app.delete("/api/chapters/:id", async (req, res) => {
-    try {
-        const { id } = req.params;
-        const chapterId = parseInt(id, 10);
+  try {
+    const { id } = req.params;
+    const chapterId = parseInt(id, 10);
 
-        if (isNaN(chapterId)) {
-            return res.status(400).json({ error: "Invalid chapter ID" });
-        }
-
-        // Delete all topics in this chapter first
-        const deleteResult = await Topic.deleteMany({ chapterId });
-        
-        console.log(`Deleted ${deleteResult.deletedCount} topics for chapter ${chapterId}`);
-        
-        res.status(204).send();
-    } catch (err) {
-        console.error("Error deleting chapter:", err);
-        res.status(500).json({ 
-            error: "Failed to delete chapter",
-            details: err.message 
-        });
+    if (isNaN(chapterId)) {
+      return res.status(400).json({ error: "Invalid chapter ID" });
     }
+
+    // Delete all topics in this chapter first
+    const deleteResult = await Topic.deleteMany({ chapterId });
+
+    console.log(`Deleted ${deleteResult.deletedCount} topics for chapter ${chapterId}`);
+
+    res.status(204).send();
+  } catch (err) {
+    console.error("Error deleting chapter:", err);
+    res.status(500).json({
+      error: "Failed to delete chapter",
+      details: err.message
+    });
+  }
 });
 
 // Add this to server.js
@@ -1484,3 +1520,20 @@ topicSchema.pre("save", function (next) {
 app.listen(PORT, () => {
   console.log(`Server started on http://localhost:${PORT}`);
 });
+
+
+// Add this at the end of your server file
+setInterval(() => {
+  // Remove tokens older than 24 hours
+  const now = Date.now();
+  for (const token of tokenBlacklist) {
+    try {
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      if (decoded.exp * 1000 < now) {
+        tokenBlacklist.delete(token);
+      }
+    } catch {
+      tokenBlacklist.delete(token);
+    }
+  }
+}, 3600000); // Run every hour
