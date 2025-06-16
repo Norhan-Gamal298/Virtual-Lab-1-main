@@ -1,8 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import { X } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { AiOutlineClose } from 'react-icons/ai';
+import { authAPI } from "../features/auth/authAPI";
+import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { setCredentials } from "../features/auth/authSlice";
+
 
 const SignUpModal = ({ onClose, switchToSignIn }) => {
+    const navigate = useNavigate();
+    const dispatch = useDispatch();
     const [userData, setUserData] = useState({
         firstName: "",
         lastName: "",
@@ -73,6 +81,8 @@ const SignUpModal = ({ onClose, switchToSignIn }) => {
                 console.log('Registering user:', userData);
                 // const response = await authAPI.register(userData);
                 // dispatch(setCredentials({ user: response.user, token: response.token }));
+                const response = await authAPI.register(userData);
+                dispatch(setCredentials({ user: response.user, token: response.token }));
                 setShowNotification(true);
             } catch (error) {
                 setErrors({ apiError: error.message });
@@ -104,7 +114,7 @@ const SignUpModal = ({ onClose, switchToSignIn }) => {
                     Your road to master is <br /> just a sign-up away
                 </h2>
 
-                <div
+                <form
                     onSubmit={handleSubmit}
                     className="mt-8 grid grid-cols-1 gap-x-6 gap-y-4 sm:grid-cols-6 px-8 pb-6"
                 >
@@ -181,7 +191,7 @@ const SignUpModal = ({ onClose, switchToSignIn }) => {
                     </div>
 
                     <button
-                        onClick={handleSubmit}
+                        onClick="type"
                         className="sm:col-span-6 w-full mt-4 rounded-lg bg-[#1F2937] dark:bg-[#F9FAFB] text-white dark:text-black py-3 text-sm font-semibold transition-colors dark:hover:bg-[#929292] dark:hover:text-white hover:bg-[#3d526f] "
                     >
                         Start Learning
@@ -200,7 +210,7 @@ const SignUpModal = ({ onClose, switchToSignIn }) => {
                             </Link>
                         </span>
                     </p>
-                </div>
+                </form>
 
                 <div>
                     <p
