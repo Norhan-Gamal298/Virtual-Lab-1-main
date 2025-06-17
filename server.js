@@ -689,7 +689,8 @@ app.post("/api/signin", async (req, res) => {
         firstName: user.firstName,
         lastName: user.lastName,
         email: user.email,
-        role: user.role,
+        createdAt: user.createdAt, // Make sure this is included
+        isVerified: user.isVerified // Include other fields you might need
       },
       token,
     });
@@ -790,8 +791,13 @@ app.get("/api/profile", async (req, res) => {
     }
     const fullName = `${user.firstName} ${user.lastName}`;
     res.json({
-      fullName,
+      id: user._id,
+      firstName: user.firstName,
+      lastName: user.lastName,
       email: user.email,
+      role: user.role,
+      createdAt: user.createdAt, // Make sure this is included
+      isVerified: user.isVerified
     });
   } catch (error) {
     res.status(500).json({ error: error.message });

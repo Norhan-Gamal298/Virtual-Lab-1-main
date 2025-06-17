@@ -47,6 +47,7 @@ const ProfileHeader = ({ user }) => {
                 <p className="text-gray-600 dark:text-gray-300 mb-2">{user.email}</p>
                 <p className="text-sm text-gray-500 dark:text-gray-400 max-w-md">
                     Member since {new Date(user.createdAt).toLocaleDateString()}
+                    {console.log(user.createdAt)}
                 </p>
             </div>
         </div>

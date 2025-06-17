@@ -10,6 +10,7 @@ const Profile = () => {
     const { user } = useSelector((state) => state.auth);
     const [activeTab, setActiveTab] = useState("overview");
 
+
     if (!user) {
         return (
             <div className="flex justify-center items-center h-screen">
@@ -20,6 +21,8 @@ const Profile = () => {
             </div>
         );
     }
+    console.log("Full user object:", user.createAt);
+
 
     return (
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 poppins-regular">
