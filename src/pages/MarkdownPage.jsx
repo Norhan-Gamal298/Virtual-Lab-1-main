@@ -13,6 +13,8 @@ export default function MarkdownPage() {
   const [headings, setHeadings] = useState([]);
   const [chapters, setChapters] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [isTocOpen, setIsTocOpen] = useState(false);
+
   const videoRef = useRef(null);
   const hasRedirectedRef = useRef(false);
 
@@ -204,9 +206,34 @@ export default function MarkdownPage() {
   return (
     <div className="docsLayoutContainer poppins-regular">
       <div className="markdownMain">
-        <div className="markdownContainer">
-          <div className="flex flex-1 flex-col markdownContentContainer">
-            <div className="max-w-none markdownContent">
+        <div className="markdownContainer flex flex-col lg:flex-row">
+          <div className="lg:hidden mb-4">
+            <button
+              onClick={() => setIsTocOpen(!isTocOpen)}
+              className="flex items-center justify-between w-full p-3 bg-neutral-background dark:bg-dark-neutral-background rounded-lg border border-neutral-border dark:border-dark-neutral-border"
+            >
+              <span className="font-medium text-neutral-text-primary dark:text-dark-neutral-text-primary">
+                Table of Contents
+              </span>
+              <svg
+                className={`w-5 h-5 transition-transform duration-200 ${isTocOpen ? "transform rotate-180" : ""
+                  }`}
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M19 9l-7 7-7-7"
+                />
+              </svg>
+            </button>
+          </div>
+          <div className="flex-1 markdownContentContainer order-2 lg:order-1">
+            <div className="max-w-none markdownContent px-4 md:px-6">
               {loading ? (
                 <div className="space-y-6 animate-pulse">
                   {/* Title skeleton */}
@@ -528,8 +555,14 @@ export default function MarkdownPage() {
           </div>
 
           {!loading && headings.length > 0 && (
-            <div className="markdownTableContainer">
-              <div className="markdownTable bg-neutral-background rounded-lg p-4">
+            <div
+              className={`markdownTableContainer order-1 lg:order-2 w-full lg:w-1/4 lg:pl-6 mb-6 lg:mb-0 ${isTocOpen ? "block" : "hidden lg:block"
+                }`}
+            >
+              <div className="markdownTable bg-neutral-background dark:bg-dark-neutral-background rounded-lg p-4 lg:sticky lg:top-20">
+                <h3 className="text-lg font-semibold mb-3 text-neutral-text-primary dark:text-dark-neutral-text-primary hidden lg:block">
+                  Table of Contents
+                </h3>
                 <ul className="space-y-2">
                   {headings.map((heading, index) => (
                     <li
@@ -537,8 +570,11 @@ export default function MarkdownPage() {
                       className={`${heading.level === 2 ? "pl-4" : "pl-2"}`}
                     >
                       <button
-                        onClick={() => handleScrollTo(heading.id)}
-                        className="text-neutral-text-secondary hover:text-primary text-left w-full transition-colors duration-200 focus:outline-none text-sm py-1 rounded hover:bg-neutral-surface px-2 -mx-2"
+                        onClick={() => {
+                          handleScrollTo(heading.id);
+                          setIsTocOpen(false); // Close dropdown after selection on mobile
+                        }}
+                        className="text-neutral-text-secondary dark:text-dark-neutral-text-secondary hover:text-primary dark:hover:text-dark-primary text-left w-full transition-colors duration-200 focus:outline-none text-sm py-1 rounded hover:bg-neutral-surface dark:hover:bg-dark-neutral-surface px-2 -mx-2"
                         aria-label={`Jump to ${heading.text}`}
                       >
                         {heading.text}

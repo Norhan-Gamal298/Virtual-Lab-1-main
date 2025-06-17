@@ -165,7 +165,7 @@ const Navbar = () => {
         {/* Logo */}
         <Link to="/" className="flex items-center text-center">
           <img
-            className="p-[0.5rem] h-[45px] w-auto navLogo transition-all duration-300"
+            className="p-[0.5rem] h-[45px]! w-auto navLogo transition-all duration-300"
             src={isDark ? logoDark : logoLight}
             alt="logo"
           />
