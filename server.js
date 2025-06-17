@@ -621,15 +621,7 @@ app.post("/api/register", async (req, res) => {
     });
 
     console.log("User created successfully:", user);
-    // res.status(201).json({
-    //   user: {
-    //     id: user._id,
-    //     firstName: user.firstName,
-    //     lastName: user.lastName,
-    //     email: user.email,
-    //   },
-    //   token: "dummy-token", // Replace with real token (JWT) later
-    // });
+    res.status(201).json({ success: true }); // Just return success
   } catch (err) {
     console.error("Error during signup:", err);
     if (err.code === 11000) {
@@ -1436,27 +1428,27 @@ app.get("/api/video/:topicId", async (req, res) => {
 
 // Delete chapter and all its topics
 app.delete("/api/chapters/:id", async (req, res) => {
-    try {
-        const { id } = req.params;
-        const chapterId = parseInt(id, 10);
+  try {
+    const { id } = req.params;
+    const chapterId = parseInt(id, 10);
 
-        if (isNaN(chapterId)) {
-            return res.status(400).json({ error: "Invalid chapter ID" });
-        }
-
-        // Delete all topics in this chapter first
-        const deleteResult = await Topic.deleteMany({ chapterId });
-        
-        console.log(`Deleted ${deleteResult.deletedCount} topics for chapter ${chapterId}`);
-        
-        res.status(204).send();
-    } catch (err) {
-        console.error("Error deleting chapter:", err);
-        res.status(500).json({ 
-            error: "Failed to delete chapter",
-            details: err.message 
-        });
+    if (isNaN(chapterId)) {
+      return res.status(400).json({ error: "Invalid chapter ID" });
     }
+
+    // Delete all topics in this chapter first
+    const deleteResult = await Topic.deleteMany({ chapterId });
+
+    console.log(`Deleted ${deleteResult.deletedCount} topics for chapter ${chapterId}`);
+
+    res.status(204).send();
+  } catch (err) {
+    console.error("Error deleting chapter:", err);
+    res.status(500).json({
+      error: "Failed to delete chapter",
+      details: err.message
+    });
+  }
 });
 
 // Add this to server.js

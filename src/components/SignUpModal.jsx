@@ -19,6 +19,8 @@ const SignUpModal = ({ onClose, switchToSignIn }) => {
 
     const [errors, setErrors] = useState([]);
     const [visible, setVisible] = useState(false);
+    const [showConfirmation, setShowConfirmation] = useState(false);
+    const [registeredEmail, setRegisteredEmail] = useState('');
 
     const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
@@ -75,9 +77,9 @@ const SignUpModal = ({ onClose, switchToSignIn }) => {
         if (validateForm()) {
             try {
                 const response = await authAPI.register(userData);
-                dispatch(setCredentials({ user: response.user, token: response.token }));
-                onClose();
-                navigate("/profile");
+                setRegisteredEmail(userData.email);
+                setShowConfirmation(true);
+                // Don't close the modal or navigate here
             } catch (error) {
                 setErrors({ apiError: error.message });
             }
@@ -202,6 +204,32 @@ const SignUpModal = ({ onClose, switchToSignIn }) => {
                     </p>
                 </div>
             </div>
+            {/* Confirmation Popup */}
+            {showConfirmation && (
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                    <div className="bg-white dark:bg-[#0a0a0a] p-6 rounded-lg max-w-md w-full">
+                        <h3 className="text-lg font-medium mb-4 text-[#1F2937] dark:text-white">
+                            Please confirm your email
+                        </h3>
+                        <p className="text-sm text-[#1F2937] dark:text-[#F3F4F6] mb-4">
+                            We've sent a confirmation email to <strong>{registeredEmail}</strong>.
+                            Please check your inbox and click the verification link
+                            to complete your registration.
+                        </p>
+                        <div className="flex justify-end">
+                            <button
+                                onClick={() => {
+                                    setShowConfirmation(false);
+                                    onClose(); // Close the modal after user acknowledges
+                                }}
+                                className="px-4 py-2 bg-[#1F2937] dark:bg-[#F9FAFB] text-white dark:text-black rounded-md hover:bg-[#3d526f] dark:hover:bg-[#929292]"
+                            >
+                                OK
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };
