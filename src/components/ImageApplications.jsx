@@ -1,133 +1,106 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { gsap } from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
-
-gsap.registerPlugin(ScrollTrigger);
+import { useTheme } from "../ThemeProvider";
 
 const ImageApplications = ({ features }) => {
     const [activeIndex, setActiveIndex] = useState(0);
     const containerRef = useRef(null);
-    const stickyRef = useRef(null);
     const itemsRef = useRef([]);
     const imagesRef = useRef([]);
-    const triggersRef = useRef([]);
-    const isScrollingRef = useRef(false);
+    const scrollDirection = useRef(1);
+    const lastScrollY = useRef(0);
+    const isScrolling = useRef(false);
 
-    // Calculate total height based on viewport height
-    const totalHeight = `${features.length * 100}vh`;
+    // Get theme context
+    const { theme, toggleTheme } = useTheme();
+    const isDark = theme === "dark";
 
+    const featuresData = features || defaultFeatures;
+    const totalHeight = `${featuresData.length * 100}vh`;
 
+    // Handle scroll events
     useEffect(() => {
-        // Clear previous triggers
-        triggersRef.current.forEach(trigger => trigger?.kill());
-        triggersRef.current = [];
+        const handleScroll = () => {
+            if (!containerRef.current || isScrolling.current) return;
 
-        // Set up scroll triggers for each feature
-        features.forEach((_, i) => {
-            const trigger = ScrollTrigger.create({
-                trigger: containerRef.current,
-                start: () => `top top+=${i * window.innerHeight}`,
-                end: () => `top top+=${(i + 1) * window.innerHeight}`,
-                onEnter: () => {
-                    if (!isScrollingRef.current) {
-                        setActiveIndex(i);
-                    }
-                },
-                onEnterBack: () => {
-                    if (!isScrollingRef.current) {
-                        setActiveIndex(i);
-                    }
-                },
-                markers: false, // Set to true for debugging
-            });
-            triggersRef.current.push(trigger);
-        });
+            const container = containerRef.current;
+            const containerRect = container.getBoundingClientRect();
+            const scrollProgress = Math.abs(containerRect.top) / (container.offsetHeight - window.innerHeight);
 
-        // Handle wheel events for smoother scrolling
-        const handleWheel = (e) => {
-            if (Math.abs(e.deltaY) > 0) {
-                isScrollingRef.current = true;
-                clearTimeout(isScrollingRef.current.timer);
-                isScrollingRef.current.timer = setTimeout(() => {
-                    isScrollingRef.current = false;
-                }, 100);
+            // Calculate which section should be active
+            const newIndex = Math.min(
+                Math.max(0, Math.floor(scrollProgress * featuresData.length)),
+                featuresData.length - 1
+            );
+
+            if (newIndex !== activeIndex) {
+                setActiveIndex(newIndex);
             }
         };
 
-        window.addEventListener('wheel', handleWheel);
+        window.addEventListener('scroll', handleScroll);
+        handleScroll(); // Initial call
 
-        return () => {
-            window.removeEventListener('wheel', handleWheel);
-            triggersRef.current.forEach(trigger => trigger?.kill());
-            ScrollTrigger.getAll().forEach(trigger => trigger.kill());
-        };
-    }, [features.length]);
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, [activeIndex, featuresData.length]);
 
+    // Animate items when activeIndex changes
     useEffect(() => {
         // Animate active item
         itemsRef.current.forEach((item, i) => {
             if (!item) return;
 
             const isActive = i === activeIndex;
-            gsap.to(item, {
-                opacity: isActive ? 1 : 0.4,
-                padding: isActive ? '1.6rem 0' : '0',
-                duration: 0.5,
-            });
-
             const progressBar = item.querySelector('.nexusItem__progressBar');
             const description = item.querySelector('.nexusItem__description');
 
-            if (isActive) {
-                gsap.to(progressBar, {
-                    scaleY: 1,
-                    duration: 1,
-                    ease: 'power2.out',
-                });
+            // Apply styles directly for immediate feedback
+            item.style.opacity = isActive ? '1' : '0.4';
+            item.style.padding = isActive ? '1.6rem 0' : '0.5rem 0';
+            item.style.transition = 'all 0.5s ease';
 
-                gsap.to(description, {
-                    opacity: 1,
-                    delay: 0.1,
-                    duration: 0.5,
-                });
-            } else {
-                gsap.to(progressBar, {
-                    scaleY: 0,
-                    duration: 0.3,
-                });
+            if (progressBar) {
+                progressBar.style.transform = isActive ? 'scaleY(1)' : 'scaleY(0)';
+                progressBar.style.transition = 'transform 0.5s ease';
+            }
 
-                gsap.to(description, {
-                    opacity: 0,
-                    duration: 0.3,
-                });
+            if (description) {
+                description.style.opacity = isActive ? '1' : '0';
+                description.style.transform = isActive ? 'translateY(0)' : 'translateY(10px)';
+                description.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
             }
         });
 
         // Animate images
         imagesRef.current.forEach((img, i) => {
             if (!img) return;
-            gsap.to(img, {
-                opacity: i === activeIndex ? 1 : 0,
-                duration: 0.5,
-            });
+
+            img.style.opacity = i === activeIndex ? '1' : '0';
+            img.style.transform = i === activeIndex ? 'scale(1)' : 'scale(0.95)';
+            img.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
         });
     }, [activeIndex]);
 
     const handleItemClick = (index) => {
+        if (index === activeIndex) return;
+
+        isScrolling.current = true;
+
+        // Calculate target scroll position
+        const targetScrollY = window.scrollY + (index - activeIndex) * window.innerHeight;
+
+        // Immediately update active index for visual feedback
         setActiveIndex(index);
-        isScrollingRef.current = true;
 
-        // Calculate scroll position accounting for any offset
-        const scrollPosition = index * window.innerHeight;
-
-        gsap.to(window, {
-            scrollTo: scrollPosition,
-            duration: 1,
-            ease: "power2.inOut",
-            onComplete: () => {
-                isScrollingRef.current = false;
-            }
+        // Smooth scroll to target position
+        window.scrollTo({
+            top: targetScrollY,
+            behavior: 'smooth'
         });
+
+        // Reset scrolling flag after animation
+        setTimeout(() => {
+            isScrolling.current = false;
+        }, 1000);
     };
 
     return (
@@ -137,47 +110,54 @@ const ImageApplications = ({ features }) => {
                 className="nexus relative"
                 style={{ height: totalHeight }}
             >
-                <div
-                    ref={stickyRef}
-                    className="nexus__sticky sticky top-0 h-screen flex flex-col justify-between p-4 md:p-16 w-full"
-                >
-                    <div className="nexus__top flex flex-col items-start">
+                <div className="nexus__sticky sticky top-0 h-screen flex flex-col justify-between p-4 md:p-16 w-full">
+                    <div className="nexus__top flex flex-col items-center">
                         <div className="perspectiveTransition title textTitleSection mb-8">
-                            <h1 className="font-bold text-4xl md:text-7xl uppercase leading-[0.82] text-left">
-                                <span className="block">the power</span>
-                                <span className="block">of Image Processing</span>
+                            <h1 className="text-3xl md:text-5xl lg:text-6xl uppercase leading-tight text-center poppins-medium text-[#1F2937] dark:text-[#F3F4F6]">
+                                <span className="">The Usage </span>
+                                <span className="">of Image Processing</span>
                             </h1>
                         </div>
                     </div>
 
-                    <div className="flex flex-col md:flex-row gap-8 h-[60vh]">
+                    <div className="flex flex-col lg:flex-row gap-8 h-[60vh]">
                         {/* Features list */}
-                        <ul className="nexusAttributes flex-1 overflow-visible w-[50%]">
-                            {features.map((feature, i) => (
+                        <ul className="nexusAttributes flex-1 overflow-visible w-full lg:w-1/2 space-y-4">
+                            {featuresData.map((feature, i) => (
                                 <li
                                     key={i}
                                     ref={el => itemsRef.current[i] = el}
-                                    className={`nexusItem ${i === activeIndex ? 'active' : ''} transition-all duration-500 cursor-pointer`}
+                                    className={`nexusItem ${i === activeIndex ? 'active' : ''} cursor-pointer transition-all duration-500`}
                                     onClick={() => handleItemClick(i)}
+                                    style={{
+                                        opacity: i === activeIndex ? 1 : 0.4,
+                                        padding: i === activeIndex ? '1.6rem 0' : '0.5rem 0'
+                                    }}
                                 >
-                                    <header className="nexusItem__header flex items-end h-4 relative pl-12">
-                                        <div className="nexusItem__number absolute left-0 bottom-0 text-sm font-mono">
+                                    <header className="nexusItem__header flex items-end h-4 relative pl-12 mb-2">
+                                        <div className="nexusItem__number absolute left-0 bottom-0 text-lg font-mono">
                                             {String(i + 1).padStart(2, '0')}
                                         </div>
-                                        <div className="nexusItem__title text-sm md:text-base font-mono">
+                                        <div className="nexusItem__title text-sm md:text-base font-mono hover:text-blue-500 transition-colors">
                                             {feature.title}
                                         </div>
                                     </header>
 
-                                    <div className="nexusItem__content overflow-hidden transition-all duration-500">
-                                        <div className="nexusItem__contentInner relative py-4">
-                                            <div className="nexusItem__progress absolute left-0 top-0 bottom-0 w-px bg-gray-300">
+                                    <div className="nexusItem__content overflow-hidden">
+                                        <div className="nexusItem__contentInner relative py-2">
+                                            <div className="nexusItem__progress absolute left-0 top-0 bottom-0 w-px ">
                                                 <div
-                                                    className="nexusItem__progressBar absolute top-0 left-0 w-full h-full bg-black origin-top"
-                                                    style={{ transform: 'scaleY(0)' }}
+                                                    className="nexusItem__progressBar absolute top-0 left-0 w-full h-full bg-blue-500 origin-top"
+                                                    style={{ transform: i === activeIndex ? 'scaleY(1)' : 'scaleY(0)' }}
                                                 />
                                             </div>
-                                            <p className="nexusItem__description text-sm md:text-base opacity-0 pl-4">
+                                            <p
+                                                className="nexusItem__description text-base pl-4 text-gray-600 dark:text-gray-300"
+                                                style={{
+                                                    opacity: i === activeIndex ? 1 : 0,
+                                                    transform: i === activeIndex ? 'translateY(0)' : 'translateY(10px)'
+                                                }}
+                                            >
                                                 {feature.description}
                                             </p>
                                         </div>
@@ -187,17 +167,22 @@ const ImageApplications = ({ features }) => {
                         </ul>
 
                         {/* Illustrations */}
-                        <div className="flex-1 relative h-full">
-                            {features.map((feature, i) => (
+                        <div className="flex-1 relative h-full  rounded-lg overflow-hidden">
+                            {featuresData.map((feature, i) => (
                                 <div
                                     key={i}
                                     ref={el => imagesRef.current[i] = el}
-                                    className={`absolute inset-0 transition-opacity duration-500 ${i === activeIndex ? 'opacity-100' : 'opacity-0'}`}
+                                    className="absolute inset-0 flex items-center justify-center p-4"
+                                    style={{
+                                        opacity: i === activeIndex ? 1 : 0,
+                                        transform: i === activeIndex ? 'scale(1)' : 'scale(0.95)'
+                                    }}
                                 >
                                     <img
-                                        src={feature.image}
+                                        src={isDark ? feature.darkImage : feature.lightImg}
                                         alt={feature.title}
-                                        className="w-full h-full object-contain"
+                                        className="max-w-full max-h-full object-contain"
+                                        loading="lazy"
                                     />
                                 </div>
                             ))}

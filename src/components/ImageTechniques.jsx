@@ -30,7 +30,7 @@ const techniques = [
 
 const ImageTechniques = () => {
     return (
-        <section className="py-20 bg-neutral-background relative">
+        <section className="py-20 bg-neutral-background relative dark:bg-[#0F0F0F] bg-[#fff] mt-[10rem]">
             <div className='gradient-bg-light'></div>
             <div className='gradient-bg-dark'></div>
             <motion.h2
@@ -41,7 +41,7 @@ const ImageTechniques = () => {
             >
                 What You'll Learn
             </motion.h2>
-            <span className='mb-[2rem] text-[18px] text-[#D1D5DB] poppins-regular'>Virtual Lab covers a wide range of Image Processing topics</span>
+            <span className='mb-[2rem] text-[18px] dark:text-[#D1D5DB] poppins-regular'>Virtual Lab covers a wide range of Image Processing topics</span>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-x-[60px] gap-y-8 px-6 max-w-7xl mx-auto mt-[2rem]">
                 {techniques.map((technique, index) => {
                     const isLast = index === techniques.length - 1;
