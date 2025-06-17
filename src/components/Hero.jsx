@@ -4,7 +4,6 @@ import heroLightBackground from "../assets/wave-background-light.png";
 import heroDarkBackground from "../assets/wave-background-dark.png";
 
 const Hero = () => {
-
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -44,40 +43,41 @@ const Hero = () => {
     }
   };
 
-
-
-
-
   return (
-    <div className="h-full heroSection h-screen relative">
-      {/* Both images with theme-dependent opacity */}
+    <div className="relative w-full min-h-screen sm:min-h-screen-auto flex items-center justify-center px-4 py-20 md:py-0 overflow-hidden poppins-regular">
+      {/* Background images */}
       <img
-        className="absolute bottom-[-8rem] w-full opacity-100 dark:opacity-0 transition-opacity duration-500"
+        className="absolute bottom-0 left-0 w-full h-auto max-h-[50vh] opacity-100  dark:opacity-0 transition-opacity duration-500 object-cover"
         src={heroLightBackground}
         alt="Light theme background"
       />
       <img
-        className="absolute bottom-[-8rem] w-full opacity-0 dark:opacity-100 transition-opacity duration-500"
+        className="absolute bottom-0 left-0 w-full h-auto max-h-[50vh] opacity-0 dark:opacity-100 transition-opacity duration-500 object-cover"
         src={heroDarkBackground}
         alt="Dark theme background"
       />
 
-      <div className="w-full h-full content-center poppins-regular">
-        <h1 className="text-[#1F2937] dark:text-[#F3F4F6] transition-color duration-200 text-[64px] font-medium mb-[1rem]">
-          Master Image Processing with <br /> Virtual Lab
+      {/* Content container */}
+      <div className="container mx-auto px-4 z-10 flex flex-col items-center text-center">
+        <h1 className="text-gray-900 dark:text-gray-100 transition-colors duration-200 text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-medium mb-4 md:mb-6 leading-tight">
+          Master Image Processing with <br className="hidden sm:block" /> Virtual Lab
         </h1>
-        <p className="text-xl mb-[1rem] text-[#4B5563] dark:text-[#fff] transition-color duration-200">
-          Virtual Lab is your platform to master Image Processing without the complexity — hands-on, step-<br />by-step, and results you can see instantly!
+        <p className="text-lg sm:text-xl text-gray-600 dark:text-gray-300 transition-colors duration-200 mb-6 md:mb-8 max-w-3xl mx-auto">
+          Virtual Lab is your platform to master Image Processing without the complexity — hands-on, step-by-step, and results you can see instantly!
         </p>
-        <div className="flex justify-center gap-[40px] mt-[3rem]">
+        <div className="flex flex-col sm:flex-row justify-center gap-4 sm:gap-6 md:gap-8 mt-6 md:mt-8 w-full sm:w-auto">
           <button
             onClick={handleDocsClick}
-            className="bg-[#1F2937] hover:bg-[#374151] dark:bg-[#F9FAFB] dark:text-[#121212] py-[14px] px-[33px] text-[14px] text-text-inverse rounded-[11px] z-1 tranistion-colors duration-200">
+            className="bg-[#1F2937] hover:bg-[#374151] dark:bg-[#F9FAFB] border dark:text-[#121212] py-3 px-6 sm:px-8 text-sm sm:text-base text-white rounded-lg transition-all duration-200 dark:hover:bg-[#7c3aed36] hover:text-[white]  hover:backdrop-blur-[3px] hover:border-solid hover:border-[#b589fe3b]"
+          >
             Get Started
           </button>
-          <a href="#siteIdentity" className="bg-[#F9FAFB] hover:bg-[#E5E7EB] text-[#1F2937] dark:bg-[#1E1E1E] dark:text-[#F3F4F6]  py-[14px] px-[33px] text-[14px] border-[1px] border-[#E5E7EB] rounded-[11px] dark:border-[#323232]">
+          <Link
+            to="/about"
+            className="bg-[#F9FAFB] hover:bg-[#E5E7EB] text-[#1F2937] dark:bg-[#282525] dark:text-[#F3F4F6]  py-3 px-6 sm:px-8 text-sm sm:text-base border border-[#1f293763] dark:border-[#323232] rounded-lg transition-all duration-200 dark:hover:bg-[#00000036] hover:backdrop-blur-[1px] shadow-[0px_0px_7px_3px_rgba(0,0,0,0.2)]"
+          >
             Learn more
-          </a>
+          </Link>
         </div>
       </div>
     </div>

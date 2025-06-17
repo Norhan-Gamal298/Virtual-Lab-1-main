@@ -11,9 +11,11 @@ const ImageApplications = ({ features }) => {
     const itemsRef = useRef([]);
     const imagesRef = useRef([]);
     const triggersRef = useRef([]);
+    const isScrollingRef = useRef(false);
 
     // Calculate total height based on viewport height
     const totalHeight = `${features.length * 100}vh`;
+
 
     useEffect(() => {
         // Clear previous triggers
@@ -24,10 +26,15 @@ const ImageApplications = ({ features }) => {
         features.forEach((_, i) => {
             const trigger = ScrollTrigger.create({
                 trigger: containerRef.current,
-                start: () => `top top+=${i * 100}%`,
-                end: () => `top top+=${(i + 1) * 100}%`,
-                onToggle: self => {
-                    if (self.isActive) {
+                start: () => `top top+=${i * window.innerHeight}`,
+                end: () => `top top+=${(i + 1) * window.innerHeight}`,
+                onEnter: () => {
+                    if (!isScrollingRef.current) {
+                        setActiveIndex(i);
+                    }
+                },
+                onEnterBack: () => {
+                    if (!isScrollingRef.current) {
                         setActiveIndex(i);
                     }
                 },
@@ -36,17 +43,21 @@ const ImageApplications = ({ features }) => {
             triggersRef.current.push(trigger);
         });
 
-        // Enable smooth snapping
-        ScrollTrigger.create({
-            snap: {
-                snapTo: 1 / (features.length - 1), // Snap in 1/(n-1) increments
-                duration: { min: 0.2, max: 0.6 },
-                delay: 0,
-                ease: "power1.inOut"
+        // Handle wheel events for smoother scrolling
+        const handleWheel = (e) => {
+            if (Math.abs(e.deltaY) > 0) {
+                isScrollingRef.current = true;
+                clearTimeout(isScrollingRef.current.timer);
+                isScrollingRef.current.timer = setTimeout(() => {
+                    isScrollingRef.current = false;
+                }, 100);
             }
-        });
+        };
+
+        window.addEventListener('wheel', handleWheel);
 
         return () => {
+            window.removeEventListener('wheel', handleWheel);
             triggersRef.current.forEach(trigger => trigger?.kill());
             ScrollTrigger.getAll().forEach(trigger => trigger.kill());
         };
@@ -104,8 +115,19 @@ const ImageApplications = ({ features }) => {
 
     const handleItemClick = (index) => {
         setActiveIndex(index);
+        isScrollingRef.current = true;
+
+        // Calculate scroll position accounting for any offset
         const scrollPosition = index * window.innerHeight;
-        window.scrollTo({ top: scrollPosition, behavior: 'smooth' });
+
+        gsap.to(window, {
+            scrollTo: scrollPosition,
+            duration: 1,
+            ease: "power2.inOut",
+            onComplete: () => {
+                isScrollingRef.current = false;
+            }
+        });
     };
 
     return (
@@ -130,7 +152,7 @@ const ImageApplications = ({ features }) => {
 
                     <div className="flex flex-col md:flex-row gap-8 h-[60vh]">
                         {/* Features list */}
-                        <ul className="nexusAttributes flex-1 overflow-visible">
+                        <ul className="nexusAttributes flex-1 overflow-visible w-[50%]">
                             {features.map((feature, i) => (
                                 <li
                                     key={i}

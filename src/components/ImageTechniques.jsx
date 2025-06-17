@@ -51,15 +51,17 @@ const ImageTechniques = () => {
                             initial={{ opacity: 0, y: 40 }}
                             whileInView={{ opacity: 1, y: 0 }}
                             transition={{ duration: 0.5, delay: index * 0.05 }}
-                            className="bg-neutral-surface rounded-2xl shadow-md hover:shadow-2xl transition-all duration-300 ease-in-out p-8 flex flex-col items-center text-left hover:border-primary group"
+                            className="bg-neutral-surface rounded-2xl transition-all duration-300 ease-in-out p-1 flex flex-col items-center text-left hover:border-primary"
                         >
-                            <div className="text-sm text-neutral-text-secondary topicBlockIcon p-[1.5rem] rounded-[1rem] group-hover:topicBlockIconHover">
+                            <div className="text-sm text-neutral-text-secondary topicBlockIcon group p-[1.5rem] rounded-[1rem]">
                                 <img width={24} src={technique.icon} alt="" />
                             </div>
                             <h5 className="text-[14px] mt-[10px] mb-2 text-neutral-text-primary text-center poppins-regular">
                                 {technique.topic}
                             </h5>
                         </motion.div>
+
+
                     );
                 })}
             </div>

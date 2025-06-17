@@ -142,7 +142,7 @@ export default function Footer() {
                         <div className="flex items-center space-x-1 text-gray-600 dark:text-gray-400 mb-4 md:mb-0">
                             <span>Made with</span>
                             <Heart className="w-4 h-4 text-red-500 fill-current" />
-                            <span>by Virual Lab</span>
+                            <span>by Virual Lab Team</span>
                         </div>
                         <div className="flex flex-col md:flex-row items-center space-y-2 md:space-y-0 md:space-x-6 text-sm text-gray-600 dark:text-gray-400">
                             <p>&copy; {currentYear} Virtual Lab. All rights reserved.</p>

@@ -855,6 +855,7 @@ pre {
   bottom: 0;
   left: 0;
   position: absolute;
+  font-size: larger;
 }
 
 .nexusItem__title {
@@ -865,7 +866,7 @@ pre {
   -webkit-font-smoothing: antialiased;
   font-family: Roobert, Helvetica Neue, sans-serif;
   font-feature-settings: "ss01" on;
-  font-size: 1.6rem;
+  font-size: 1.9rem;
   font-weight: 500;
   letter-spacing: -.02em;
   line-height: .7;
@@ -875,8 +876,7 @@ pre {
 
 @media only screen and (min-width: 769px) {
   .nexusItem.active .nexusItem__title {
-    font-size: 2.2rem;
-    line-height: .5
+    line-height: 0.5
   }
 }
 
@@ -928,7 +928,6 @@ pre {
 
 .nexusItem__description {
   -webkit-font-smoothing: antialiased;
-  font-weight: 400;
   opacity: 0;
   padding-top: 1.3rem;
   transition: opacity 0.5s;
@@ -962,9 +961,9 @@ pre {
 }
 
 .nexus {
-  height: calc(100vh * 4);
-  position: relative;
-  margin: 16rem;
+  contain: strict;
+  will-change: transform;
+  
 }
 
 
@@ -1018,9 +1017,13 @@ pre {
   flex: 0 0 auto;
   flex-direction: column;
 }
-
+.nexus__sticky {
+  height: 100vh;
+  overflow: hidden;
+}
 
 .nexusAttributes {
+  pointer-events: auto;
   contain: layout;
   flex: 0 0 auto;
 }
@@ -1207,20 +1210,42 @@ pre {
 
 
 .logoImgIntro {
-  max-width: 100%;
+  width: 100%;
+  max-width: 1860px;
   height: auto;
   filter: hue-rotate(35deg);
-  width: 1860px;
   transition: opacity 0.7s ease-in-out;
 }
 
 .image-wrapper {
   position: relative;
   width: 100%;
-  height: 400px; /* Adjust this height based on your image size */
-  z-index: 1;
+  height: 200px; /* Smaller screens */
 }
 
+@media (min-width: 640px) {
+  .image-wrapper {
+    height: 250px; /* sm breakpoint */
+  }
+}
+
+@media (min-width: 768px) {
+  .image-wrapper {
+    height: 300px; /* md breakpoint */
+  }
+}
+
+@media (min-width: 1024px) {
+  .image-wrapper {
+    height: 350px; /* lg breakpoint */
+  }
+}
+
+@media (min-width: 1280px) {
+  .image-wrapper {
+    height: 400px; /* xl breakpoint */
+  }
+}
 
 
 
@@ -1364,7 +1389,7 @@ pre {
 }
 
 .nexusItem__description {
-  @apply text-xs md:text-sm opacity-0 pl-4 transition-opacity duration-500;
+  @apply opacity-0 pl-4 transition-opacity duration-500;
 }
 
 .nexusItem.active .nexusItem__description {
@@ -1429,43 +1454,31 @@ pre {
   overflow: hidden;
 }
 
-/* Create a pseudo-element for the hover gradient */
+/* Hover gradient only when hovering this element */
+.topicBlockIcon:hover::before {
+  opacity: 1;
+}
+
+/* Gradient overlay */
 .topicBlockIcon::before {
   content: '';
   position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
+  inset: 0;
   background: radial-gradient(146.47% 137.3% at 49.21% 125.4%, #0F0F0F 48.14%, #47169B 69.1%, #5434E2 83.33%, #9CBDFF 100%);
   opacity: 0;
-  transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: opacity 0.3s ease;
   border-radius: inherit;
+  z-index: 0;
 }
 
-/* Ensure the icon stays on top */
+/* Icon should stay on top */
 .topicBlockIcon img {
   position: relative;
   z-index: 1;
+  transition: transform 0.3s ease;
 }
 
-/* Hover state using group hover */
-.group:hover .topicBlockIcon::before {
-  opacity: 1;
-}
-
-/* Alternative approach using direct hover if you prefer */
-.topicBlockIconHover::before {
-  opacity: 1;
-}
-
-/* Optional: Add a subtle transform for extra smoothness */
-.topicBlockIcon img {
-  transform: translateZ(0); /* Enable hardware acceleration */
-  will-change: background; /* Hint to browser about upcoming changes */
-}
-
-/* Additional smooth hover effects */
-.group:hover .topicBlockIcon img {
-  transform: translateZ(0) scale(1.02);
+/* Optional smooth image zoom on hover */
+.topicBlockIcon:hover img {
+  transform: scale(1.05);
 }
