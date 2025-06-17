@@ -129,7 +129,7 @@ const Navbar = () => {
       <div className="max-w-screen-2xl mx-auto flex justify-between items-center">
         <Link to="/" className="flex items-center text-center">
           <img
-            className="p-[0.5rem] h-[60px] w-auto navLogo transition-all duration-300"
+            className="p-[0.5rem] h-[45px] w-auto navLogo transition-all duration-300"
             src={isDark ? logoDark : logoLight}
             alt="logo"
           />
@@ -178,9 +178,9 @@ const Navbar = () => {
                 transition={{ duration: 0.2 }}
               >
                 {isDark ? (
-                  <FiSun className="text-yellow-300" size={28} />
+                  <FiSun className="dark:text-white" size={24} />
                 ) : (
-                  <FiMoon className="text-gray-700" size={28} />
+                  <FiMoon className="dark:text-white" size={24} />
                 )}
               </motion.div>
             </AnimatePresence>
@@ -194,7 +194,7 @@ const Navbar = () => {
             >
               <FiSearch
                 className="text-[#000] dark:text-[#fff] transition-colors duration-300"
-                size={28}
+                size={24}
               />
             </button>
           )}
@@ -206,11 +206,13 @@ const Navbar = () => {
                 className="flex items-center"
               >
                 <div
-                  className="p-[4px] rounded-lg bg-white dark:bg-transparent transition-all duration-200"
+                  className="p-[4px] rounded-lg transition-all duration-200"
                   style={{
-                    background: `conic-gradient(#7c3aed ${completionRate}%, #303135 ${completionRate}%)`,
+                    background: `conic-gradient(#7c3aed ${completionRate}%, ${document.documentElement.classList.contains('dark') ? '#d1d1d1' : '#303135'
+                      } ${completionRate}%)`,
                   }}
                 >
+
                   <img
                     src={`${user.image || defaultAvatar}?v=${Date.now()}`}
                     alt="User"
@@ -244,7 +246,7 @@ const Navbar = () => {
             </div>
           ) : (
             <button
-              className="px-7 py-3.5 rounded-lg bg-[#F5F7FA] dark:bg-[#1f1f1f] border border-neutral-border dark:border-[#3b3b3b] text-primary-text transition-colors font-medium"
+              className="px-7 py-[12px] rounded-lg bg-[#F5F7FA] text-[14px] dark:bg-[#1f1f1f] border border-neutral-border dark:border-[#3b3b3b] text-primary-text transition-colors font-medium"
               onClick={() => setActiveModal("signup")}
             >
               Sign Up

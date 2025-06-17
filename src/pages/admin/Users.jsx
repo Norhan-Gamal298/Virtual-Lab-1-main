@@ -220,13 +220,12 @@ export default function Users() {
         try {
             const response = await fetch(`http://localhost:8080/api/admin/users/${userId}/block`, {
                 method: 'PATCH',
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                }
+                headers: { 'Authorization': `Bearer ${token}` }
             });
 
             if (!response.ok) {
-                throw new Error('Failed to block/unblock user');
+                const errorData = await response.json();
+                throw new Error(errorData.error || 'Failed to block/unblock user');
             }
 
             const updatedUser = await response.json();
@@ -234,8 +233,9 @@ export default function Users() {
                 user.id === userId ? { ...user, isBlocked: updatedUser.isBlocked } : user
             ));
         } catch (error) {
-            console.error('Error blocking/unblocking user:', error);
-            setError('Failed to block/unblock user');
+            console.error('Error:', error);
+            // Show user-friendly error message
+            alert(`Operation failed: ${error.message}`);
         } finally {
             setActionLoading(null);
         }

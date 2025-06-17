@@ -1,14 +1,16 @@
 import React, { useEffect, useState } from 'react';
+import { X } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { AiOutlineClose } from 'react-icons/ai';
 import { authAPI } from "../features/auth/authAPI";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { setCredentials } from "../features/auth/authSlice";
 
+
 const SignUpModal = ({ onClose, switchToSignIn }) => {
     const navigate = useNavigate();
     const dispatch = useDispatch();
-
     const [userData, setUserData] = useState({
         firstName: "",
         lastName: "",
@@ -76,6 +78,10 @@ const SignUpModal = ({ onClose, switchToSignIn }) => {
 
         if (validateForm()) {
             try {
+                // Simulate API call
+                console.log('Registering user:', userData);
+                // const response = await authAPI.register(userData);
+                // dispatch(setCredentials({ user: response.user, token: response.token }));
                 const response = await authAPI.register(userData);
                 setRegisteredEmail(userData.email);
                 setShowConfirmation(true);
@@ -84,6 +90,12 @@ const SignUpModal = ({ onClose, switchToSignIn }) => {
                 setErrors({ apiError: error.message });
             }
         }
+    };
+
+    const handleNotificationClose = () => {
+        setShowNotification(false);
+        onClose();
+        // navigate("/profile");
     };
 
     return (
@@ -97,7 +109,7 @@ const SignUpModal = ({ onClose, switchToSignIn }) => {
                     onClick={onClose}
                     className="absolute top-4 right-4 text-[#1F2937] dark:text-white bg-transparent border-0 cursor-pointer"
                 >
-                    <AiOutlineClose size={24} />
+                    <X size={24} />
                 </button>
 
                 <h2 className="text-4xl text-[#1F2937] dark:text-[#F3F4F6] font-bold text-center mt-16">
@@ -181,7 +193,7 @@ const SignUpModal = ({ onClose, switchToSignIn }) => {
                     </div>
 
                     <button
-                        type="submit"
+                        onClick="type"
                         className="sm:col-span-6 w-full mt-4 rounded-lg bg-[#1F2937] dark:bg-[#F9FAFB] text-white dark:text-black py-3 text-sm font-semibold transition-colors dark:hover:bg-[#929292] dark:hover:text-white hover:bg-[#3d526f] "
                     >
                         Start Learning
@@ -189,8 +201,16 @@ const SignUpModal = ({ onClose, switchToSignIn }) => {
 
                     <p className="text-sm sm:col-span-6 text-center text-[#a1a1a1] mt-2">
                         By joining, you agree to our{" "}
-                        <span className="text-[#1F2937] dark:text-white underline">Terms of Service</span> and{" "}
-                        <span className="text-[#1F2937] dark:text-white underline">Privacy Policy</span>
+                        <span className="text-[#1F2937] dark:text-white underline" onClick={onClose}>
+                            <Link to="/terms">
+                                Terms of Service
+                            </Link>
+                        </span> and{" "}
+                        <span className="text-[#1F2937] dark:text-white underline" onClick={onClose}>
+                            <Link to="/privacy">
+                                Privacy Policy
+                            </Link>
+                        </span>
                     </p>
                 </form>
 

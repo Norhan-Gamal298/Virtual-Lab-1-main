@@ -276,9 +276,9 @@ const Faq = () => {
                         <p className="text-blue-100 mb-6">
                             Our support team is here to help you get the most out of the Virtual Lab platform
                         </p>
-                        <button className="bg-white text-blue-600 font-semibold px-8 py-3 rounded-lg hover:bg-blue-50 transition-colors duration-200 shadow-sm">
+                        <a href='https://discord.gg/r7ggne83bD' className="bg-white text-blue-600 font-semibold px-8 py-3 rounded-lg hover:bg-blue-50 transition-colors duration-200 shadow-sm">
                             Contact Support
-                        </button>
+                        </a>
                     </div>
                 </div>
             </div>

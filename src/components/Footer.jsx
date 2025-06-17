@@ -28,7 +28,7 @@ export default function Footer() {
                             and a vibrant community. Join us on your learning journey.
                         </p>
                         <div className="flex space-x-4">
-                            <a
+                            {/* <a
                                 href="https://github.com"
                                 target="_blank"
                                 rel="noopener noreferrer"
@@ -43,9 +43,9 @@ export default function Footer() {
                                 className="text-gray-400 hover:text-blue-500 transition-colors"
                             >
                                 <Twitter className="w-5 h-5" />
-                            </a>
+                            </a> */}
                             <a
-                                href="mailto:contact@yourapp.com"
+                                href="mailto:virtual.image.lab@gmail.com"
                                 className="text-gray-400 hover:text-red-500 transition-colors"
                             >
                                 <Mail className="w-5 h-5" />
@@ -129,7 +129,7 @@ export default function Footer() {
                                     to="/faq"
                                     className="text-gray-600 dark:text-gray-400 hover:text-[#612EBE] transition-colors"
                                 >
-                                    Support
+                                    FAQ
                                 </Link>
                             </li>
                         </ul>
