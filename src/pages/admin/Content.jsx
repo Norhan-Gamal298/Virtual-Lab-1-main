@@ -53,12 +53,30 @@ const MarkdownEditor = ({
     const renderMarkdown = (markdown) => {
         // Simple markdown to HTML conversion for preview
         return markdown
-            .replace(/^# (.*$)/gim, "<h1 class='dark:text-white text-[#1f1f1f]'>$1</h1>")
-            .replace(/^## (.*$)/gim, "<h2 class='dark:text-white text-[#1f1f1f]'>$1</h2>")
-            .replace(/^### (.*$)/gim, "<h3 class='dark:text-white text-[#1f1f1f]'>$1</h3>")
-            .replace(/\*\*(.*)\*\*/gim, "<strong class='dark:text-white text-[#1f1f1f]'>$1</strong>")
-            .replace(/\*(.*)\*/gim, "<em class='dark:text-white text-[#1f1f1f]'>$1</em>")
-            .replace(/\[([^\]]+)\]\(([^\)]+)\)/gim, '<a href="$2" class="text-blue-500 hover:underline">$1</a>')
+            .replace(
+                /^# (.*$)/gim,
+                "<h1 class='dark:text-white text-[#1f1f1f]'>$1</h1>"
+            )
+            .replace(
+                /^## (.*$)/gim,
+                "<h2 class='dark:text-white text-[#1f1f1f]'>$1</h2>"
+            )
+            .replace(
+                /^### (.*$)/gim,
+                "<h3 class='dark:text-white text-[#1f1f1f]'>$1</h3>"
+            )
+            .replace(
+                /\*\*(.*)\*\*/gim,
+                "<strong class='dark:text-white text-[#1f1f1f]'>$1</strong>"
+            )
+            .replace(
+                /\*(.*)\*/gim,
+                "<em class='dark:text-white text-[#1f1f1f]'>$1</em>"
+            )
+            .replace(
+                /\[([^\]]+)\]\(([^\)]+)\)/gim,
+                '<a href="$2" class="text-blue-500 hover:underline">$1</a>'
+            )
             .replace(
                 /!\[([^\]]*)\]\(([^\)]+)\)/gim,
                 '<img alt="$1" src="$2" class="max-w-full h-auto rounded-lg my-2" />'
@@ -279,43 +297,49 @@ const Content = () => {
         }
     };
 
-const handleDeleteChapter = async (chapterId) => {
-    try {
-        // Extract numeric ID from "chapter-13" format
-        const chapterIdNum = parseInt(chapterId.replace('chapter-', ''));
-        
-        if (isNaN(chapterIdNum)) {
-            throw new Error('Invalid chapter ID');
-        }
+    const handleDeleteChapter = async (chapterId) => {
+        try {
+            // Extract numeric ID from "chapter-13" format
+            const chapterIdNum = parseInt(chapterId.replace("chapter-", ""));
 
-        if (!window.confirm("Are you sure you want to delete this chapter and all its topics?")) {
-            return;
-        }
-
-        const response = await fetch(`http://localhost:8080/api/chapters/${chapterIdNum}`, {
-            method: 'DELETE',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${localStorage.getItem('token')}` // Add if using auth
+            if (isNaN(chapterIdNum)) {
+                throw new Error("Invalid chapter ID");
             }
-        });
 
-        if (!response.ok) {
-            const errorData = await response.json().catch(() => ({}));
-            throw new Error(errorData.error || 'Failed to delete chapter');
+            if (
+                !window.confirm(
+                    "Are you sure you want to delete this chapter and all its topics?"
+                )
+            ) {
+                return;
+            }
+
+            const response = await fetch(
+                `http://localhost:8080/api/chapters/${chapterIdNum}`,
+                {
+                    method: "DELETE",
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${localStorage.getItem("token")}`, // Add if using auth
+                    },
+                }
+            );
+
+            if (!response.ok) {
+                const errorData = await response.json().catch(() => ({}));
+                throw new Error(errorData.error || "Failed to delete chapter");
+            }
+
+            // Update UI state after successful deletion
+            setChapters((prev) => prev.filter((ch) => ch.id !== chapterId));
+            setTopics((prev) =>
+                prev.filter((topic) => parseInt(topic.chapterId) !== chapterIdNum)
+            );
+        } catch (error) {
+            console.error("Error deleting chapter:", error);
+            alert(`Deletion failed: ${error.message}`);
         }
-
-        // Update UI state after successful deletion
-        setChapters(prev => prev.filter(ch => ch.id !== chapterId));
-        setTopics(prev => prev.filter(topic => 
-            parseInt(topic.chapterId) !== chapterIdNum
-        ));
-        
-    } catch (error) {
-        console.error("Error deleting chapter:", error);
-        alert(`Deletion failed: ${error.message}`);
-    }
-};
+    };
 
     const moveChapter = (chapterId, direction) => {
         const index = chapters.findIndex((ch) => ch.id === chapterId);
@@ -364,11 +388,15 @@ const handleDeleteChapter = async (chapterId) => {
     const handleEditTopic = async (topic) => {
         try {
             const response = await fetch(`/api/docs/${topic.id}`);
+            if (!response.ok) throw new Error("Failed to load content");
             const content = await response.text();
 
             setTopicForm({
                 ...topic,
+                chapterId: topic.chapterId,
                 content: content,
+                videoFile: null, // Reset video file for editing
+                images: topic.images || [],
             });
             setEditingTopic(topic);
             setShowTopicModal(true);
@@ -377,64 +405,175 @@ const handleDeleteChapter = async (chapterId) => {
         }
     };
 
-const handleSaveTopic = async () => {
-    try {
-        // Extract numeric chapter ID from the string ID (e.g., "chapter-1" -> 1)
-        const chapterIdNumber = parseInt(topicForm.chapterId.split('-')[1]);
-        
-        const chapter = chapters.find(ch => ch.chapterId === chapterIdNumber);
-        if (!chapter) throw new Error('Invalid chapter selected');
+    const handleSaveTopic = async () => {
+        try {
+            // Debug: Log the current topic form data
+            console.log("Current topicForm:", topicForm);
 
-        const formData = new FormData();
-        
-        // Add all required fields
-        formData.append('chapterId', chapterIdNumber);
-        formData.append('chapterTitle', chapter.title);
-        
-        // Generate topic ID in the format your backend expects (e.g., "chapter_1_1")
-        const topicCount = topics.filter(t => t.chapterId === chapterIdNumber).length;
-        const topicId = editingTopic?.id || `chapter_${chapterIdNumber}_${topicCount + 1}`;
-        formData.append('topicId', topicId);
-        
-        formData.append('title', topicForm.title);
-        formData.append('markdownPath', `/docs/chapter_${chapterIdNumber}/${topicForm.title.replace(/\s+/g, '-')}.md`);
-        formData.append('content', topicForm.content);
+            // 1. Validate required fields
+            if (!topicForm.chapterId) {
+                throw new Error("Please select a chapter");
+            }
+            if (!topicForm.title) {
+                throw new Error("Please enter a title");
+            }
 
-        // Handle file uploads
-        if (topicForm.videoFile) {
-            formData.append('video', topicForm.videoFile);
-        }
-        
-        if (topicForm.images && topicForm.images.length > 0) {
-            topicForm.images.forEach((image) => {
-                formData.append('images', image);
+            // 2. Get chapter ID - handle both string and number cases
+            let chapterIdNumber;
+            if (typeof topicForm.chapterId === "string") {
+                // Handle "chapter-1" format
+                if (topicForm.chapterId.startsWith("chapter-")) {
+                    chapterIdNumber = parseInt(topicForm.chapterId.split("-")[1]);
+                } else {
+                    // Handle plain number strings
+                    chapterIdNumber = parseInt(topicForm.chapterId);
+                }
+            } else if (typeof topicForm.chapterId === "number") {
+                chapterIdNumber = topicForm.chapterId;
+            }
+
+            if (isNaN(chapterIdNumber)) {
+                throw new Error("Invalid chapter ID");
+            }
+
+            // 3. Find the chapter
+            const chapter = chapters.find(
+                (ch) =>
+                    ch.chapterId === chapterIdNumber ||
+                    ch.id === `chapter-${chapterIdNumber}`
+            );
+
+            if (!chapter) {
+                throw new Error("Selected chapter not found");
+            }
+
+            // 4. Prepare form data
+            const formData = new FormData();
+
+            // Required fields
+            formData.append("chapterId", chapterIdNumber);
+            formData.append("chapterTitle", chapter.title);
+            formData.append("title", topicForm.title);
+            formData.append("content", topicForm.content || "");
+
+            // Generate topic ID
+            const existingTopicsInChapter = topics.filter(
+                (t) =>
+                    t.chapterId === chapterIdNumber ||
+                    t.chapterId === `chapter-${chapterIdNumber}`
+            );
+
+            const topicId =
+                editingTopic?._id ||
+                `chapter_${chapterIdNumber}_${existingTopicsInChapter.length + 1
+                }_${topicForm.title
+                    .toLowerCase()
+                    .replace(/\s+/g, "_")
+                    .replace(/[^\w-]+/g, "")}`;
+
+            formData.append("topicId", topicId);
+
+            // File paths
+            const basePath = `public/docs/Chapter ${chapterIdNumber} ${chapter.title.replace(
+                /\//g,
+                "-"
+            )}`;
+            const markdownFileName = `${chapterIdNumber}.${existingTopicsInChapter.length + 1
+                }-${topicForm.title.replace(/\s+/g, "-")}.md`;
+            formData.append("markdownPath", `${basePath}/${markdownFileName}`);
+
+            // Handle video file
+            if (topicForm.videoFile) {
+                formData.append("video", topicForm.videoFile);
+                const videoFileName = `video_${topicForm.title.replace(
+                    /\s+/g,
+                    "_"
+                )}.${topicForm.videoFile.name.split(".").pop()}`;
+                formData.append("videoPath", `${basePath}/videos/${videoFileName}`);
+            } else if (editingTopic?.videoPath) {
+                formData.append("videoPath", editingTopic.videoPath);
+            }
+
+            // Handle images
+            if (topicForm.images?.length > 0) {
+                topicForm.images.forEach((image, index) => {
+                    if (image && image.name) {
+                        // Add null check here
+                        formData.append("images", image);
+                        const imageFileName = `img_${index}_${topicForm.title.replace(
+                            /\s+/g,
+                            "_"
+                        )}.${image.name.split(".").pop()}`;
+                        formData.append(
+                            `imagePaths[${index}]`,
+                            `${basePath}/images/${imageFileName}`
+                        );
+                    }
+                });
+            } else if (editingTopic?.images?.length > 0) {
+                editingTopic.images.forEach((image, index) => {
+                    formData.append(`imagePaths[${index}]`, image);
+                });
+            }
+
+            // 5. Send request
+            const url = editingTopic
+                ? `/api/topics/${editingTopic._id}`
+                : "/api/topics";
+            const method = editingTopic ? "PUT" : "POST";
+
+            const response = await fetch(url, {
+                method,
+                body: formData,
             });
+
+            if (!response.ok) {
+                const errorData = await response.json().catch(() => ({}));
+                throw new Error(
+                    errorData.message || errorData.error || "Failed to save topic"
+                );
+            }
+
+            // 6. Success handling
+            loadData();
+            setShowTopicModal(false);
+            alert("Topic saved successfully!");
+        } catch (error) {
+            console.error("Error saving topic:", error);
+            alert(`Error saving topic: ${error.message}`);
         }
-
-        const url = editingTopic ? `/api/topics/${editingTopic.id}` : '/api/topics';
-        const method = editingTopic ? 'PUT' : 'POST';
-
-        const response = await fetch(url, {
-            method,
-            body: formData
-        });
-
-        if (!response.ok) {
-            const errorData = await response.json();
-            throw new Error(errorData.error || 'Failed to save topic');
-        }
-
-        loadData(); // Refresh the data
-        setShowTopicModal(false);
-    } catch (error) {
-        console.error('Error saving topic:', error);
-        alert(`Error: ${error.message}`);
-    }
-};
+    };
 
     const handleDeleteTopic = async (topicId) => {
-        if (window.confirm("Are you sure you want to delete this topic?")) {
-            setTopics(topics.filter((topic) => topic.id !== topicId));
+        if (!window.confirm("Are you sure you want to delete this topic?")) {
+            return;
+        }
+
+        try {
+            const response = await fetch(
+                `http://localhost:8080/api/topics/${topicId}`,
+                {
+                    method: "DELETE",
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${localStorage.getItem("token")}`, // Add if using auth
+                    },
+                }
+            );
+
+            if (!response.ok) {
+                const errorData = await response.json().catch(() => ({}));
+                throw new Error(errorData.error || "Failed to delete topic");
+            }
+
+            // Update UI state after successful deletion
+            setTopics((prev) => prev.filter((topic) => topic.id !== topicId));
+
+            // Show success message
+            alert("Topic deleted successfully");
+        } catch (error) {
+            console.error("Error deleting topic:", error);
+            alert(`Deletion failed: ${error.message}`);
         }
     };
 
@@ -451,15 +590,21 @@ const handleSaveTopic = async () => {
     if (loading) {
         return (
             <div className="p-6 max-w-6xl mx-auto">
-                <h1 className="text-2xl font-bold mb-6 dark:text-white text-[#1f1f1f]">Content Management</h1>
-                <div className="text-center py-8 dark:text-gray-400 text-gray-600">Loading...</div>
+                <h1 className="text-2xl font-bold mb-6 dark:text-white text-[#1f1f1f]">
+                    Content Management
+                </h1>
+                <div className="text-center py-8 dark:text-gray-400 text-gray-600">
+                    Loading...
+                </div>
             </div>
         );
     }
 
     return (
         <div className="p-6 max-w-6xl mx-auto">
-            <h1 className="text-2xl font-bold mb-6 dark:text-white text-[#1f1f1f]">Content Management</h1>
+            <h1 className="text-2xl font-bold mb-6 dark:text-white text-[#1f1f1f]">
+                Content Management
+            </h1>
 
             {/* Tab Navigation */}
             <div className="border-b dark:border-[#3a3a3a] border-gray-300 mb-6">
@@ -467,8 +612,8 @@ const handleSaveTopic = async () => {
                     <button
                         onClick={() => setActiveTab("chapters")}
                         className={`py-2 px-1 border-b-2 font-medium text-sm ${activeTab === "chapters"
-                            ? "border-indigo-500 dark:text-white text-[#1f1f1f]"
-                            : "border-transparent dark:text-gray-400 text-gray-500 hover:dark:text-gray-300 hover:text-gray-700 hover:border-gray-300"
+                                ? "border-indigo-500 dark:text-white text-[#1f1f1f]"
+                                : "border-transparent dark:text-gray-400 text-gray-500 hover:dark:text-gray-300 hover:text-gray-700 hover:border-gray-300"
                             }`}
                     >
                         <Folder className="inline w-4 h-4 mr-1" />
@@ -477,8 +622,8 @@ const handleSaveTopic = async () => {
                     <button
                         onClick={() => setActiveTab("topics")}
                         className={`py-2 px-1 border-b-2 font-medium text-sm ${activeTab === "topics"
-                            ? "border-indigo-500 dark:text-white text-[#1f1f1f]"
-                            : "border-transparent dark:text-gray-400 text-gray-500 hover:dark:text-gray-300 hover:text-gray-700 hover:border-gray-300"
+                                ? "border-indigo-500 dark:text-white text-[#1f1f1f]"
+                                : "border-transparent dark:text-gray-400 text-gray-500 hover:dark:text-gray-300 hover:text-gray-700 hover:border-gray-300"
                             }`}
                     >
                         <FileText className="inline w-4 h-4 mr-1" />
@@ -491,7 +636,9 @@ const handleSaveTopic = async () => {
             {activeTab === "chapters" && (
                 <div>
                     <div className="flex justify-between items-center mb-4">
-                        <h2 className="text-xl font-semibold dark:text-white text-[#1f1f1f]">Chapters</h2>
+                        <h2 className="text-xl font-semibold dark:text-white text-[#1f1f1f]">
+                            Chapters
+                        </h2>
                         <button
                             onClick={handleAddChapter}
                             className="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 flex items-center gap-2"
@@ -521,7 +668,10 @@ const handleSaveTopic = async () => {
                             </thead>
                             <tbody className="divide-y dark:divide-[#3a3a3a] divide-gray-200">
                                 {chapters.map((chapter) => (
-                                    <tr key={`chapter-${chapter.chapterId}`} className="dark:hover:bg-[#2a2a2a] hover:bg-gray-50">
+                                    <tr
+                                        key={`chapter-${chapter.chapterId}`}
+                                        className="dark:hover:bg-[#2a2a2a] hover:bg-gray-50"
+                                    >
                                         <td className="px-6 py-4 whitespace-nowrap text-sm dark:text-gray-300 text-gray-900">
                                             <div className="flex items-center gap-1">
                                                 {chapter.order}
@@ -584,7 +734,9 @@ const handleSaveTopic = async () => {
             {activeTab === "topics" && (
                 <div>
                     <div className="flex justify-between items-center mb-4">
-                        <h2 className="text-xl font-semibold dark:text-white text-[#1f1f1f]">Topics</h2>
+                        <h2 className="text-xl font-semibold dark:text-white text-[#1f1f1f]">
+                            Topics
+                        </h2>
                         <button
                             onClick={() => handleAddTopic()}
                             className="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 flex items-center gap-2"
@@ -617,7 +769,10 @@ const handleSaveTopic = async () => {
                             </thead>
                             <tbody className="divide-y dark:divide-[#3a3a3a] divide-gray-200">
                                 {topics.map((topic) => (
-                                    <tr key={`topic-${topic.id}`} className="dark:hover:bg-[#2a2a2a] hover:bg-gray-50">
+                                    <tr
+                                        key={`topic-${topic.id}`}
+                                        className="dark:hover:bg-[#2a2a2a] hover:bg-gray-50"
+                                    >
                                         <td className="px-6 py-4 whitespace-nowrap text-sm dark:text-gray-400 text-gray-500">
                                             {topic.chapterTitle}
                                         </td>
@@ -748,24 +903,21 @@ const handleSaveTopic = async () => {
                                         Chapter
                                     </label>
                                     <select
-                                        value={topicForm.chapterId}
+                                        value={topicForm.chapterId || ""}
                                         onChange={(e) =>
                                             setTopicForm({ ...topicForm, chapterId: e.target.value })
                                         }
                                         className="w-full border dark:border-[#3a3a3a] border-gray-300 rounded-lg px-3 py-2 dark:bg-[#2a2a2a] bg-white dark:text-gray-300 text-gray-800"
                                         required
                                     >
-                                        {chapters.length === 0 ? (
-                                            <option disabled value="">
-                                                No chapters available
+                                        {chapters.map((chapter) => (
+                                            <option
+                                                key={chapter.id}
+                                                value={chapter.chapterId} // Use the numeric ID here
+                                            >
+                                                {chapter.title}
                                             </option>
-                                        ) : (
-                                            chapters.map((chapter) => (
-                                                <option key={chapter.id} value={chapter.id}>
-                                                    {chapter.title}
-                                                </option>
-                                            ))
-                                        )}
+                                        ))}
                                     </select>
                                 </div>
                             </div>

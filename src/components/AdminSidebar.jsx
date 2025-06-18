@@ -77,6 +77,12 @@ const AdminSidebar = () => {
         return exact ? location.pathname === path : location.pathname.startsWith(path);
     };
 
+    // Check if any sub-item is active for parent item styling
+    const isParentActive = (item) => {
+        if (!item.hasSubItems) return false;
+        return item.subItems.some(subItem => isActive(subItem.path));
+    };
+
     const toggleItemExpansion = (label) => {
         setExpandedItems(prev => ({
             ...prev,
@@ -153,7 +159,7 @@ const AdminSidebar = () => {
                 <div className="p-2 border-b border-gray-800">
                     <motion.button
                         onClick={() => setSidebarCollapsed(prev => !prev)}
-                        className="p-2 text-[#1F2937] dark:text-[#ffffff] bg-[#F5F7FA] dark:bg-[#1f1f1f] border border-[#323232] dark:border-[#3b3b3b] rounded-lg w-full flex justify-center transition-colors duration-300"
+                        className="p-2 text-[#1F2937] dark:text-[#ffffff] bg-[#F5F7FA] dark:bg-[#1f1f1f] border border-[#323232] dark:border-[#3b3b3b] hover:dark:bg-[#454545] hover:bg-[#dedbf5] rounded-lg w-full flex justify-end transition-colors duration-300"
                         transition={hoverTransition}
                     >
                         {sidebarCollapsed ? (
@@ -171,15 +177,17 @@ const AdminSidebar = () => {
                                 {item.hasSubItems ? (
                                     <motion.div
                                         layout
-                                        className={`rounded-lg w-full mr-auto flex flex-col whitespace-nowrap border border-[#525252] text-[#1F2937] dark:text-[#ffffff] bg-[#F5F7FA] dark:bg-[#1f1f1f] dark:border-[#3b3b3b] transition-colors duration-300 ${isActive(item.path) ? '' : ''}`}
+                                        className={`rounded-lg mr-auto flex flex-col whitespace-nowrap border transition-colors duration-300 ${isParentActive(item)
+                                            ? 'border-[#6366f1] bg-[#e0e7ff] dark:bg-[#374151] dark:border-[#6366f1]'
+                                            : 'border-[#525252] bg-[#F5F7FA] dark:bg-[#1f1f1f] dark:border-[#3b3b3b] hover:dark:bg-[#374151] hover:bg-[#e5e7eb]'
+                                            }`}
                                     >
                                         <motion.button
                                             onClick={() => !sidebarCollapsed && toggleItemExpansion(item.label)}
-                                            className={`flex items-center p-2 w-full rounded-lg  justify-between transition-all duration-900  ${sidebarCollapsed ? 'justify-start' : 'justify-between'}`}
+                                            className={`flex items-center p-2 w-full rounded-lg justify-between transition-all duration-300 text-[#1F2937] dark:text-[#ffffff] justify-start mr-auto ${sidebarCollapsed ? '' : ''}`}
                                             transition={hoverTransition}
-
                                         >
-                                            <div className="flex items-center ">
+                                            <div className="flex items-center">
                                                 <span className="text-xl">{item.icon}</span>
                                                 <AnimatePresence>
                                                     {!sidebarCollapsed && (
@@ -200,7 +208,7 @@ const AdminSidebar = () => {
                                                     animate={{
                                                         rotate: expandedItems[item.label] ? 90 : 0
                                                     }}
-                                                    transition={{ duration: 0.2, }}
+                                                    transition={{ duration: 0.2 }}
                                                     className="text-xs"
                                                 >
                                                     <FiChevronRight size={18} />
@@ -216,21 +224,23 @@ const AdminSidebar = () => {
                                                     animate="visible"
                                                     exit="exit"
                                                     variants={subItemVariants}
-                                                    className="ml-6 overflow-hidden"
+                                                    className="ml-6 overflow-hidden pb-2 bg-transparent"
                                                 >
                                                     {item.subItems.map((subItem) => {
                                                         if (subItem.allowedRoles && !subItem.allowedRoles.includes(user?.role)) return null;
+                                                        const isCurrentSubActive = location.pathname === subItem.path;
                                                         return (
                                                             <li key={subItem.label}>
                                                                 <motion.div
                                                                     transition={hoverTransition}
-                                                                    className="rounded-lg w-full "
+                                                                    className="rounded-lg w-full"
                                                                 >
                                                                     <NavLink
                                                                         to={subItem.path}
-                                                                        className={({ isActive }) =>
-                                                                            `flex items-center p-2 justify-start text-sm rounded-lg w-full whitespace-nowrap mb-1  ${isActive ? 'bg-[#00000008]' : ''}`
-                                                                        }
+                                                                        className={`flex items-center p-2 justify-start text-sm rounded-lg w-full whitespace-nowrap mb-1 transition-all duration-300 ${isCurrentSubActive
+                                                                            ? 'bg-[#3b82f6] text-white dark:bg-[#3b82f6] dark:text-white shadow-sm'
+                                                                            : 'bg-transparent text-[#374151] dark:text-[#d1d5db] hover:bg-[#f3f4f6] dark:hover:bg-[#4b5563]'
+                                                                            }`}
                                                                     >
                                                                         <motion.span
                                                                             variants={itemVariants}
@@ -248,7 +258,6 @@ const AdminSidebar = () => {
                                     </motion.div>
                                 ) : (
                                     <motion.div
-                                        whileHover={{ backgroundColor: "#9CA3AF" }}
                                         transition={hoverTransition}
                                         className="rounded-lg w-full mr-auto flex"
                                     >
@@ -256,7 +265,7 @@ const AdminSidebar = () => {
                                             to={item.path}
                                             end={item.exact}
                                             className={({ isActive }) =>
-                                                `flex items-center text-[#1F2937] dark:text-[#ffffff] bg-[#F5F7FA] dark:bg-[#1f1f1f] border border-[#323232] dark:border-[#3b3b3b] transition-colors duration-300 p-[12px] rounded-lg w-full whitespace-nowrap ${isActive ? 'bg-[#9CA3AF]' : ''} ${sidebarCollapsed ? "justify-center" : "justify-start "}`
+                                                `flex items-center text-[#1F2937] dark:text-[#ffffff] bg-[#F5F7FA] dark:bg-[#1f1f1f] border border-[#323232] dark:border-[#3b3b3b] transition-colors duration-300 p-[12px] dark:hover:bg-[#454545] hover:bg-[#dedbf5] rounded-lg w-[350px] whitespace-nowrap justify-start mr-auto  ${isActive ? 'dark:bg-[#454545] bg-[#dedbf5]' : ''} ${sidebarCollapsed ? "justify-center" : "justify-start "}`
                                             }
                                         >
                                             <span className="text-xl">{item.icon}</span>
