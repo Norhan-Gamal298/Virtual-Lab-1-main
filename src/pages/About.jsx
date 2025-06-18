@@ -166,7 +166,7 @@ const About = () => {
                                 <img
                                     src={member.image}
                                     alt={member.name}
-                                    className="w-24 h-24 object-cover rounded-full mx-auto mb-4"
+                                    className="w-32 h-32! object-cover rounded-full mx-auto mb-4"
                                 />
                             )}
                             <h3 className="text-lg text-white font-semibold">{member.name}</h3>
