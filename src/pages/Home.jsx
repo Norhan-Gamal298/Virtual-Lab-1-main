@@ -62,7 +62,7 @@ const Home = () => {
       <hr className="w-[90%] mx-[auto] featuresDivider" />
       <ImageApplications features={features} />
       <ImageTechniques />
-      <hr className="w-[90%] mx-[auto] featuresDivider" />
+      <hr className="w-[90%] mx-[auto] featuresDivider transition-all duration-300" />
       <PageOutro />
     </div>
   );

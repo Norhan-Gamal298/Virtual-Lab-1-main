@@ -1285,32 +1285,37 @@ pre {
 .dark .gradient-bg-dark {
   opacity: 1;
 }
-
 @keyframes glowPulse {
   0% {
-    box-shadow: 0px 0px 81px 2px #6525D3;
     opacity: 0.8;
   }
   50% {
-    box-shadow: 0px 0px 120px 5px #7C3AED;
     opacity: 1;
   }
   100% {
-    box-shadow: 0px 0px 81px 2px #6525D3;
     opacity: 0.8;
   }
 }
 
 .dark .featuresDivider {
-  margin-top: 1rem;
-  margin-bottom: 1rem;
+  margin: 1rem auto;
   width: 90%;
-  margin-left: auto;
-  margin-right: auto;
   height: 1px;
   border: none;
   background: linear-gradient(90deg, #0F0F0F 0%, #7C3AED 50%, #0F0F0F 100%);
-  box-shadow: 0px 0px 81px 2px #6525D3;
+  box-shadow: 0px 0px 81px 0px #6525D3;
+  opacity: 1;
+  transition: all 0.3s ease-in-out;
+  animation: glowPulse 3s ease-in-out infinite;
+}
+
+ .featuresDivider {
+  margin: 1rem auto;
+  width: 90%;
+  height: 1px;
+  border: none;
+  background: linear-gradient(90deg, #f8fafc 0%, #93c5fd 50%, #f8fafc 100%);
+  box-shadow: 0px 0px 81px 0px #93c5fd;
   opacity: 1;
   transition: all 0.3s ease-in-out;
   animation: glowPulse 3s ease-in-out infinite;

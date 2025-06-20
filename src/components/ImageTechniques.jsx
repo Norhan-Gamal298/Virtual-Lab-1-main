@@ -30,7 +30,7 @@ const techniques = [
 
 const ImageTechniques = () => {
     return (
-        <section className="py-20 bg-neutral-background relative dark:bg-[#0F0F0F] bg-[#fff] mt-[10rem]">
+        <section className="py-20 bg-neutral-background relative mt-[10rem]">
             <div className='gradient-bg-light'></div>
             <div className='gradient-bg-dark'></div>
             <motion.h2
