@@ -37,7 +37,7 @@ export default function TerminalPage() {
         }
 
         try {
-            const decoded = decodeURIComponent(encodedCode.replace(/\+/g, ' '));
+            const decoded = decodeURIComponent(encodedCode.replace(/\+/g, '%2B'));
             setCode(decoded);
         } catch (error) {
             console.error('Decoding error:', error);
