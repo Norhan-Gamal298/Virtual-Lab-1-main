@@ -31,7 +31,9 @@ app.use(cors({
   allowedHeaders: ['Content-Type', 'Authorization']
 })); // Enable Cross-Origin Resource Sharing
 app.use(express.json()); // Parse incoming JSON requests
+app.use(express.urlencoded({ extended: true })); // Parse URL-encoded bodies
 app.use(bodyParser.json()); // Parse JSON body (redundant with express.json but kept)
+
 
 // Load environment variables from .env file
 dotenv.config();
@@ -1161,7 +1163,7 @@ app.get("/api/quizzes/:chapterId", async (req, res) => {
 app.get("/api/quizs/all", async (req, res) => {
   try {
     const questions = await Quiz.find();
-    res.json(questions); // ✅ Send array directly
+    res.json(questions); //  Send array directly
   } catch (err) {
     console.error("Error fetching quizzes:", err); // 🔍 Add this for debugging
     res.status(500).json({ error: "Failed to fetch quiz questions" });
@@ -1236,30 +1238,37 @@ app.get("/api/docs/:topicId", async (req, res) => {
 
 
 // Add this endpoint for saving markdown content
-app.put("/api/topics/:id", async (req, res) => {
+app.put("/api/topics/:id", upload.none(), async (req, res) => {
+  console.log("Raw body received:", req.body); 
   try {
     const { id } = req.params;
     const { title, chapterId, content } = req.body;
 
-    const chapterIdNum = parseInt(chapterId, 10);
-
-    // First update the markdown file
     const topic = await Topic.findOne({ topicId: id });
-    if (topic && topic.markdownPath) {
-      const fullPath = path.join(__dirname, topic.markdownPath);
-      fs.writeFileSync(fullPath, content);
+    if (!topic) {
+      return res.status(404).json({ error: "Topic not found" });
     }
 
-    // Then update database record
-    const updated = await Topic.findOneAndUpdate(
-      { topicId: id },
-      { title, chapterId: chapterIdNum, content },
-      { new: true }
-    );
+    // Update title and chapterId
+    topic.title = title;
+    topic.chapterId = Number(chapterId);
 
-    res.json(updated);
+    // Save updated topic
+    await topic.save();
+
+    // Write markdown content to file
+    if (topic.markdownPath) {
+      const fullPath = path.join(__dirname, topic.markdownPath);
+      fs.writeFileSync(fullPath, content || "# Empty Content");
+    }
+
+    res.json(topic);
   } catch (error) {
-    res.status(500).json({ error: "Failed to update topic", details: error.message });
+    console.error("Update error:", error);
+    res.status(500).json({
+      error: "Failed to update topic",
+      details: error.message
+    });
   }
 });
 
@@ -1343,6 +1352,7 @@ app.put("/api/chapters/:id", async (req, res) => {
 
     res.json({ chapterId, chapterTitle });
   } catch (err) {
+    console.error("Error updating chapter:", err);
     res.status(500).json({ error: "Failed to update chapter" });
   }
 });
