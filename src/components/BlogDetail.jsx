@@ -85,7 +85,7 @@ export default function BlogDetail() {
 
       {blog.image && (
         <motion.div
-          className="flex justify-center mb-8"
+          className="flex justify-center mb-8 text-[#4B5563] dark:text-[#D1D5DB]"
           initial={{ scale: 0.9, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           transition={{ duration: 0.8, delay: 0.4 }}
@@ -99,7 +99,7 @@ export default function BlogDetail() {
       )}
 
       <motion.div
-        className="prose prose-lg max-w-none poppins-regular mb-8 text-[#4B5563] dark:text-[#D1D5DB]"
+        className="prose prose-lg max-w-none poppins-regular mb-8 text-[#1F2937] dark:text-[#F3F4F6]"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.8, delay: 0.6 }}
@@ -110,7 +110,7 @@ export default function BlogDetail() {
       </motion.div>
 
       <motion.div
-        className="mt-8"
+        className="mt-8 text-[#4B5563] dark:text-[#D1D5DB]"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.8, delay: 0.8 }}
