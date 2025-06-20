@@ -56,9 +56,9 @@ const ImageTechniques = () => {
                             <div className="text-sm text-neutral-text-secondary topicBlockIcon group p-[1.5rem] rounded-[1rem]">
                                 <img width={24} src={technique.icon} alt="" />
                             </div>
-                            <h5 className="text-[14px] mt-[10px] mb-2 text-neutral-text-primary text-center poppins-regular">
+                            <h3 className="text-[14px] mt-[10px] mb-2 text-neutral-text-primary text-center poppins-regular">
                                 {technique.topic}
-                            </h5>
+                            </h3>
                         </motion.div>
 
 

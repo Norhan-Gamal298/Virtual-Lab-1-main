@@ -47,6 +47,7 @@ export default function Footer() {
                             <a
                                 href="mailto:virtual.image.lab@gmail.com"
                                 className="text-gray-400 hover:text-red-500 transition-colors"
+                                aria-label='Email Virtual Lab at virtual.image.lab@gmail.com'
                             >
                                 <Mail className="w-5 h-5" />
                             </a>

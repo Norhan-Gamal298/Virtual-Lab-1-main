@@ -113,10 +113,10 @@ const ImageApplications = ({ features }) => {
                 <div className="nexus__sticky sticky top-0 h-screen flex flex-col justify-between p-4 md:p-16 w-full">
                     <div className="nexus__top flex flex-col items-center">
                         <div className="perspectiveTransition title textTitleSection mb-8">
-                            <h1 className="text-3xl md:text-5xl lg:text-6xl uppercase leading-tight text-center poppins-medium text-[#1F2937] dark:text-[#F3F4F6]">
+                            <h2 className="text-3xl md:text-5xl lg:text-6xl uppercase leading-tight text-center poppins-medium text-[#1F2937] dark:text-[#F3F4F6]">
                                 <span className="">The Usage </span>
                                 <span className="">of Image Processing</span>
-                            </h1>
+                            </h2>
                         </div>
                     </div>
 
