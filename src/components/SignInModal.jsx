@@ -5,6 +5,7 @@ import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { setCredentials } from "../features/auth/authSlice";
 import { authAPI } from "../features/auth/authAPI";
+import { toast } from 'react-toastify';
 
 const SignInModal = ({ onClose, switchToSignUp }) => {
   const dispatch = useDispatch();
@@ -49,23 +50,76 @@ const SignInModal = ({ onClose, switchToSignUp }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (validateForm()) {
-      try {
-        const response = await authAPI.login(userData);
-        dispatch(setCredentials({ user: response.user, token: response.token }));
-        setApiError(null);
+    if (!validateForm()) {
+      // Show all validation errors as toasts
+      Object.values(errors).forEach(error => {
+        toast.error(error, {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "colored",
+        });
+      });
+      return;
+    }
+
+    try {
+      const response = await authAPI.login(userData);
+      dispatch(setCredentials({ user: response.user, token: response.token }));
+      setApiError(null);
+      toast.success("Login successful! Redirecting...", {
+        position: "top-right",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+      });
+      setTimeout(() => {
         onClose();
         navigate("/profile");
-      } catch (error) {
-        setApiError(error.message);
-      }
+      }, 500); // 1 second delay to ensure toast is visible
+
+
+    } catch (error) {
+      toast.error(error.message, {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+      });
     }
+
   };
 
   const handleResetSubmit = async (e) => {
     e.preventDefault();
     setResetMessage("");
     setResetError("");
+
+    if (!resetEmail) {
+      toast.error("Email is required for password reset", {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+      });
+      return;
+    }
     try {
       const res = await fetch("http://localhost:8080/api/request-reset-password", {
         method: "POST",
@@ -74,12 +128,40 @@ const SignInModal = ({ onClose, switchToSignUp }) => {
       });
       const data = await res.json();
       if (res.ok) {
-        setResetMessage("Check your email for a reset link.");
+        toast.success("Check your email for a reset link.", {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "colored",
+        });
       } else {
-        setResetError(data.error || "Error sending reset email.");
+        toast.error(data.error || "Error sending reset email.", {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "colored",
+        });
       }
     } catch (err) {
-      setResetError("Network error.");
+      toast.error("Network error.", {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+      });
+
     }
   };
 

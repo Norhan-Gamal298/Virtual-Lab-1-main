@@ -15,6 +15,8 @@ import {
     EyeOff,
 } from "lucide-react";
 
+const API_BASE_URL = "http://localhost:8080";
+
 // Simple Markdown Editor Component
 const MarkdownEditor = ({
     value,
@@ -273,8 +275,8 @@ const Content = () => {
     const handleSaveChapter = async () => {
         try {
             const url = editingChapter
-                ? `/api/chapters/${editingChapter.chapterId}`
-                : "/api/chapters";
+                ? `${API_BASE_URL}/api/chapters/${editingChapter.chapterId}`
+                : `${API_BASE_URL}/api/chapters`;
 
             const method = editingChapter ? "PUT" : "POST";
 
@@ -407,140 +409,46 @@ const Content = () => {
 
     const handleSaveTopic = async () => {
         try {
-            // Debug: Log the current topic form data
-            console.log("Current topicForm:", topicForm);
-
-            // 1. Validate required fields
-            if (!topicForm.chapterId) {
-                throw new Error("Please select a chapter");
-            }
-            if (!topicForm.title) {
-                throw new Error("Please enter a title");
+            // 1. Validate
+            if (!topicForm.chapterId || !topicForm.title) {
+                throw new Error("Chapter and title are required");
             }
 
-            // 2. Get chapter ID - handle both string and number cases
-            let chapterIdNumber;
-            if (typeof topicForm.chapterId === "string") {
-                // Handle "chapter-1" format
-                if (topicForm.chapterId.startsWith("chapter-")) {
-                    chapterIdNumber = parseInt(topicForm.chapterId.split("-")[1]);
-                } else {
-                    // Handle plain number strings
-                    chapterIdNumber = parseInt(topicForm.chapterId);
-                }
-            } else if (typeof topicForm.chapterId === "number") {
-                chapterIdNumber = topicForm.chapterId;
-            }
-
-            if (isNaN(chapterIdNumber)) {
-                throw new Error("Invalid chapter ID");
-            }
-
-            // 3. Find the chapter
-            const chapter = chapters.find(
-                (ch) =>
-                    ch.chapterId === chapterIdNumber ||
-                    ch.id === `chapter-${chapterIdNumber}`
-            );
-
-            if (!chapter) {
-                throw new Error("Selected chapter not found");
-            }
-
-            // 4. Prepare form data
+            // 2. Prepare form data
             const formData = new FormData();
-
-            // Required fields
-            formData.append("chapterId", chapterIdNumber);
-            formData.append("chapterTitle", chapter.title);
             formData.append("title", topicForm.title);
+            formData.append("chapterId", topicForm.chapterId.toString());
             formData.append("content", topicForm.content || "");
 
-            // Generate topic ID
-            const existingTopicsInChapter = topics.filter(
-                (t) =>
-                    t.chapterId === chapterIdNumber ||
-                    t.chapterId === `chapter-${chapterIdNumber}`
-            );
+            // 3. For existing topics, use their ID
+            const topicId = editingTopic?.id;
+            if (!topicId) throw new Error("Missing topic ID for update");
 
-            const topicId =
-                editingTopic?._id ||
-                `chapter_${chapterIdNumber}_${existingTopicsInChapter.length + 1
-                }_${topicForm.title
-                    .toLowerCase()
-                    .replace(/\s+/g, "_")
-                    .replace(/[^\w-]+/g, "")}`;
+            // 4. Debug logs
+            console.log("Sending update for topic:", topicId);
+            console.log("FormData entries:", Array.from(formData.entries()));
 
-            formData.append("topicId", topicId);
-
-            // File paths
-            const basePath = `public/docs/Chapter ${chapterIdNumber} ${chapter.title.replace(
-                /\//g,
-                "-"
-            )}`;
-            const markdownFileName = `${chapterIdNumber}.${existingTopicsInChapter.length + 1
-                }-${topicForm.title.replace(/\s+/g, "-")}.md`;
-            formData.append("markdownPath", `${basePath}/${markdownFileName}`);
-
-            // Handle video file
-            if (topicForm.videoFile) {
-                formData.append("video", topicForm.videoFile);
-                const videoFileName = `video_${topicForm.title.replace(
-                    /\s+/g,
-                    "_"
-                )}.${topicForm.videoFile.name.split(".").pop()}`;
-                formData.append("videoPath", `${basePath}/videos/${videoFileName}`);
-            } else if (editingTopic?.videoPath) {
-                formData.append("videoPath", editingTopic.videoPath);
-            }
-
-            // Handle images
-            if (topicForm.images?.length > 0) {
-                topicForm.images.forEach((image, index) => {
-                    if (image && image.name) {
-                        // Add null check here
-                        formData.append("images", image);
-                        const imageFileName = `img_${index}_${topicForm.title.replace(
-                            /\s+/g,
-                            "_"
-                        )}.${image.name.split(".").pop()}`;
-                        formData.append(
-                            `imagePaths[${index}]`,
-                            `${basePath}/images/${imageFileName}`
-                        );
-                    }
-                });
-            } else if (editingTopic?.images?.length > 0) {
-                editingTopic.images.forEach((image, index) => {
-                    formData.append(`imagePaths[${index}]`, image);
-                });
-            }
-
-            // 5. Send request
-            const url = editingTopic
-                ? `/api/topics/${editingTopic._id}`
-                : "/api/topics";
-            const method = editingTopic ? "PUT" : "POST";
-
-            const response = await fetch(url, {
-                method,
+            // 5. Make request
+            const response = await fetch(`http://localhost:8080/api/topics/${topicId}`, {
+                method: "PUT",
                 body: formData,
+                // Don't set Content-Type header - browser will do it automatically for FormData
             });
 
+            // 6. Handle response
             if (!response.ok) {
                 const errorData = await response.json().catch(() => ({}));
-                throw new Error(
-                    errorData.message || errorData.error || "Failed to save topic"
-                );
+                console.error("Server response:", errorData);
+                throw new Error(errorData.error || "Failed to save topic");
             }
 
-            // 6. Success handling
+            // 7. Success
             loadData();
             setShowTopicModal(false);
-            alert("Topic saved successfully!");
+            alert("Topic updated successfully!");
         } catch (error) {
-            console.error("Error saving topic:", error);
-            alert(`Error saving topic: ${error.message}`);
+            console.error("Save error:", error);
+            alert(`Error: ${error.message}`);
         }
     };
 
@@ -550,8 +458,7 @@ const Content = () => {
         }
 
         try {
-            const response = await fetch(
-                `http://localhost:8080/api/topics/${topicId}`,
+            const response = await fetch(`${API_BASE_URL}/api/topics/${topicId}`,
                 {
                     method: "DELETE",
                     headers: {

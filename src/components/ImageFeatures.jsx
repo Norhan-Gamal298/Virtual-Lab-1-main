@@ -20,8 +20,8 @@ const ImageFeatures = () => {
             <div className='gradient-bg-light !h-[150px] md:!h-[395px]'></div>
             <div className='gradient-bg-dark !h-[150px] md:!h-[395px]'></div>
 
-            <div className="flex flex-col h-full w-full items-center justify-center mt-[30px] md:mt-[55px] z-1 relative px-4">
-                <h2 className='text-[#F3F4F6] poppins-medium text-[32px] md:text-[44px] mb-[1rem] text-center'>
+            <div className="flex flex-col h-full w-full items-center justify-center mt-[30px] md:mt-[55px] z-1 relative px-4 transition-all duration-300">
+                <h2 className='text-[#1F2937] dark:text-[#F3F4F6] poppins-medium text-[32px] md:text-[44px] mb-[1rem] text-center'>
                     Why Use Virtual Lab
                 </h2>
 

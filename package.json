@@ -61,6 +61,7 @@
     "react-tabs": "^6.1.0",
     "react-toastify": "^11.0.5",
     "rehype-katex": "^7.0.1",
+    "rehype-mathjax": "^7.1.0",
     "rehype-raw": "^7.0.0",
     "remark-gfm": "^4.0.1",
     "remark-math": "^6.0.0",

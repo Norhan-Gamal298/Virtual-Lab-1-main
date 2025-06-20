@@ -76,20 +76,45 @@ const SignUpModal = ({ onClose, switchToSignIn }) => {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        if (validateForm()) {
-            try {
-                // Simulate API call
-                console.log('Registering user:', userData);
-                // const response = await authAPI.register(userData);
-                // dispatch(setCredentials({ user: response.user, token: response.token }));
-                const response = await authAPI.register(userData);
-                setRegisteredEmail(userData.email);
-                setShowConfirmation(true);
-                // Don't close the modal or navigate here
-            } catch (error) {
-                setErrors({ apiError: error.message });
-            }
+        if (!validateForm()) {
+            // Show all validation errors as toasts
+            Object.values(errors).forEach(error => {
+                toast.error(error, {
+                    position: "top-right",
+                    autoClose: 5000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "colored",
+                });
+            });
+            return;
         }
+
+        try {
+            // Simulate API call
+            console.log('Registering user:', userData);
+            // const response = await authAPI.register(userData);
+            // dispatch(setCredentials({ user: response.user, token: response.token }));
+            const response = await authAPI.register(userData);
+            setRegisteredEmail(userData.email);
+            setShowConfirmation(true);
+            // Don't close the modal or navigate here
+        } catch (error) {
+            toast.error(error.message || "Registration failed. Please try again.", {
+                position: "top-right",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "colored",
+            });
+        }
+
     };
 
     const handleNotificationClose = () => {

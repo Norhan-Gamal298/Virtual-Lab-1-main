@@ -51,7 +51,7 @@ const ImageTechniques = () => {
                             initial={{ opacity: 0, y: 40 }}
                             whileInView={{ opacity: 1, y: 0 }}
                             transition={{ duration: 0.5, delay: index * 0.05 }}
-                            className="bg-neutral-surface rounded-2xl transition-all duration-300 ease-in-out p-1 flex flex-col items-center text-left hover:border-primary"
+                            className="bg-neutral-surface rounded-2xl transition-all duration-300 ease-in-out p-1 flex flex-col items-center text-left"
                         >
                             <div className="text-sm text-neutral-text-secondary topicBlockIcon group p-[1.5rem] rounded-[1rem]">
                                 <img width={24} src={technique.icon} alt="" />

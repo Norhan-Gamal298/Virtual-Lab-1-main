@@ -2,9 +2,12 @@ import { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import remarkMath from "remark-math";
+import rehypeKatex from "rehype-katex";
 import rehypeRaw from "rehype-raw";
 import { useSelector } from "react-redux";
 import VideoNote from "../components/VideoNote";
+import "katex/dist/katex.min.css"; // Import KaTeX CSS
 
 export default function MarkdownPage() {
   const { topicId } = useParams();
@@ -30,11 +33,6 @@ export default function MarkdownPage() {
         if (!response.ok) throw new Error("Failed to load chapters");
         const data = await response.json();
 
-        /* console.log(
-          "Fetched chapters:",
-          data.map((ch) => ch.chapter)
-        ); */
-
         setChapters(data);
       } catch (error) {
         console.error("Error fetching chapters:", error);
@@ -55,7 +53,6 @@ export default function MarkdownPage() {
 
   const allTopics = sortedChapters.flatMap((chapter) =>
     [...chapter.topics].sort((a, b) => {
-      // Extract numbers from topicId, e.g. chapter_1_1_what_is_image_processing
       const getParts = (t) => {
         const match = t.id.match(/^chapter_(\d+)_(\d+)_(\d+)_/);
         return match
@@ -75,14 +72,12 @@ export default function MarkdownPage() {
 
   useEffect(() => {
     if (chapters.length > 0 && !topicId && allTopics.length > 0) {
-      // Redirect to the very first topic in allTopics
       const firstTopic = allTopics[0];
       if (firstTopic?.id) {
         hasRedirectedRef.current = true;
         navigate(`/docs/${firstTopic.id}`, { replace: true });
       }
     }
-    // eslint-disable-next-line
   }, [chapters, topicId, allTopics]);
 
   // Fetch markdown for the topic
@@ -95,14 +90,7 @@ export default function MarkdownPage() {
 
     const fetchMarkdown = async () => {
       try {
-
-
         setLoading(true);
-        /* console.log(
-          "allTopics",
-          allTopics.map((t) => ({ id: t.id, title: t.title }))
-        );
-        console.log("topicId", topicId); */
         const topic = allTopics.find((t) => t.id === topicId);
 
         if (!topic) {
@@ -138,7 +126,6 @@ export default function MarkdownPage() {
     if (chapters.length > 0) {
       fetchMarkdown();
     }
-    // eslint-disable-next-line
   }, [topicId, chapters]);
 
   // Extract headings for table of contents
@@ -236,40 +223,25 @@ export default function MarkdownPage() {
             <div className="max-w-none markdownContent px-4 md:px-6">
               {loading ? (
                 <div className="space-y-6 animate-pulse">
-                  {/* Title skeleton */}
                   <div className="h-8 dark:bg-[#353535] rounded w-3/4 bg-[#dfdfdf]"></div>
-
-                  {/* Paragraph skeletons */}
                   <div className="space-y-3">
                     <div className="h-4 dark:bg-[#353535] rounded w-full bg-[#dfdfdf]"></div>
                     <div className="h-4 dark:bg-[#353535] rounded w-5/6 bg-[#dfdfdf]"></div>
                     <div className="h-4 dark:bg-[#353535] rounded w-4/6 bg-[#dfdfdf]"></div>
                     <div className="h-4 dark:bg-[#353535] rounded w-5/6 bg-[#dfdfdf]"></div>
                   </div>
-
-                  {/* Code block skeleton */}
                   <div className="h-64 dark:bg-[#353535] rounded-lg bg-[#dfdfdf]"></div>
-
-                  {/* Subheading skeleton */}
                   <div className="h-6 dark:bg-[#353535] rounded w-1/2 bg-[#dfdfdf] mt-8"></div>
-
-                  {/* List skeletons */}
                   <div className="space-y-2 pl-6">
                     <div className="h-4 dark:bg-[#353535] rounded w-4/6 bg-[#dfdfdf]"></div>
                     <div className="dark:bg-[#353535] rounded w-3/6 bg-[#dfdfdf]"></div>
                     <div className="h-4 dark:bg-[#353535] rounded w-5/6 bg-[#dfdfdf]"></div>
                   </div>
-
-                  {/* Image skeleton */}
                   <div className="h-48 dark:bg-[#353535] rounded-lg mt-6 bg-[#dfdfdf]"></div>
-
-                  {/* Another paragraph */}
                   <div className="space-y-3 mt-6">
                     <div className="h-4 dark:bg-[#353535] rounded w-full bg-[#dfdfdf]"></div>
                     <div className="h-4 dark:bg-[#353535] rounded w-2/3 bg-[#dfdfdf]"></div>
                   </div>
-
-                  {/* Table skeleton */}
                   <div className="mt-6">
                     <div className="h-8 dark:bg-[#353535] rounded-t-lg bg-[#dfdfdf]"></div>
                     <div className="h-32 dark:bg-[#353535] rounded-b-lg bg-[#dfdfdf]"></div>
@@ -277,8 +249,8 @@ export default function MarkdownPage() {
                 </div>
               ) : (
                 <ReactMarkdown
-                  remarkPlugins={[remarkGfm]}
-                  rehypePlugins={[rehypeRaw]}
+                  remarkPlugins={[remarkGfm, remarkMath]}
+                  rehypePlugins={[rehypeRaw, rehypeKatex]}
                   components={{
                     h1: ({ children }) => {
                       const text = String(children).trim();
@@ -338,9 +310,7 @@ export default function MarkdownPage() {
                       );
                       if (!currentTopic) return null;
 
-
-                      // Extract filename from src (e.g., "grayscale.png")
-                      const filename = src.split("/").pop(); // in case it's "photos/grayscale.png"
+                      const filename = src.split("/").pop();
                       const imageUrl = `http://localhost:8080/api/image/${currentTopic.id}/${filename}`;
 
                       return (
@@ -572,7 +542,7 @@ export default function MarkdownPage() {
                       <button
                         onClick={() => {
                           handleScrollTo(heading.id);
-                          setIsTocOpen(false); // Close dropdown after selection on mobile
+                          setIsTocOpen(false);
                         }}
                         className="text-neutral-text-secondary dark:text-dark-neutral-text-secondary hover:text-primary dark:hover:text-dark-primary text-left w-full transition-colors duration-200 focus:outline-none text-sm py-1 rounded hover:bg-neutral-surface dark:hover:bg-dark-neutral-surface px-2 -mx-2"
                         aria-label={`Jump to ${heading.text}`}
