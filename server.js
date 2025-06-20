@@ -27,7 +27,7 @@ const PORT = 8080;
 // Middleware Setup
 app.use(cors({
   origin: 'http://localhost:5173', // Your frontend URL
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
 })); // Enable Cross-Origin Resource Sharing
 app.use(express.json()); // Parse incoming JSON requests
@@ -210,7 +210,21 @@ const userSchema = new mongoose.Schema({
   lastName: { type: String, required: true },
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
-  role: { type: String, enum: ["user", "admin", "root"], default: "user" },
+  role: {
+    type: String,
+    enum: ["user", "admin", "root"],
+    default: "user",
+    validate: {
+      validator: function (v) {
+        // Prevent changing root role
+        if (this.isModified('role') && this._originalRole === 'root') {
+          return false;
+        }
+        return true;
+      },
+      message: 'Cannot modify root administrator role'
+    }
+  },
   isBlocked: { type: Boolean, default: false },
   isVerified: { type: Boolean, default: false },
   verificationToken: { type: String },
@@ -218,9 +232,9 @@ const userSchema = new mongoose.Schema({
 });
 
 // Pre-save Hook: Hash password before saving to DB
-userSchema.pre("save", async function (next) {
-  if (!this.isModified("password")) return next();
-  this.password = await bcrypt.hash(this.password, 10);
+// Add pre-save hook to track original role
+userSchema.pre('save', function (next) {
+  this._originalRole = this.role;
   next();
 });
 
@@ -275,6 +289,17 @@ const topicSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
+
+const tokenBlacklist = new Set();
+
+// Middleware to check blacklisted tokens
+const checkBlacklist = (req, res, next) => {
+  const token = req.headers.authorization?.split(" ")[1];
+  if (token && tokenBlacklist.has(token)) {
+    return res.status(401).json({ error: "Token revoked" });
+  }
+  next();
+};
 
 const Topic = mongoose.models.Topic || mongoose.model("Topic", topicSchema);
 
@@ -341,85 +366,11 @@ app.post('/api/upload-blog-image', blogImageUpload.single('image'), (req, res) =
 // Make sure to serve static files
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-app.get("/api/blogs", async (req, res) => {
-  try {
-    const blogs = await Blog.find().sort({ createdAt: -1 });
-    res.json(blogs);
-  } catch (error) {
-    res.status(500).json({ error: "Failed to fetch blogs", details: error.message });
-  }
-});
 
-app.put("/api/blogs/:id", async (req, res) => {
-  try {
-    const { title, author, content, image } = req.body;
-    const blog = await Blog.findByIdAndUpdate(
-      req.params.id,
-      {
-        title,
-        author,
-        content,
-        excerpt: content.replace(/\n/g, ' ').slice(0, 120) + (content.length > 120 ? '...' : ''),
-        image
-      },
-      { new: true }
-    );
-    if (!blog) return res.status(404).json({ error: "Blog not found" });
-    res.json(blog);
-  } catch (error) {
-    res.status(500).json({ error: "Failed to update blog", details: error.message });
-  }
-});
-
-app.get("/api/blogs/:id", async (req, res) => {
-  try {
-    const blog = await Blog.findOne({ id: Number(req.params.id) });
-    if (!blog) return res.status(404).json({ error: "Blog not found" });
-    res.json(blog);
-  } catch (error) {
-    res.status(500).json({ error: "Failed to fetch blog", details: error.message });
-  }
-});
-
-app.get("/api/blogs", async (req, res) => {
-  try {
-    const blogs = await Blog.find().sort({ createdAt: -1 });
-    res.json(blogs);
-  } catch (err) {
-    console.error("Error fetching blogs:", err);
-    res.status(500).json({ error: "Failed to fetch blogs" });
-  }
-});
-
-// Update an existing blog
-app.put("/api/blogs/:id", async (req, res) => {
-  try {
-    const { title, author, content, image } = req.body;
-    const blog = await Blog.findByIdAndUpdate(
-      req.params.id,
-      { title, author, content, image },
-      { new: true }
-    );
-    if (!blog) return res.status(404).json({ error: "Blog not found" });
-    res.json(blog);
-  } catch (error) {
-    res.status(500).json({ error: "Failed to update blog", details: error.message });
-  }
-});
-
-app.get("/api/blogs/:id", async (req, res) => {
-  try {
-    const blog = await Blog.findOne({ id: Number(req.params.id) });
-    if (!blog) return res.status(404).json({ error: "Blog not found" });
-    res.json(blog);
-  } catch (error) {
-    res.status(500).json({ error: "Failed to fetch blog", details: error.message });
-  }
-});
 
 // ---------------- Routes ---------------- //
 
-const adminAuth = async (req, res, next) => {
+const adminAuth = [checkBlacklist, async (req, res, next) => {
   const token = req.headers.authorization?.split(" ")[1];
   if (!token) return res.status(401).json({ error: "Unauthorized" });
 
@@ -427,7 +378,15 @@ const adminAuth = async (req, res, next) => {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     const user = await User.findById(decoded.id);
 
-    if (!user || !["admin", "root"].includes(user.role)) {
+    if (!user) {
+      return res.status(403).json({ error: "User not found" });
+    }
+    if (user.isBlocked) {
+      return res.status(403).json({ error: "Account is blocked" });
+    }
+
+    // Check if user is admin or root
+    if (!["admin", "root"].includes(user.role)) {
       return res.status(403).json({ error: "Access denied" });
     }
 
@@ -436,7 +395,7 @@ const adminAuth = async (req, res, next) => {
   } catch (error) {
     res.status(401).json({ error: "Invalid token", details: error.message });
   }
-};
+}];
 
 // Temporary admin creation route (remove after use!)
 // Add this with your other routes in server.js
@@ -523,18 +482,23 @@ app.post("/api/admin/login", async (req, res) => {
       return res.status(401).json({ error: "Invalid credentials" });
     }
 
-    // 2. Check password
+    // 2. Check if account is blocked
+    if (user.isBlocked) {
+      return res.status(403).json({ error: "Account is blocked" });
+    }
+
+    // 3. Check password
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
       return res.status(401).json({ error: "Invalid credentials" });
     }
 
-    // 3. Verify admin role
+    // 4. Verify admin role
     if (!["admin", "root"].includes(user.role)) {
       return res.status(403).json({ error: "Admin privileges required" });
     }
 
-    // 4. Create JWT token
+    // 5. Create JWT token
     const token = jwt.sign(
       {
         id: user._id,
@@ -545,7 +509,7 @@ app.post("/api/admin/login", async (req, res) => {
       { expiresIn: "1h" }
     );
 
-    // 5. Send response
+    // 6. Send response
     res.json({
       user: {
         id: user._id,
@@ -565,9 +529,61 @@ app.post("/api/admin/login", async (req, res) => {
 app.patch("/api/admin/users/:id/block", adminAuth, async (req, res) => {
   try {
     const user = await User.findById(req.params.id);
+
+    // Prevent blocking root admin
+    if (user.role === "root") {
+      return res.status(403).json({ error: "Cannot block root administrator" });
+    }
+
     user.isBlocked = !user.isBlocked;
     await user.save();
+
+    // Add token to blacklist if blocking
+    if (user.isBlocked) {
+      const token = req.headers.authorization.split(' ')[1];
+      tokenBlacklist.add(token);
+    }
+
     res.json(user);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Make sure this route is defined in your server.js
+app.patch("/api/admin/users/:id/role", adminAuth, async (req, res) => {
+  try {
+    const requestingUser = req.user;
+    const targetUserId = req.params.id;
+    const { role } = req.body;
+
+    // Only root admin can change roles
+    if (requestingUser.role !== "root") {
+      return res.status(403).json({ error: "Only root administrator can change roles" });
+    }
+
+    const targetUser = await User.findById(targetUserId);
+    if (!targetUser) return res.status(404).json({ error: "User not found" });
+    if (targetUser.role === "root") {
+      return res.status(403).json({ error: "Cannot modify root administrator role" });
+    }
+
+    // Validate new role
+    if (!["user", "admin"].includes(role)) {
+      return res.status(400).json({ error: "Invalid role specified" });
+    }
+
+    targetUser.role = role;
+    await targetUser.save();
+
+    res.json({
+      message: `User role updated to ${role}`,
+      user: {
+        id: targetUser._id,
+        email: targetUser.email,
+        role: targetUser.role
+      }
+    });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -623,15 +639,7 @@ app.post("/api/register", async (req, res) => {
     });
 
     console.log("User created successfully:", user);
-    // res.status(201).json({
-    //   user: {
-    //     id: user._id,
-    //     firstName: user.firstName,
-    //     lastName: user.lastName,
-    //     email: user.email,
-    //   },
-    //   token: "dummy-token", // Replace with real token (JWT) later
-    // });
+    res.status(201).json({ success: true }); // Just return success
   } catch (err) {
     console.error("Error during signup:", err);
     if (err.code === 11000) {
@@ -699,7 +707,8 @@ app.post("/api/signin", async (req, res) => {
         firstName: user.firstName,
         lastName: user.lastName,
         email: user.email,
-        role: user.role,
+        createdAt: user.createdAt, // Make sure this is included
+        isVerified: user.isVerified // Include other fields you might need
       },
       token,
     });
@@ -800,8 +809,13 @@ app.get("/api/profile", async (req, res) => {
     }
     const fullName = `${user.firstName} ${user.lastName}`;
     res.json({
-      fullName,
+      id: user._id,
+      firstName: user.firstName,
+      lastName: user.lastName,
       email: user.email,
+      role: user.role,
+      createdAt: user.createdAt, // Make sure this is included
+      isVerified: user.isVerified
     });
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -887,6 +901,83 @@ app.get('/api/report/quiz', adminAuth, async (req, res) => {
   }
 });
 
+
+app.get("/api/blogs", async (req, res) => {
+  try {
+    const blogs = await Blog.find().sort({ createdAt: -1 });
+    res.json(blogs);
+  } catch (error) {
+    res.status(500).json({ error: "Failed to fetch blogs", details: error.message });
+  }
+});
+
+app.put("/api/blogs/:id", async (req, res) => {
+  try {
+    const { title, author, content, image } = req.body;
+    const blog = await Blog.findByIdAndUpdate(
+      req.params.id,
+      {
+        title,
+        author,
+        content,
+        excerpt: content.replace(/\n/g, ' ').slice(0, 120) + (content.length > 120 ? '...' : ''),
+        image
+      },
+      { new: true }
+    );
+    if (!blog) return res.status(404).json({ error: "Blog not found" });
+    res.json(blog);
+  } catch (error) {
+    res.status(500).json({ error: "Failed to update blog", details: error.message });
+  }
+});
+
+app.get("/api/blogs/:id", async (req, res) => {
+  try {
+    const blog = await Blog.findOne({ id: Number(req.params.id) });
+    if (!blog) return res.status(404).json({ error: "Blog not found" });
+    res.json(blog);
+  } catch (error) {
+    res.status(500).json({ error: "Failed to fetch blog", details: error.message });
+  }
+});
+
+app.get("/api/blogs", async (req, res) => {
+  try {
+    const blogs = await Blog.find().sort({ createdAt: -1 });
+    res.json(blogs);
+  } catch (err) {
+    console.error("Error fetching blogs:", err);
+    res.status(500).json({ error: "Failed to fetch blogs" });
+  }
+});
+
+// Update an existing blog
+app.put("/api/blogs/:id", async (req, res) => {
+  try {
+    const { title, author, content, image } = req.body;
+    const blog = await Blog.findByIdAndUpdate(
+      req.params.id,
+      { title, author, content, image },
+      { new: true }
+    );
+    if (!blog) return res.status(404).json({ error: "Blog not found" });
+    res.json(blog);
+  } catch (error) {
+    res.status(500).json({ error: "Failed to update blog", details: error.message });
+  }
+});
+
+app.get("/api/blogs/:id", async (req, res) => {
+  try {
+    const blog = await Blog.findOne({ id: Number(req.params.id) });
+    if (!blog) return res.status(404).json({ error: "Blog not found" });
+    res.json(blog);
+  } catch (error) {
+    res.status(500).json({ error: "Failed to fetch blog", details: error.message });
+  }
+});
+
 // Blogs Report
 app.get('/api/report/blogs', adminAuth, async (req, res) => {
   try {
@@ -912,6 +1003,9 @@ app.get('/api/report/blogs', adminAuth, async (req, res) => {
     res.status(500).json({ error: 'Failed to generate report', details: error.message });
   }
 });
+
+
+
 
 // ---------------- Quiz Result Management ---------------- //
 
@@ -1239,7 +1333,7 @@ app.get("/api/docs/:topicId", async (req, res) => {
 
 // Add this endpoint for saving markdown content
 app.put("/api/topics/:id", upload.none(), async (req, res) => {
-  console.log("Raw body received:", req.body); 
+  console.log("Raw body received:", req.body);
   try {
     const { id } = req.params;
     const { title, chapterId, content } = req.body;
@@ -1446,27 +1540,27 @@ app.get("/api/video/:topicId", async (req, res) => {
 
 // Delete chapter and all its topics
 app.delete("/api/chapters/:id", async (req, res) => {
-    try {
-        const { id } = req.params;
-        const chapterId = parseInt(id, 10);
+  try {
+    const { id } = req.params;
+    const chapterId = parseInt(id, 10);
 
-        if (isNaN(chapterId)) {
-            return res.status(400).json({ error: "Invalid chapter ID" });
-        }
-
-        // Delete all topics in this chapter first
-        const deleteResult = await Topic.deleteMany({ chapterId });
-        
-        console.log(`Deleted ${deleteResult.deletedCount} topics for chapter ${chapterId}`);
-        
-        res.status(204).send();
-    } catch (err) {
-        console.error("Error deleting chapter:", err);
-        res.status(500).json({ 
-            error: "Failed to delete chapter",
-            details: err.message 
-        });
+    if (isNaN(chapterId)) {
+      return res.status(400).json({ error: "Invalid chapter ID" });
     }
+
+    // Delete all topics in this chapter first
+    const deleteResult = await Topic.deleteMany({ chapterId });
+
+    console.log(`Deleted ${deleteResult.deletedCount} topics for chapter ${chapterId}`);
+
+    res.status(204).send();
+  } catch (err) {
+    console.error("Error deleting chapter:", err);
+    res.status(500).json({
+      error: "Failed to delete chapter",
+      details: err.message
+    });
+  }
 });
 
 // Add this to server.js
@@ -1494,3 +1588,20 @@ topicSchema.pre("save", function (next) {
 app.listen(PORT, () => {
   console.log(`Server started on http://localhost:${PORT}`);
 });
+
+
+// Add this at the end of your server file
+setInterval(() => {
+  // Remove tokens older than 24 hours
+  const now = Date.now();
+  for (const token of tokenBlacklist) {
+    try {
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      if (decoded.exp * 1000 < now) {
+        tokenBlacklist.delete(token);
+      }
+    } catch {
+      tokenBlacklist.delete(token);
+    }
+  }
+}, 3600000); // Run every hour

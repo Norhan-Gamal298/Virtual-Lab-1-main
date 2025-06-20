@@ -11,7 +11,10 @@ export const authAPI = {
             const error = await response.json();
             throw new Error(error.error || "Failed to register");
         }
-        return await response.json();
+        return {
+            success: true,
+            email: userData.email
+        };
     },
 
     async login(credentials) {

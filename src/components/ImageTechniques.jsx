@@ -30,7 +30,7 @@ const techniques = [
 
 const ImageTechniques = () => {
     return (
-        <section className="py-20 bg-neutral-background relative">
+        <section className="py-20 bg-neutral-background relative mt-[10rem]">
             <div className='gradient-bg-light'></div>
             <div className='gradient-bg-dark'></div>
             <motion.h2
@@ -41,7 +41,7 @@ const ImageTechniques = () => {
             >
                 What You'll Learn
             </motion.h2>
-            <span className='mb-[2rem] text-[18px] text-[#D1D5DB] poppins-regular'>Virtual Lab covers a wide range of Image Processing topics</span>
+            <span className='mb-[2rem] text-[18px] dark:text-[#D1D5DB] poppins-regular'>Virtual Lab covers a wide range of Image Processing topics</span>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-x-[60px] gap-y-8 px-6 max-w-7xl mx-auto mt-[2rem]">
                 {techniques.map((technique, index) => {
                     const isLast = index === techniques.length - 1;
@@ -51,15 +51,17 @@ const ImageTechniques = () => {
                             initial={{ opacity: 0, y: 40 }}
                             whileInView={{ opacity: 1, y: 0 }}
                             transition={{ duration: 0.5, delay: index * 0.05 }}
-                            className="bg-neutral-surface rounded-2xl shadow-md hover:shadow-2xl transition-all duration-300 ease-in-out p-8 flex flex-col items-center text-left hover:border-primary group"
+                            className="bg-neutral-surface rounded-2xl transition-all duration-300 ease-in-out p-1 flex flex-col items-center text-left"
                         >
-                            <div className="text-sm text-neutral-text-secondary topicBlockIcon p-[1.5rem] rounded-[1rem] group-hover:topicBlockIconHover">
+                            <div className="text-sm text-neutral-text-secondary topicBlockIcon group p-[1.5rem] rounded-[1rem]">
                                 <img width={24} src={technique.icon} alt="" />
                             </div>
                             <h5 className="text-[14px] mt-[10px] mb-2 text-neutral-text-primary text-center poppins-regular">
                                 {technique.topic}
                             </h5>
                         </motion.div>
+
+
                     );
                 })}
             </div>

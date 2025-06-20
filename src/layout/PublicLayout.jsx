@@ -1,4 +1,4 @@
-import Navbar from "../components/Navbar";
+/* import Navbar from "../components/Navbar";
 
 export default function PublicLayout({ children }) {
     return (
@@ -7,4 +7,4 @@ export default function PublicLayout({ children }) {
             <div className="flex-1 overflow-auto">{children}</div>
         </div>
     );
-}
+} */

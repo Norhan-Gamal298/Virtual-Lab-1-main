@@ -11,6 +11,21 @@ export default function TerminalPage() {
     const [isRunning, setIsRunning] = useState(false);
     const [files, setFiles] = useState({});
     const [error, setError] = useState(null);
+    const [acceptedFormats, setAcceptedFormats] = useState('JPG, JPEG, PNG, BMP, TIFF');
+
+    // Fetch accepted formats on component mount
+    useEffect(() => {
+        const fetchFormats = async () => {
+            try {
+                const response = await fetch('http://localhost:5000/formats');
+                const data = await response.json();
+                setAcceptedFormats(data.formatsString);
+            } catch (err) {
+                console.warn('Could not fetch formats:', err);
+            }
+        };
+        fetchFormats();
+    }, []);
 
     useEffect(() => {
         const params = new URLSearchParams(location.search);
@@ -31,7 +46,7 @@ export default function TerminalPage() {
     }, [location]);
 
     const handleRunCode = async (e) => {
-        e.preventDefault(); // ✅ Add this line to prevent page reload
+        e.preventDefault();
         setIsRunning(true);
         setOutput(prev => [...prev, '$ python script.py']);
         setError(null);
@@ -54,21 +69,65 @@ export default function TerminalPage() {
         }
     };
 
+    const validateFileFormat = (file) => {
+        const allowedExtensions = ['.jpg', '.jpeg', '.png', '.bmp', '.tiff'];
+        const fileExtension = file.name.toLowerCase().substring(file.name.lastIndexOf('.'));
+        return allowedExtensions.includes(fileExtension);
+    };
 
-    // In TerminalPage.js handleFileUpload
     const handleFileUpload = (e) => {
-        const fileList = e.target.files;
-        Array.from(fileList).forEach(file => {
-            // Use arrayBuffer instead of DataURL
+        const fileList = Array.from(e.target.files);
+        const validFiles = [];
+        const invalidFiles = [];
+
+        fileList.forEach(file => {
+            if (validateFileFormat(file)) {
+                validFiles.push(file);
+            } else {
+                invalidFiles.push(file);
+            }
+        });
+
+        // Show format error if invalid files detected
+        if (invalidFiles.length > 0) {
+            const errorMessage = [
+                '❌ INVALID FILE FORMAT(S) DETECTED:',
+                '',
+                ...invalidFiles.map(file => `• ${file.name} (${file.name.substring(file.name.lastIndexOf('.')) || 'no extension'})`),
+                '',
+                `✅ Accepted formats: ${acceptedFormats}`,
+                '',
+                '💡 Please convert your files to an accepted format and try again.'
+            ];
+
+            setOutput(prev => [...prev, ...errorMessage]);
+            return;
+        }
+
+        // Process valid files
+        validFiles.forEach(file => {
             const reader = new FileReader();
             reader.onload = (e) => {
                 setFiles(prev => ({
                     ...prev,
-                    [file.name]: e.target.result // ArrayBuffer
+                    [file.name]: e.target.result
                 }));
             };
             reader.readAsArrayBuffer(file);
         });
+
+        // Show success message
+        if (validFiles.length > 0) {
+            const successMessage = [
+                '✅ Files ready for upload:',
+                ...validFiles.map(file => `• ${file.name}`),
+                ''
+            ];
+            setOutput(prev => [...prev, ...successMessage]);
+        }
+
+        // Clear the input
+        e.target.value = '';
     };
 
     const clearTerminal = () => {
@@ -104,6 +163,7 @@ export default function TerminalPage() {
                             onChange={handleFileUpload}
                             className="hidden"
                             multiple
+                            accept=".jpg,.jpeg,.png,.bmp,.tiff"
                         />
                     </label>
                     <button
@@ -112,12 +172,24 @@ export default function TerminalPage() {
                     >
                         Clear Terminal
                     </button>
-                    <button
-                        onClick={downloadOutput}
-                        className="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700"
-                    >
-                        Download Output
-                    </button>
+                </div>
+            </div>
+
+            {/* Format Information Card */}
+            <div className="bg-blue-50 border-l-4 border-blue-400 p-4 mb-4 rounded">
+                <div className="flex items-center">
+                    <div className="flex-shrink-0">
+                        <span className="text-blue-400 text-xl">ℹ️</span>
+                    </div>
+                    <div className="ml-3">
+                        <p className="text-sm text-blue-700">
+                            <strong>Accepted Image Formats:</strong> {acceptedFormats}
+                        </p>
+                        <p className="text-xs text-blue-600 mt-1">
+                            Files will be automatically renamed to "sample.[extension]" for your Python code to access.<br />
+                            You need to adjust the code to the uploaded file format.
+                        </p>
+                    </div>
                 </div>
             </div>
 
@@ -157,7 +229,13 @@ export default function TerminalPage() {
                             return <img key={i} src={line} alt="Output" className="mt-4 max-w-full border border-gray-600" />;
                         }
                         return (
-                            <div key={i} className={line.startsWith('Error') ? 'text-red-400' : ''}>
+                            <div key={i} className={
+                                line.startsWith('❌') ? 'text-red-400' :
+                                    line.startsWith('✅') ? 'text-green-400' :
+                                        line.startsWith('Error') ? 'text-red-400' :
+                                            line.startsWith('📁') || line.startsWith('•') ? 'text-blue-400' :
+                                                line.startsWith('💡') || line.startsWith('🔧') ? 'text-yellow-400' : ''
+                            }>
                                 {line}
                             </div>
                         );
