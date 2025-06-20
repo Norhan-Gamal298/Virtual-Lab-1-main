@@ -131,7 +131,7 @@ const About = () => {
                             <div className="relative">
                                 <div className="absolute inset-0 bg-gradient-to-r from-[#612EBE] to-[#8434f5] rounded-[1rem] blur-xl opacity-30"></div>
                                 <img
-                                    className="relative w-[600px] max-w-md sm:max-w-lg rounded-[1rem] shadow-2xl border border-white/20"
+                                    className="aboutUsImg relative w-[600px] max-w-md sm:max-w-lg rounded-[1rem] shadow-2xl"
                                     src={about_img}
                                     alt="Virtual Lab About"
                                 />
@@ -225,7 +225,7 @@ const About = () => {
                             <div key={idx} className="group bg-white/80 dark:bg-[#0f0f0f]/80 backdrop-blur-sm border border-purple-200/50 dark:border-purple-800/30 p-4 sm:p-6 rounded-xl text-center shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:scale-105 hover:-translate-y-2">
                                 {member.image && (
                                     <div className="relative mb-4">
-                                        <div className="absolute inset-0 bg-gradient-to-r from-[#612EBE] to-[#8434f5] rounded-full blur-md opacity-0 group-hover:opacity-30 transition-opacity duration-300"></div>
+                                        <div className="absolute inset-0 bg-gradient-to-r from-[#612EBE] to-[#8434f5] rounded-full blur-sm opacity-0 dark:group-hover:opacity-20 transition-opacity duration-300"></div>
                                         <img
                                             src={member.image}
                                             alt={member.name}

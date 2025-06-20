@@ -882,7 +882,8 @@ pre {
 
 @media only screen and (min-width: 769px) {
   .nexusItem.active .nexusItem__title {
-    line-height: 0.5
+    line-height: 1;
+    text-align: left;
   }
 }
 
@@ -1503,6 +1504,16 @@ pre {
   transform: scale(1.05);
 }
 
+.aboutUsImg{
+  transition: all ease-in-out 0.2s;
+/*   filter: hue-rotate(180deg);
+ */
+ filter: hue-rotate(220deg);
+}
+
+.dark .aboutUsImg{
+  filter: hue-rotate(220deg);
+}
 
 
 
