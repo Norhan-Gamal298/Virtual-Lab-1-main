@@ -175,25 +175,25 @@ const Navbar = () => {
         <div className="hidden md:flex gap-6 transition-colors duration-300">
           <button
             onClick={handleDocsClick}
-            className="text-neutral-text-secondary hover:text-neutral-text-primary text-[16px] font-medium transition-colors dark:text-dark-text-secondary dark:hover:text-dark-neutral-text-primary"
+            className="text-neutral-text-secondary hover:text-neutral-600 text-[16px] font-medium transition-colors dark:text-dark-text-secondary dark:hover:text-neutral-300"
           >
             Docs
           </button>
           <Link
             to="/about"
-            className="text-neutral-text-secondary hover:text-neutral-text-primary text-[16px] font-medium transition-colors dark:text-dark-text-secondary dark:hover:text-dark-neutral-text-primary"
+            className="text-neutral-text-secondary hover:text-neutral-600 text-[16px] font-medium transition-colors dark:text-dark-text-secondary dark:hover:text-neutral-300"
           >
             About
           </Link>
           <Link
             to="/blogs"
-            className="text-neutral-text-secondary hover:text-neutral-text-primary text-[16px] font-medium transition-colors dark:text-dark-text-secondary dark:hover:text-dark-neutral-text-primary"
+            className="text-neutral-text-secondary hover:text-neutral-600 text-[16px] font-medium transition-colors dark:text-dark-text-secondary dark:hover:text-neutral-300"
           >
             Blog
           </Link>
           <Link
             to="/community"
-            className="text-neutral-text-secondary hover:text-neutral-text-primary text-[16px] font-medium transition-colors dark:text-dark-text-secondary dark:hover:text-dark-neutral-text-primary"
+            className="text-neutral-text-secondary hover:text-neutral-600 text-[16px] font-medium transition-colors dark:text-dark-text-secondary dark:hover:text-neutral-300"
           >
             Community
           </Link>
@@ -203,7 +203,7 @@ const Navbar = () => {
         <div className="hidden md:flex items-center gap-3 select-none transition duration-300">
           {/* Theme Toggle Button */}
           <button
-            className="p-[12px] rounded-lg bg-[#F5F7FA] dark:bg-[#1f1f1f] dark:border-[#3b3b3b] transition-colors duration-300 border border-neutral-border"
+            className="p-[12px] rounded-lg bg-[#F5F7FA] dark:bg-[#1f1f1f] dark:border-[#3b3b3b] transition-colors duration-300 border border-neutral-border hover:bg-gray-100 dark:hover:bg-[#2a2a2a]"
             onClick={toggleTheme}
             aria-label={`Switch to ${isDark ? "light" : "dark"} mode`}
           >
@@ -227,7 +227,7 @@ const Navbar = () => {
           {/* Search Button (only on docs page) */}
           {isDocsPage && (
             <button
-              className="p-[12px] rounded-lg bg-[#F5F7FA] dark:bg-[#1f1f1f] dark:border-[#3b3b3b] duration-300 hover:bg-secondary-surface-tint text-neutral-text-secondary transition-colors border border-neutral-border"
+              className="p-[12px] rounded-lg bg-[#F5F7FA] dark:bg-[#1f1f1f] dark:border-[#3b3b3b] duration-300 hover:bg-gray-100 dark:hover:bg-[#2a2a2a] text-neutral-text-secondary transition-colors border border-neutral-border"
               onClick={() => setIsSearchOpen(true)}
               aria-label="Open search"
             >
@@ -243,10 +243,10 @@ const Navbar = () => {
             <div className="relative cursor-pointer" ref={dropdownRef}>
               <div
                 onClick={() => setShowDropdown(!showDropdown)}
-                className="flex items-center gap-2"
+                className="flex items-center gap-2   rounded-lg transition-colors"
               >
                 <div
-                  className="p-[4px] rounded-lg transition-all duration-200"
+                  className="p-[4px] rounded-lg transition-all duration-200 hover:bg-gray-100 dark:hover:bg-[#2a2a2a]"
                   style={{
                     background: `conic-gradient(#7c3aed ${completionRate}%, ${document.documentElement.classList.contains('dark') ? '#d1d1d1' : '#303135'
                       } ${completionRate}%)`,
@@ -265,7 +265,7 @@ const Navbar = () => {
               {showDropdown && (
                 <div className="absolute right-0 mt-2 w-48 bg-[#F5F7FA] dark:bg-[#1f1f1f] rounded-md shadow-lg border border-neutral-border dark:border-dark-neutral-border z-50 overflow-hidden">
                   <div
-                    className="px-4 py-3 text-[#000] dark:text-[#fff] hover:bg-secondary-surface-tint dark:hover:bg-dark-secondary-surface-tint transition-colors duration-200 cursor-pointer"
+                    className="px-4 py-3 text-[#000] dark:text-[#fff] hover:bg-gray-100 dark:hover:bg-[#2a2a2a] transition-colors duration-200 cursor-pointer"
                     onClick={() => {
                       setShowDropdown(false);
                       navigate("/profile");
@@ -274,7 +274,7 @@ const Navbar = () => {
                     Profile Dashboard
                   </div>
                   <div
-                    className="px-4 py-3 text-[#000] dark:text-[#fff] hover:bg-secondary-surface-tint dark:hover:bg-dark-secondary-surface-tint transition-colors duration-200 cursor-pointer"
+                    className="px-4 py-3 text-[#000] dark:text-[#fff] hover:bg-gray-100 dark:hover:bg-[#2a2a2a] transition-colors duration-200 cursor-pointer"
                     onClick={handleLogout}
                   >
                     Log out
@@ -284,7 +284,7 @@ const Navbar = () => {
             </div>
           ) : (
             <button
-              className="px-7 py-[12px] rounded-lg bg-[#F5F7FA] text-[14px] dark:bg-[#1f1f1f] border border-neutral-border dark:border-[#3b3b3b] text-primary-text dark:text-dark-text-primary transition-colors font-medium"
+              className="px-7 py-[12px] rounded-lg bg-[#F5F7FA] text-[14px] dark:bg-[#1f1f1f] border border-neutral-border dark:border-[#3b3b3b] text-primary-text dark:text-dark-text-primary transition-colors font-medium hover:bg-gray-100 dark:hover:bg-[#2a2a2a]"
               onClick={() => setActiveModal("signup")}
             >
               Sign Up
@@ -296,7 +296,7 @@ const Navbar = () => {
         <div className="flex md:hidden items-center gap-2">
           {/* Theme Toggle Button (Mobile) */}
           <button
-            className="p-2 rounded-lg bg-[#F5F7FA] dark:bg-[#1f1f1f] dark:border-[#3b3b3b] transition-colors duration-300 border border-neutral-border"
+            className="p-2 rounded-lg bg-[#F5F7FA] dark:bg-[#1f1f1f] dark:border-[#3b3b3b] transition-colors duration-300 border border-neutral-border hover:bg-gray-100 dark:hover:bg-[#2a2a2a]"
             onClick={toggleTheme}
             aria-label={`Switch to ${isDark ? "light" : "dark"} mode`}
           >
@@ -320,7 +320,7 @@ const Navbar = () => {
           {/* Search Button (Mobile - only on docs page) */}
           {isDocsPage && (
             <button
-              className="p-2 rounded-lg bg-[#F5F7FA] dark:bg-[#1f1f1f] dark:border-[#3b3b3b] duration-300 hover:bg-secondary-surface-tint text-neutral-text-secondary transition-colors border border-neutral-border"
+              className="p-2 rounded-lg bg-[#F5F7FA] dark:bg-[#1f1f1f] dark:border-[#3b3b3b] duration-300 hover:bg-gray-100 dark:hover:bg-[#2a2a2a] text-neutral-text-secondary transition-colors border border-neutral-border"
               onClick={() => setIsSearchOpen(true)}
               aria-label="Open search"
             >
@@ -334,7 +334,7 @@ const Navbar = () => {
           {/* User Avatar (Mobile) */}
           {user && (
             <div
-              className="p-[2px] rounded-lg transition-all duration-200 cursor-pointer"
+              className="p-[2px] rounded-lg transition-all duration-200 cursor-pointer hover:bg-gray-100 dark:hover:bg-[#2a2a2a]"
               style={{
                 background: `conic-gradient(#7c3aed ${completionRate}%, ${document.documentElement.classList.contains('dark') ? '#d1d1d1' : '#303135'
                   } ${completionRate}%)`,
@@ -352,7 +352,7 @@ const Navbar = () => {
           {/* Mobile Menu Button */}
           <button
             id="mobile-menu-button"
-            className="p-2 rounded-lg bg-[#F5F7FA] dark:bg-[#1f1f1f] dark:border-[#3b3b3b] transition-colors duration-300 border border-neutral-border"
+            className="p-2 rounded-lg bg-[#F5F7FA] dark:bg-[#1f1f1f] dark:border-[#3b3b3b] transition-colors duration-300 border border-neutral-border hover:bg-gray-100 dark:hover:bg-[#2a2a2a]"
             onClick={() => setShowMobileMenu(!showMobileMenu)}
             aria-label="Toggle mobile menu"
           >
@@ -417,7 +417,7 @@ const Navbar = () => {
                 </div>
                 <button
                   onClick={() => setShowMobileMenu(false)}
-                  className="p-2 rounded-lg hover:bg-[#F5F7FA] dark:hover:bg-[#1f1f1f] transition-colors"
+                  className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-[#2a2a2a] transition-colors"
                 >
                   <FiX className="text-[#000] dark:text-[#fff]" size={20} />
                 </button>
@@ -428,28 +428,28 @@ const Navbar = () => {
                 <div className="space-y-1">
                   <button
                     onClick={handleDocsClick}
-                    className="w-full text-left px-4 py-3 text-[16px] font-medium text-neutral-text-secondary dark:text-dark-text-secondary hover:text-neutral-text-primary dark:hover:text-dark-neutral-text-primary hover:bg-[#F5F7FA] dark:hover:bg-[#1f1f1f] rounded-lg transition-all duration-200"
+                    className="w-full text-left px-4 py-3 text-[16px] font-medium text-neutral-text-secondary dark:text-dark-text-secondary hover:text-neutral-600 dark:hover:text-neutral-300 hover:bg-gray-100 dark:hover:bg-[#2a2a2a] rounded-lg transition-all duration-200"
                   >
                     Docs
                   </button>
                   <Link
                     to="/about"
                     onClick={handleMobileLinkClick}
-                    className="block px-4 py-3 text-[16px] font-medium text-neutral-text-secondary dark:text-dark-text-secondary hover:text-neutral-text-primary dark:hover:text-dark-neutral-text-primary hover:bg-[#F5F7FA] dark:hover:bg-[#1f1f1f] rounded-lg transition-all duration-200"
+                    className="block px-4 py-3 text-[16px] font-medium text-neutral-text-secondary dark:text-dark-text-secondary hover:text-neutral-600 dark:hover:text-neutral-300 hover:bg-gray-100 dark:hover:bg-[#2a2a2a] rounded-lg transition-all duration-200"
                   >
                     About
                   </Link>
                   <Link
                     to="/blogs"
                     onClick={handleMobileLinkClick}
-                    className="block px-4 py-3 text-[16px] font-medium text-neutral-text-secondary dark:text-dark-text-secondary hover:text-neutral-text-primary dark:hover:text-dark-neutral-text-primary hover:bg-[#F5F7FA] dark:hover:bg-[#1f1f1f] rounded-lg transition-all duration-200"
+                    className="block px-4 py-3 text-[16px] font-medium text-neutral-text-secondary dark:text-dark-text-secondary hover:text-neutral-600 dark:hover:text-neutral-300 hover:bg-gray-100 dark:hover:bg-[#2a2a2a] rounded-lg transition-all duration-200"
                   >
                     Blog
                   </Link>
                   <Link
                     to="/community"
                     onClick={handleMobileLinkClick}
-                    className="block px-4 py-3 text-[16px] font-medium text-neutral-text-secondary dark:text-dark-text-secondary hover:text-neutral-text-primary dark:hover:text-dark-neutral-text-primary hover:bg-[#F5F7FA] dark:hover:bg-[#1f1f1f] rounded-lg transition-all duration-200"
+                    className="block px-4 py-3 text-[16px] font-medium text-neutral-text-secondary dark:text-dark-text-secondary hover:text-neutral-600 dark:hover:text-neutral-300 hover:bg-gray-100 dark:hover:bg-[#2a2a2a] rounded-lg transition-all duration-200"
                   >
                     Community
                   </Link>
@@ -464,7 +464,7 @@ const Navbar = () => {
                           setShowMobileMenu(false);
                           navigate("/profile");
                         }}
-                        className="w-full text-left px-4 py-3 text-[16px] font-medium text-neutral-text-secondary dark:text-dark-text-secondary hover:text-neutral-text-primary dark:hover:text-dark-neutral-text-primary hover:bg-[#F5F7FA] dark:hover:bg-[#1f1f1f] rounded-lg transition-all duration-200"
+                        className="w-full text-left px-4 py-3 text-[16px] font-medium text-neutral-text-secondary dark:text-dark-text-secondary hover:text-neutral-600 dark:hover:text-neutral-300 hover:bg-gray-100 dark:hover:bg-[#2a2a2a] rounded-lg transition-all duration-200"
                       >
                         Profile Dashboard
                       </button>
@@ -483,7 +483,7 @@ const Navbar = () => {
               {!user && (
                 <div className="p-4 border-t border-neutral-border dark:border-dark-neutral-border">
                   <button
-                    className="w-full px-7 py-3 rounded-lg bg-[#F5F7FA] text-[14px] dark:bg-[#1f1f1f] border border-neutral-border dark:border-[#3b3b3b] text-primary-text dark:text-dark-text-primary transition-colors font-medium"
+                    className="w-full px-7 py-3 rounded-lg bg-[#F5F7FA] text-[14px] dark:bg-[#1f1f1f] border border-neutral-border dark:border-[#3b3b3b] text-primary-text dark:text-dark-text-primary transition-colors font-medium hover:bg-gray-100 dark:hover:bg-[#2a2a2a]"
                     onClick={() => {
                       setActiveModal("signup");
                       setShowMobileMenu(false);
