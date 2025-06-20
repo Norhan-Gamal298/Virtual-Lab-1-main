@@ -3,7 +3,6 @@ export async function runPythonCode(code, files) {
         const formData = new FormData();
         formData.append('code', code);
 
-        // Handle file uploads properly
         if (files && Object.keys(files).length > 0) {
             Object.entries(files).forEach(([name, content]) => {
                 if (content instanceof Blob) {
