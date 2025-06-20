@@ -17,7 +17,8 @@ export default function MarkdownPage() {
   const [chapters, setChapters] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isTocOpen, setIsTocOpen] = useState(false);
-
+  const [showFinishButton, setShowFinishButton] = useState(false);
+  const [showCongratulations, setShowCongratulations] = useState(false);
   const videoRef = useRef(null);
   const hasRedirectedRef = useRef(false);
 
@@ -69,6 +70,65 @@ export default function MarkdownPage() {
   const prevTopic = currentIndex > 0 ? allTopics[currentIndex - 1] : null;
   const nextTopic =
     currentIndex < allTopics.length - 1 ? allTopics[currentIndex + 1] : null;
+
+  // Move checkAllTopicsCompleted function here, after allTopics is defined
+  const checkAllTopicsCompleted = async () => {
+    if (!userEmail || !allTopics.length || currentIndex === -1) return false;
+
+    try {
+      const response = await fetch(`http://localhost:8080/api/user-progress/${userEmail}`);
+      if (!response.ok) return false;
+
+      const progressData = await response.json();
+      const userProgress = Array.isArray(progressData)
+        ? progressData.reduce((acc, topic) => {
+          acc[topic.id] = topic.completed;
+          return acc;
+        }, {})
+        : progressData;
+
+      // Check if all topics before the current one are completed
+      const allPreviousCompleted = allTopics
+        .slice(0, currentIndex)
+        .every(topic => userProgress[topic.id]);
+
+      return allPreviousCompleted && currentIndex === allTopics.length - 1;
+    } catch (error) {
+      console.error("Error checking progress:", error);
+      return false;
+    }
+  };
+
+  useEffect(() => {
+    const determineFinishButton = async () => {
+      const shouldShow = await checkAllTopicsCompleted();
+      setShowFinishButton(shouldShow);
+    };
+
+    determineFinishButton();
+  }, [userEmail, topicId, allTopics, currentIndex]);
+
+  // Function to handle finishing the journey
+  const handleFinishJourney = () => {
+    // Update progress for the last topic
+    if (user) {
+      fetch("http://localhost:8080/api/update-progress", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: user.email,
+          topicId: topicId,
+        }),
+      }).catch(error => {
+        console.error("Error updating progress:", error);
+      });
+    }
+
+    // Show congratulations modal
+    setShowCongratulations(true);
+  };
 
   useEffect(() => {
     if (chapters.length > 0 && !topicId && allTopics.length > 0) {
@@ -517,6 +577,18 @@ export default function MarkdownPage() {
                       {nextTopic.title}
                     </div>
                   </button>
+                ) : showFinishButton ? (
+                  <button
+                    onClick={handleFinishJourney}
+                    className="border border-green-500 hover:border-green-600 bg-green-500 hover:bg-green-600 text-white rounded-lg text-right cursor-pointer paginationNavLink paginationNavLinkNext p-4 transition-all duration-200"
+                  >
+                    <div className="text-sm">
+                      Finish Learning Journey
+                    </div>
+                    <div className="paginationLabel break-all font-medium mt-1">
+                      Congratulations!
+                    </div>
+                  </button>
                 ) : (
                   <div />
                 )}
@@ -557,6 +629,56 @@ export default function MarkdownPage() {
           )}
         </div>
       </div>
+      {showCongratulations && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white dark:bg-[#1E1E1E] rounded-xl shadow-xl max-w-md w-full p-6 text-center">
+            <div className="mb-6">
+              <div className="w-20 h-20 bg-green-100 dark:bg-green-900 rounded-full flex items-center justify-center mx-auto mb-4">
+                <svg
+                  className="w-12 h-12 text-green-500 dark:text-green-400"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M5 13l4 4L19 7"
+                  />
+                </svg>
+              </div>
+              <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+                Congratulations!
+              </h3>
+              <p className="text-gray-600 dark:text-gray-300">
+                You've completed the entire learning journey. Great job!
+              </p>
+            </div>
+            <div className="flex flex-col space-y-3">
+              <button
+                onClick={() => {
+                  setShowCongratulations(false);
+                  navigate("/");
+                }}
+                className="px-4 py-2 bg-[#7C3AED] text-white rounded-lg hover:bg-purple-700 transition"
+              >
+                Back to Home
+              </button>
+              <button
+                onClick={() => {
+                  setShowCongratulations(false);
+                  navigate("/profile");
+                }}
+                className="px-4 py-2 border border-[#7C3AED] text-[#7C3AED] dark:text-white rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition"
+              >
+                View Achievements
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

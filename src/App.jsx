@@ -26,6 +26,7 @@ import AdminAdmins from "./pages/admin/Admins";
 import AdminLogin from "./pages/admin/Login";
 import AdminRoute from "./components/AdminRoute";
 import Faq from "./pages/Faq";
+import ProtectedCongratulations from "./components/ProtectedCongratulations";
 
 function App() {
   return (
@@ -40,6 +41,7 @@ function App() {
         {/* Terms and Privacy routes */}
         <Route path="/terms" element={<TermsAndPrivacy />} />
         <Route path="/privacy" element={<TermsAndPrivacy />} />
+        <Route path="/congratulations " element={<ProtectedCongratulations />} />
         <Route path="/terms-and-privacy" element={<TermsAndPrivacy />} />
 
         <Route path="/docs/*" element={<DocsLayout />}>

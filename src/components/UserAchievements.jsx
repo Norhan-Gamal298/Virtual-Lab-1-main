@@ -34,14 +34,18 @@ const UserAchievements = () => {
   };
 
   // Calculate overall progress percentage
+  // Calculate overall progress percentage
   const calculateProgress = () => {
     const totalTopics = chapters.reduce(
       (total, chapter) => total + chapter.topics.length,
       0
     );
-    return totalTopics > 0
+    const percentage = totalTopics > 0
       ? Math.round((completedTopicsCount / totalTopics) * 100)
       : 0;
+
+    // Ensure percentage never exceeds 100
+    return Math.min(percentage, 100);
   };
 
   // Determine achievement level based on progress
