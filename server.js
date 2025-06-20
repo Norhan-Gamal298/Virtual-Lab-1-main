@@ -208,7 +208,21 @@ const userSchema = new mongoose.Schema({
   lastName: { type: String, required: true },
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
-  role: { type: String, enum: ["user", "admin", "root"], default: "user" },
+  role: {
+    type: String,
+    enum: ["user", "admin", "root"],
+    default: "user",
+    validate: {
+      validator: function (v) {
+        // Prevent changing root role
+        if (this.isModified('role') && this._originalRole === 'root') {
+          return false;
+        }
+        return true;
+      },
+      message: 'Cannot modify root administrator role'
+    }
+  },
   isBlocked: { type: Boolean, default: false },
   isVerified: { type: Boolean, default: false },
   verificationToken: { type: String },
@@ -216,9 +230,9 @@ const userSchema = new mongoose.Schema({
 });
 
 // Pre-save Hook: Hash password before saving to DB
-userSchema.pre("save", async function (next) {
-  if (!this.isModified("password")) return next();
-  this.password = await bcrypt.hash(this.password, 10);
+// Add pre-save hook to track original role
+userSchema.pre('save', function (next) {
+  this._originalRole = this.role;
   next();
 });
 
@@ -350,81 +364,7 @@ app.post('/api/upload-blog-image', blogImageUpload.single('image'), (req, res) =
 // Make sure to serve static files
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-app.get("/api/blogs", async (req, res) => {
-  try {
-    const blogs = await Blog.find().sort({ createdAt: -1 });
-    res.json(blogs);
-  } catch (error) {
-    res.status(500).json({ error: "Failed to fetch blogs", details: error.message });
-  }
-});
 
-app.put("/api/blogs/:id", async (req, res) => {
-  try {
-    const { title, author, content, image } = req.body;
-    const blog = await Blog.findByIdAndUpdate(
-      req.params.id,
-      {
-        title,
-        author,
-        content,
-        excerpt: content.replace(/\n/g, ' ').slice(0, 120) + (content.length > 120 ? '...' : ''),
-        image
-      },
-      { new: true }
-    );
-    if (!blog) return res.status(404).json({ error: "Blog not found" });
-    res.json(blog);
-  } catch (error) {
-    res.status(500).json({ error: "Failed to update blog", details: error.message });
-  }
-});
-
-app.get("/api/blogs/:id", async (req, res) => {
-  try {
-    const blog = await Blog.findOne({ id: Number(req.params.id) });
-    if (!blog) return res.status(404).json({ error: "Blog not found" });
-    res.json(blog);
-  } catch (error) {
-    res.status(500).json({ error: "Failed to fetch blog", details: error.message });
-  }
-});
-
-app.get("/api/blogs", async (req, res) => {
-  try {
-    const blogs = await Blog.find().sort({ createdAt: -1 });
-    res.json(blogs);
-  } catch (err) {
-    console.error("Error fetching blogs:", err);
-    res.status(500).json({ error: "Failed to fetch blogs" });
-  }
-});
-
-// Update an existing blog
-app.put("/api/blogs/:id", async (req, res) => {
-  try {
-    const { title, author, content, image } = req.body;
-    const blog = await Blog.findByIdAndUpdate(
-      req.params.id,
-      { title, author, content, image },
-      { new: true }
-    );
-    if (!blog) return res.status(404).json({ error: "Blog not found" });
-    res.json(blog);
-  } catch (error) {
-    res.status(500).json({ error: "Failed to update blog", details: error.message });
-  }
-});
-
-app.get("/api/blogs/:id", async (req, res) => {
-  try {
-    const blog = await Blog.findOne({ id: Number(req.params.id) });
-    if (!blog) return res.status(404).json({ error: "Blog not found" });
-    res.json(blog);
-  } catch (error) {
-    res.status(500).json({ error: "Failed to fetch blog", details: error.message });
-  }
-});
 
 // ---------------- Routes ---------------- //
 
@@ -443,6 +383,7 @@ const adminAuth = [checkBlacklist, async (req, res, next) => {
       return res.status(403).json({ error: "Account is blocked" });
     }
 
+    // Check if user is admin or root
     if (!["admin", "root"].includes(user.role)) {
       return res.status(403).json({ error: "Access denied" });
     }
@@ -602,6 +543,45 @@ app.patch("/api/admin/users/:id/block", adminAuth, async (req, res) => {
     }
 
     res.json(user);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Make sure this route is defined in your server.js
+app.patch("/api/admin/users/:id/role", adminAuth, async (req, res) => {
+  try {
+    const requestingUser = req.user;
+    const targetUserId = req.params.id;
+    const { role } = req.body;
+
+    // Only root admin can change roles
+    if (requestingUser.role !== "root") {
+      return res.status(403).json({ error: "Only root administrator can change roles" });
+    }
+
+    const targetUser = await User.findById(targetUserId);
+    if (!targetUser) return res.status(404).json({ error: "User not found" });
+    if (targetUser.role === "root") {
+      return res.status(403).json({ error: "Cannot modify root administrator role" });
+    }
+
+    // Validate new role
+    if (!["user", "admin"].includes(role)) {
+      return res.status(400).json({ error: "Invalid role specified" });
+    }
+
+    targetUser.role = role;
+    await targetUser.save();
+
+    res.json({
+      message: `User role updated to ${role}`,
+      user: {
+        id: targetUser._id,
+        email: targetUser.email,
+        role: targetUser.role
+      }
+    });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -919,6 +899,83 @@ app.get('/api/report/quiz', adminAuth, async (req, res) => {
   }
 });
 
+
+app.get("/api/blogs", async (req, res) => {
+  try {
+    const blogs = await Blog.find().sort({ createdAt: -1 });
+    res.json(blogs);
+  } catch (error) {
+    res.status(500).json({ error: "Failed to fetch blogs", details: error.message });
+  }
+});
+
+app.put("/api/blogs/:id", async (req, res) => {
+  try {
+    const { title, author, content, image } = req.body;
+    const blog = await Blog.findByIdAndUpdate(
+      req.params.id,
+      {
+        title,
+        author,
+        content,
+        excerpt: content.replace(/\n/g, ' ').slice(0, 120) + (content.length > 120 ? '...' : ''),
+        image
+      },
+      { new: true }
+    );
+    if (!blog) return res.status(404).json({ error: "Blog not found" });
+    res.json(blog);
+  } catch (error) {
+    res.status(500).json({ error: "Failed to update blog", details: error.message });
+  }
+});
+
+app.get("/api/blogs/:id", async (req, res) => {
+  try {
+    const blog = await Blog.findOne({ id: Number(req.params.id) });
+    if (!blog) return res.status(404).json({ error: "Blog not found" });
+    res.json(blog);
+  } catch (error) {
+    res.status(500).json({ error: "Failed to fetch blog", details: error.message });
+  }
+});
+
+app.get("/api/blogs", async (req, res) => {
+  try {
+    const blogs = await Blog.find().sort({ createdAt: -1 });
+    res.json(blogs);
+  } catch (err) {
+    console.error("Error fetching blogs:", err);
+    res.status(500).json({ error: "Failed to fetch blogs" });
+  }
+});
+
+// Update an existing blog
+app.put("/api/blogs/:id", async (req, res) => {
+  try {
+    const { title, author, content, image } = req.body;
+    const blog = await Blog.findByIdAndUpdate(
+      req.params.id,
+      { title, author, content, image },
+      { new: true }
+    );
+    if (!blog) return res.status(404).json({ error: "Blog not found" });
+    res.json(blog);
+  } catch (error) {
+    res.status(500).json({ error: "Failed to update blog", details: error.message });
+  }
+});
+
+app.get("/api/blogs/:id", async (req, res) => {
+  try {
+    const blog = await Blog.findOne({ id: Number(req.params.id) });
+    if (!blog) return res.status(404).json({ error: "Blog not found" });
+    res.json(blog);
+  } catch (error) {
+    res.status(500).json({ error: "Failed to fetch blog", details: error.message });
+  }
+});
+
 // Blogs Report
 app.get('/api/report/blogs', adminAuth, async (req, res) => {
   try {
@@ -944,6 +1001,9 @@ app.get('/api/report/blogs', adminAuth, async (req, res) => {
     res.status(500).json({ error: 'Failed to generate report', details: error.message });
   }
 });
+
+
+
 
 // ---------------- Quiz Result Management ---------------- //
 

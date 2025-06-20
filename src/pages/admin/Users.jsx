@@ -5,8 +5,8 @@ import { useSelector } from 'react-redux';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import CssBaseline from "@mui/material/CssBaseline";
 import { FaDownload } from "react-icons/fa";
-
-
+import { Menu, MenuItem, IconButton, Tooltip } from '@mui/material';
+import MoreVertIcon from '@mui/icons-material/MoreVert';
 
 const downloadReport = async (format) => {
     const token = localStorage.getItem('token');
@@ -139,6 +139,11 @@ export default function Users() {
     const { type } = useParams();
     const { token, user } = useSelector(state => state.auth);
 
+    // Menu state for role actions
+    const [anchorEl, setAnchorEl] = useState(null);
+    const [selectedUser, setSelectedUser] = useState(null);
+    const open = Boolean(anchorEl);
+
     const columns = [
         {
             field: 'id',
@@ -186,32 +191,72 @@ export default function Users() {
             renderCell: (params) => (
                 <div className={`inline-flex items-center px-3 py-1.5 rounded-full text-xs font-semibold uppercase tracking-wide ${params.value === 'admin'
                     ? 'bg-gradient-to-r from-amber-100 to-orange-100 text-amber-800 border border-amber-200 shadow'
-                    : 'bg-gradient-to-r from-blue-100 to-indigo-100 text-blue-800 border border-blue-200 shadow'
+                    : params.value === 'root'
+                        ? 'bg-gradient-to-r from-purple-100 to-fuchsia-100 text-purple-800 border border-purple-200 shadow'
+                        : 'bg-gradient-to-r from-blue-100 to-indigo-100 text-blue-800 border border-blue-200 shadow'
                     }`}>
                     {params.value?.charAt(0).toUpperCase() + params.value?.slice(1)}
                 </div>
             )
         },
         {
+            field: 'isBlocked',
+            headerName: 'Status',
+            width: 120,
+            renderCell: (params) => (
+                <div className={`inline-flex items-center px-3 py-1.5 rounded-full text-xs font-semibold uppercase tracking-wide ${params.value
+                    ? 'bg-gradient-to-r from-red-100 to-rose-100 text-red-800 border border-red-200 shadow'
+                    : 'bg-gradient-to-r from-emerald-100 to-green-100 text-emerald-800 border border-emerald-200 shadow'
+                    }`}>
+                    {params.value ? 'Blocked' : 'Active'}
+                </div>
+            )
+        },
+        {
             field: 'actions',
             headerName: 'Actions',
-            width: 140,
-            renderCell: (params) => (
-                <button
-                    onClick={() => handleBlockUser(params.row.id)}
-                    disabled={actionLoading === params.row.id}
-                    className={`inline-flex items-center justify-center px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300 transform hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed shadow ${params.row.isBlocked
-                        ? 'bg-gradient-to-r from-emerald-100 to-green-100 hover:from-emerald-200 hover:to-green-200 text-emerald-800 border border-emerald-200'
-                        : 'bg-gradient-to-r from-red-100 to-rose-100 hover:from-red-200 hover:to-rose-200 text-red-800 border border-red-200'
-                        }`}
-                >
-                    {actionLoading === params.row.id ? (
-                        <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
-                    ) : (
-                        params.row.isBlocked ? 'Unblock' : 'Block'
-                    )}
-                </button>
-            )
+            width: 200,
+            renderCell: (params) => {
+                const isCurrentUser = params.row.id === user?.id;
+                const isRootUser = params.row.role === 'root';
+
+                return (
+                    <div className="flex items-center gap-2">
+                        <button
+                            onClick={() => handleBlockUser(params.row.id)}
+                            disabled={actionLoading === params.row.id || isRootUser || isCurrentUser}
+                            className={`inline-flex items-center justify-center px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300 transform hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed shadow ${params.row.isBlocked
+                                ? 'bg-gradient-to-r from-emerald-100 to-green-100 hover:from-emerald-200 hover:to-green-200 text-emerald-800 border border-emerald-200'
+                                : 'bg-gradient-to-r from-red-100 to-rose-100 hover:from-red-200 hover:to-rose-200 text-red-800 border border-red-200'
+                                }`}
+                        >
+                            {actionLoading === params.row.id ? (
+                                <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
+                            ) : (
+                                params.row.isBlocked ? 'Unblock' : 'Block'
+                            )}
+                        </button>
+
+                        {/* Role management menu (only for root admin) */}
+                        {user?.role === 'root' && !isRootUser && !isCurrentUser && (
+                            <>
+                                <IconButton
+                                    aria-label="more"
+                                    aria-controls="long-menu"
+                                    aria-haspopup="true"
+                                    onClick={(e) => {
+                                        setSelectedUser(params.row);
+                                        setAnchorEl(e.currentTarget);
+                                    }}
+                                    disabled={actionLoading === params.row.id}
+                                >
+                                    <MoreVertIcon />
+                                </IconButton>
+                            </>
+                        )}
+                    </div>
+                );
+            }
         }
     ];
 
@@ -234,11 +279,54 @@ export default function Users() {
             ));
         } catch (error) {
             console.error('Error:', error);
-            // Show user-friendly error message
             alert(`Operation failed: ${error.message}`);
         } finally {
             setActionLoading(null);
         }
+    };
+
+    const handleChangeRole = async (newRole) => {
+        if (!selectedUser) return;
+
+        setActionLoading(selectedUser.id);
+        try {
+            const response = await fetch(`http://localhost:8080/api/admin/users/${selectedUser.id}/role`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                },
+                body: JSON.stringify({ role: newRole })
+            });
+
+            // First check if response is OK
+            if (!response.ok) {
+                // Try to get error message from response
+                const errorText = await response.text();
+                console.error('Server response:', errorText);
+                throw new Error(errorText || 'Failed to update role');
+            }
+
+            // If OK, parse as JSON
+            const result = await response.json();
+
+            setUsers(users.map(u =>
+                u.id === selectedUser.id ? { ...u, role: newRole } : u
+            ));
+
+            handleCloseMenu();
+            alert(`User role updated to ${newRole}`);
+        } catch (error) {
+            console.error('Error changing role:', error);
+            alert(error.message);
+        } finally {
+            setActionLoading(null);
+        }
+    };
+
+    const handleCloseMenu = () => {
+        setAnchorEl(null);
+        setSelectedUser(null);
     };
 
     useEffect(() => {
@@ -346,7 +434,6 @@ export default function Users() {
                                     </div>
                                 )}
                                 <div>
-
                                     <div>
                                         <h1 className="text-4xl font-bold bg-clip-text mb-2">
                                             {type === 'admins' ? 'Administrators' : 'Students'} Management
@@ -356,7 +443,6 @@ export default function Users() {
                                         </p>
                                     </div>
                                 </div>
-
                             </div>
                             <div className="flex justify-end mb-6">
                                 <div className="flex gap-3">
@@ -377,6 +463,7 @@ export default function Users() {
                                 </div>
                             </div>
                         </div>
+
                         {/* Enhanced Stats Cards */}
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
                             <div className="bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 border border-indigo-100 rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
@@ -461,6 +548,44 @@ export default function Users() {
                     )}
                 </div>
             </div>
+
+            {/* Role Management Menu */}
+            <Menu
+                id="role-menu"
+                anchorEl={anchorEl}
+                open={open}
+                onClose={handleCloseMenu}
+                PaperProps={{
+                    style: {
+                        width: '200px',
+                        borderRadius: '12px',
+                        boxShadow: '0 4px 20px rgba(0,0,0,0.1)',
+                    },
+                }}
+            >
+                <MenuItem
+                    onClick={() => handleChangeRole('admin')}
+                    disabled={selectedUser?.role === 'admin' || actionLoading === selectedUser?.id}
+                >
+                    <div className="flex items-center gap-2 w-full">
+                        {selectedUser?.role === 'admin' && (
+                            <div className="w-2 h-2 rounded-full bg-green-500"></div>
+                        )}
+                        <span>Make Admin</span>
+                    </div>
+                </MenuItem>
+                <MenuItem
+                    onClick={() => handleChangeRole('user')}
+                    disabled={selectedUser?.role === 'user' || actionLoading === selectedUser?.id}
+                >
+                    <div className="flex items-center gap-2 w-full">
+                        {selectedUser?.role === 'user' && (
+                            <div className="w-2 h-2 rounded-full bg-green-500"></div>
+                        )}
+                        <span>Make Regular User</span>
+                    </div>
+                </MenuItem>
+            </Menu>
         </ThemeProvider>
     );
 }
