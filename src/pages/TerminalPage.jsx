@@ -174,6 +174,27 @@ export default function TerminalPage() {
                     </button>
                 </div>
             </div>
+            <div className="bg-orange-50 border-l-4 border-orange-400 p-4 mb-4 rounded">
+                <div className="flex items-start">
+                    <div className="flex-shrink-0">
+                        <span className="text-orange-400 text-xl">📦</span>
+                    </div>
+                    <div className="ml-3 flex-1">
+                        <p className="text-sm font-semibold text-orange-800 mb-2">
+                            Required Python Packages
+                        </p>
+                        <p className="text-xs text-orange-700 mb-2">
+                            Make sure to install these packages before running your code:
+                        </p>
+                        <div className="bg-gray-900 text-green-400 p-3 rounded font-mono text-xs overflow-x-auto">
+                            <code>pip install opencv-python numpy matplotlib PyWavelets scikit-learn pymongo flask pillow</code>
+                        </div>
+                        <p className="text-xs text-orange-600 mt-2">
+                            <strong>Note:</strong> These packages are required for image processing, machine learning, database operations, and web functionality.
+                        </p>
+                    </div>
+                </div>
+            </div>
 
             {/* Format Information Card */}
             <div className="bg-blue-50 border-l-4 border-blue-400 p-4 mb-4 rounded">
