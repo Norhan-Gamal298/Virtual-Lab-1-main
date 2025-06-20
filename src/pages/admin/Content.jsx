@@ -76,11 +76,11 @@ const MarkdownEditor = ({
         "<em class='dark:text-white text-[#1f1f1f]'>$1</em>"
       )
       .replace(
-        /\[([^\]]+)\]\(([^\)]+)\)/gim,
+        /\[([^\]]+)\]\(([^)]+)\)/gim,
         '<a href="$2" class="text-blue-500 hover:underline">$1</a>'
       )
       .replace(
-        /!\[([^\]]*)\]\(([^\)]+)\)/gim,
+        /!\[([^\]]*)\]\(([^)]+)\)/gim,
         '<img alt="$1" src="$2" class="max-w-full h-auto rounded-lg my-2" />'
       )
       .replace(
@@ -407,50 +407,53 @@ const Content = () => {
     }
   };
 
-const handleSaveTopic = async () => {
-  try {
-    // 1. Validate
-    if (!topicForm.chapterId || !topicForm.title) {
-      throw new Error("Chapter and title are required");
+  const handleSaveTopic = async () => {
+    try {
+      // 1. Validate
+      if (!topicForm.chapterId || !topicForm.title) {
+        throw new Error("Chapter and title are required");
+      }
+
+      // 2. Prepare form data
+      const formData = new FormData();
+      formData.append("title", topicForm.title);
+      formData.append("chapterId", topicForm.chapterId.toString());
+      formData.append("content", topicForm.content || "");
+
+      // 3. For existing topics, use their ID
+      const topicId = editingTopic?.id;
+      if (!topicId) throw new Error("Missing topic ID for update");
+
+      // 4. Debug logs
+      console.log("Sending update for topic:", topicId);
+      console.log("FormData entries:", Array.from(formData.entries()));
+
+      // 5. Make request
+      const response = await fetch(
+        `http://localhost:8080/api/topics/${topicId}`,
+        {
+          method: "PUT",
+          body: formData,
+          // Don't set Content-Type header - browser will do it automatically for FormData
+        }
+      );
+
+      // 6. Handle response
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        console.error("Server response:", errorData);
+        throw new Error(errorData.error || "Failed to save topic");
+      }
+
+      // 7. Success
+      loadData();
+      setShowTopicModal(false);
+      alert("Topic updated successfully!");
+    } catch (error) {
+      console.error("Save error:", error);
+      alert(`Error: ${error.message}`);
     }
-
-    // 2. Prepare form data
-    const formData = new FormData();
-    formData.append("title", topicForm.title);
-    formData.append("chapterId", topicForm.chapterId.toString());
-    formData.append("content", topicForm.content || "");
-
-    // 3. For existing topics, use their ID
-    const topicId = editingTopic?.id;
-    if (!topicId) throw new Error("Missing topic ID for update");
-
-    // 4. Debug logs
-    console.log("Sending update for topic:", topicId);
-    console.log("FormData entries:", Array.from(formData.entries()));
-
-    // 5. Make request
-    const response = await fetch(`http://localhost:8080/api/topics/${topicId}`, {
-      method: "PUT",
-      body: formData,
-      // Don't set Content-Type header - browser will do it automatically for FormData
-    });
-
-    // 6. Handle response
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}));
-      console.error("Server response:", errorData);
-      throw new Error(errorData.error || "Failed to save topic");
-    }
-
-    // 7. Success
-    loadData();
-    setShowTopicModal(false);
-    alert("Topic updated successfully!");
-  } catch (error) {
-    console.error("Save error:", error);
-    alert(`Error: ${error.message}`);
-  }
-};
+  };
 
   const handleDeleteTopic = async (topicId) => {
     if (!window.confirm("Are you sure you want to delete this topic?")) {
@@ -458,15 +461,13 @@ const handleSaveTopic = async () => {
     }
 
     try {
-      const response = await fetch(`${API_BASE_URL}/api/topics/${topicId}`,
-        {
-          method: "DELETE",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("token")}`, // Add if using auth
-          },
-        }
-      );
+      const response = await fetch(`${API_BASE_URL}/api/topics/${topicId}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`, // Add if using auth
+        },
+      });
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
