@@ -8,32 +8,32 @@ import bodyParser from "body-parser";
 import jwt from "jsonwebtoken";
 import { Buffer } from "buffer";
 import fs from "fs";
-import ExcelJS from 'exceljs';
-import PdfPrinter from 'pdfmake';
+import ExcelJS from "exceljs";
+import PdfPrinter from "pdfmake";
 // import htmlPdf from 'html-pdf';
 import path from "path";
 import nodemailer from "nodemailer";
 import crypto from "crypto";
 import { fileURLToPath } from "url";
-import multer from 'multer';
-const upload = multer({ dest: 'uploads/' });
+import multer from "multer";
+const upload = multer({ dest: "uploads/" });
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-
 
 // Initialize Express App
 const app = express();
 const PORT = 8080;
 // Middleware Setup
-app.use(cors({
-  origin: 'http://localhost:5173', // Your frontend URL
-  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization']
-})); // Enable Cross-Origin Resource Sharing
+app.use(
+  cors({
+    origin: "http://localhost:5173", // Your frontend URL
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  })
+); // Enable Cross-Origin Resource Sharing
 app.use(express.json()); // Parse incoming JSON requests
 app.use(express.urlencoded({ extended: true })); // Parse URL-encoded bodies
 app.use(bodyParser.json()); // Parse JSON body (redundant with express.json but kept)
-
 
 // Load environment variables from .env file
 dotenv.config();
@@ -49,144 +49,143 @@ mongoose
     throw new Error("MongoDB connection failed");
   });
 
-
 // Add this function to your server
 function formatContent(content) {
   // Simple markdown to HTML conversion
   return content
-    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>') // bold
-    .replace(/\*(.*?)\*/g, '<em>$1</em>') // italic
-    .replace(/\n/g, '<br>') // line breaks
+    .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>") // bold
+    .replace(/\*(.*?)\*/g, "<em>$1</em>") // italic
+    .replace(/\n/g, "<br>") // line breaks
     .replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2" target="_blank">$1</a>'); // links
 }
 
-
 const generateReport = async (res, data, headers, fileName, format) => {
-  if (format === 'xlsx') {
+  if (format === "xlsx") {
     // Excel generation
     const workbook = new ExcelJS.Workbook();
-    const worksheet = workbook.addWorksheet('Report');
+    const worksheet = workbook.addWorksheet("Report");
 
-    worksheet.columns = headers.map(header => ({
+    worksheet.columns = headers.map((header) => ({
       header: header.label,
       key: header.key,
-      width: header.width
+      width: header.width,
     }));
 
-    data.forEach(item => worksheet.addRow(item));
+    data.forEach((item) => worksheet.addRow(item));
 
     res.setHeader(
-      'Content-Type',
-      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+      "Content-Type",
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
     );
     res.setHeader(
-      'Content-Disposition',
+      "Content-Disposition",
       `attachment; filename=${fileName}.xlsx`
     );
 
     await workbook.xlsx.write(res);
     res.end();
-
-  } else if (format === 'pdf') {
+  } else if (format === "pdf") {
     // PDF generation
     const fonts = {
       Roboto: {
-        normal: 'Helvetica',
-        bold: 'Helvetica-Bold',
-        italics: 'Helvetica-Oblique',
-        bolditalics: 'Helvetica-BoldOblique'
-      }
+        normal: "Helvetica",
+        bold: "Helvetica-Bold",
+        italics: "Helvetica-Oblique",
+        bolditalics: "Helvetica-BoldOblique",
+      },
     };
 
     const printer = new PdfPrinter(fonts);
 
     // Calculate column widths based on header lengths
-    const colWidths = headers.map(h => {
+    const colWidths = headers.map((h) => {
       const headerLength = h.label.length;
       // Base width + extra space for content
       return Math.max(headerLength * 7, 80);
     });
 
     // Prepare data rows with proper formatting
-    const bodyRows = data.map(row =>
-      headers.map(h => {
+    const bodyRows = data.map((row) =>
+      headers.map((h) => {
         const value = row[h.key];
         // Format dates and long text
-        if (h.key.includes('Date') || h.key.includes('At')) {
-          return { text: value, style: 'dateCell' };
+        if (h.key.includes("Date") || h.key.includes("At")) {
+          return { text: value, style: "dateCell" };
         } else if (value.length > 30) {
-          return { text: value, style: 'wrapCell' };
+          return { text: value, style: "wrapCell" };
         }
         return value;
       })
     );
 
     const docDefinition = {
-      pageOrientation: 'landscape',
+      pageOrientation: "landscape",
       pageMargins: [40, 40, 40, 40], // Increased page width
       content: [
         {
           text: fileName,
-          style: 'header',
-          margin: [0, 0, 0, 20] // Reduced margin for the title
+          style: "header",
+          margin: [0, 0, 0, 20], // Reduced margin for the title
         },
         {
           table: {
             headerRows: 1,
             widths: colWidths,
             body: [
-              headers.map(h => ({
+              headers.map((h) => ({
                 text: h.label,
-                style: 'tableHeader',
-                margin: [5, 4, 5, 4] // Add padding to header cells
+                style: "tableHeader",
+                margin: [5, 4, 5, 4], // Add padding to header cells
               })),
-              ...bodyRows.map(row =>
-                row.map(cell => ({
-                  text: typeof cell === 'object' ? cell.text : cell,
-                  style: typeof cell === 'object' ? cell.style : 'tableCell',
-                  margin: [5, 4, 5, 4] // Add padding to body cells
+              ...bodyRows.map((row) =>
+                row.map((cell) => ({
+                  text: typeof cell === "object" ? cell.text : cell,
+                  style: typeof cell === "object" ? cell.style : "tableCell",
+                  margin: [5, 4, 5, 4], // Add padding to body cells
                 }))
-              )
-            ]
+              ),
+            ],
           },
           layout: {
-            fillColor: (rowIndex) => rowIndex === 0 ? '#dddddd' : null,
+            fillColor: (rowIndex) => (rowIndex === 0 ? "#dddddd" : null),
             hLineWidth: () => 0.5,
-            vLineWidth: () => 0.5
-          }
-        }
+            vLineWidth: () => 0.5,
+          },
+        },
       ],
       styles: {
         header: {
           fontSize: 18,
           bold: true,
-          alignment: 'center'
+          alignment: "center",
         },
         tableHeader: {
           bold: true,
-          fontSize: 10
+          fontSize: 10,
         },
         tableCell: {
           fontSize: 9,
-          lineHeight: 1.2
+          lineHeight: 1.2,
         },
         dateCell: {
-          fontSize: 9
+          fontSize: 9,
         },
         wrapCell: {
           fontSize: 8,
-          lineHeight: 1.1
+          lineHeight: 1.1,
         },
         defaultStyle: {
-          fontSize: 10
-        }
-      }
+          fontSize: 10,
+        },
+      },
     };
 
-
     const pdfDoc = printer.createPdfKitDocument(docDefinition);
-    res.setHeader('Content-Type', 'application/pdf');
-    res.setHeader('Content-Disposition', `attachment; filename=${fileName}.pdf`);
+    res.setHeader("Content-Type", "application/pdf");
+    res.setHeader(
+      "Content-Disposition",
+      `attachment; filename=${fileName}.pdf`
+    );
     pdfDoc.pipe(res);
     pdfDoc.end();
   }
@@ -194,15 +193,11 @@ const generateReport = async (res, data, headers, fileName, format) => {
 
 // Users Report
 
-
 // Example for UsersManagement.jsx
 const downloadReport = (format) => {
   const url = `http://localhost:8080/api/report/users?format=${format}`;
-  window.open(url, '_blank');
+  window.open(url, "_blank");
 };
-
-
-
 
 // Define User Schema
 const userSchema = new mongoose.Schema({
@@ -217,13 +212,13 @@ const userSchema = new mongoose.Schema({
     validate: {
       validator: function (v) {
         // Prevent changing root role
-        if (this.isModified('role') && this._originalRole === 'root') {
+        if (this.isModified("role") && this._originalRole === "root") {
           return false;
         }
         return true;
       },
-      message: 'Cannot modify root administrator role'
-    }
+      message: "Cannot modify root administrator role",
+    },
   },
   isBlocked: { type: Boolean, default: false },
   isVerified: { type: Boolean, default: false },
@@ -233,7 +228,7 @@ const userSchema = new mongoose.Schema({
 
 // Pre-save Hook: Hash password before saving to DB
 // Add pre-save hook to track original role
-userSchema.pre('save', function (next) {
+userSchema.pre("save", function (next) {
   this._originalRole = this.role;
   next();
 });
@@ -321,7 +316,9 @@ app.post("/api/blogs", async (req, res) => {
   try {
     const { title, author, content, image } = req.body;
     if (!title || !author || !content) {
-      return res.status(400).json({ error: "Title, author, and content are required" });
+      return res
+        .status(400)
+        .json({ error: "Title, author, and content are required" });
     }
 
     const blog = new Blog({
@@ -329,7 +326,9 @@ app.post("/api/blogs", async (req, res) => {
       author,
       content,
       formattedContent: content, // You can format this if needed
-      excerpt: content.replace(/\n/g, ' ').slice(0, 120) + (content.length > 120 ? '...' : ''),
+      excerpt:
+        content.replace(/\n/g, " ").slice(0, 120) +
+        (content.length > 120 ? "..." : ""),
       image,
       createdAt: new Date(),
     });
@@ -337,65 +336,72 @@ app.post("/api/blogs", async (req, res) => {
     await blog.save();
     res.status(201).json(blog);
   } catch (error) {
-    res.status(500).json({ error: "Failed to create blog", details: error.message });
+    res
+      .status(500)
+      .json({ error: "Failed to create blog", details: error.message });
   }
 });
 
 // Configure multer for image uploads
 const blogImageStorage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, 'uploads/blog-images/');
+    cb(null, "uploads/blog-images/");
   },
   filename: (req, file, cb) => {
     cb(null, `${Date.now()}-${file.originalname}`);
-  }
+  },
 });
 
 const blogImageUpload = multer({ storage: blogImageStorage });
 
 // Add this endpoint for image uploads
-app.post('/api/upload-blog-image', blogImageUpload.single('image'), (req, res) => {
-  if (!req.file) {
-    return res.status(400).json({ error: 'No file uploaded' });
+app.post(
+  "/api/upload-blog-image",
+  blogImageUpload.single("image"),
+  (req, res) => {
+    if (!req.file) {
+      return res.status(400).json({ error: "No file uploaded" });
+    }
+    res.json({
+      url: `/uploads/blog-images/${req.file.filename}`,
+    });
   }
-  res.json({
-    url: `/uploads/blog-images/${req.file.filename}`
-  });
-});
+);
 
 // Make sure to serve static files
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
-
-
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 // ---------------- Routes ---------------- //
 
-const adminAuth = [checkBlacklist, async (req, res, next) => {
-  const token = req.headers.authorization?.split(" ")[1];
-  if (!token) return res.status(401).json({ error: "Unauthorized" });
+const adminAuth = [
+  checkBlacklist,
+  async (req, res, next) => {
+    const token = req.headers.authorization?.split(" ")[1];
+    if (!token) return res.status(401).json({ error: "Unauthorized" });
 
-  try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    const user = await User.findById(decoded.id);
+    try {
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      const user = await User.findById(decoded.id);
 
-    if (!user) {
-      return res.status(403).json({ error: "User not found" });
+      if (!user) {
+        return res.status(403).json({ error: "User not found" });
+      }
+      if (user.isBlocked) {
+        return res.status(403).json({ error: "Account is blocked" });
+      }
+
+      // Check if user is admin or root
+      if (!["admin", "root"].includes(user.role)) {
+        return res.status(403).json({ error: "Access denied" });
+      }
+
+      req.user = user;
+      next();
+    } catch (error) {
+      res.status(401).json({ error: "Invalid token", details: error.message });
     }
-    if (user.isBlocked) {
-      return res.status(403).json({ error: "Account is blocked" });
-    }
-
-    // Check if user is admin or root
-    if (!["admin", "root"].includes(user.role)) {
-      return res.status(403).json({ error: "Access denied" });
-    }
-
-    req.user = user;
-    next();
-  } catch (error) {
-    res.status(401).json({ error: "Invalid token", details: error.message });
-  }
-}];
+  },
+];
 
 // Temporary admin creation route (remove after use!)
 // Add this with your other routes in server.js
@@ -540,7 +546,7 @@ app.patch("/api/admin/users/:id/block", adminAuth, async (req, res) => {
 
     // Add token to blacklist if blocking
     if (user.isBlocked) {
-      const token = req.headers.authorization.split(' ')[1];
+      const token = req.headers.authorization.split(" ")[1];
       tokenBlacklist.add(token);
     }
 
@@ -559,13 +565,17 @@ app.patch("/api/admin/users/:id/role", adminAuth, async (req, res) => {
 
     // Only root admin can change roles
     if (requestingUser.role !== "root") {
-      return res.status(403).json({ error: "Only root administrator can change roles" });
+      return res
+        .status(403)
+        .json({ error: "Only root administrator can change roles" });
     }
 
     const targetUser = await User.findById(targetUserId);
     if (!targetUser) return res.status(404).json({ error: "User not found" });
     if (targetUser.role === "root") {
-      return res.status(403).json({ error: "Cannot modify root administrator role" });
+      return res
+        .status(403)
+        .json({ error: "Cannot modify root administrator role" });
     }
 
     // Validate new role
@@ -581,8 +591,8 @@ app.patch("/api/admin/users/:id/role", adminAuth, async (req, res) => {
       user: {
         id: targetUser._id,
         email: targetUser.email,
-        role: targetUser.role
-      }
+        role: targetUser.role,
+      },
     });
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -708,7 +718,7 @@ app.post("/api/signin", async (req, res) => {
         lastName: user.lastName,
         email: user.email,
         createdAt: user.createdAt, // Make sure this is included
-        isVerified: user.isVerified // Include other fields you might need
+        isVerified: user.isVerified, // Include other fields you might need
       },
       token,
     });
@@ -815,99 +825,104 @@ app.get("/api/profile", async (req, res) => {
       email: user.email,
       role: user.role,
       createdAt: user.createdAt, // Make sure this is included
-      isVerified: user.isVerified
+      isVerified: user.isVerified,
     });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 });
 
-
-app.get('/api/report/users', adminAuth, async (req, res) => {
+app.get("/api/report/users", adminAuth, async (req, res) => {
   try {
-    const format = req.query.format || 'pdf';
-    const users = await User.find().select('-password -verificationToken').lean();
+    const format = req.query.format || "pdf";
+    const users = await User.find()
+      .select("-password -verificationToken")
+      .lean();
 
     const headers = [
-      { key: 'firstName', label: 'First Name', width: 15 },
-      { key: 'lastName', label: 'Last Name', width: 15 },
-      { key: 'email', label: 'Email', width: 30 },
-      { key: 'role', label: 'Role', width: 10 },
-      { key: 'createdAt', label: 'Created At', width: 20 },
-      { key: 'isBlocked', label: 'Blocked', width: 10 }
+      { key: "firstName", label: "First Name", width: 15 },
+      { key: "lastName", label: "Last Name", width: 15 },
+      { key: "email", label: "Email", width: 30 },
+      { key: "role", label: "Role", width: 10 },
+      { key: "createdAt", label: "Created At", width: 20 },
+      { key: "isBlocked", label: "Blocked", width: 10 },
     ];
 
-    const data = users.map(user => ({
+    const data = users.map((user) => ({
       ...user,
       createdAt: new Date(user.createdAt).toLocaleString(),
-      isBlocked: user.isBlocked ? 'Yes' : 'No'
+      isBlocked: user.isBlocked ? "Yes" : "No",
     }));
 
-    await generateReport(res, data, headers, 'users-report', format);
-
+    await generateReport(res, data, headers, "users-report", format);
   } catch (error) {
-    res.status(500).json({ error: 'Failed to generate report', details: error.message });
+    res
+      .status(500)
+      .json({ error: "Failed to generate report", details: error.message });
   }
 });
 
 // Content Report
-app.get('/api/report/content', adminAuth, async (req, res) => {
+app.get("/api/report/content", adminAuth, async (req, res) => {
   try {
-    const format = req.query.format || 'pdf';
+    const format = req.query.format || "pdf";
     const topics = await Topic.find().lean();
 
     const headers = [
-      { key: 'chapterId', label: 'Chapter ID', width: 10 },
-      { key: 'chapterTitle', label: 'Chapter Title', width: 25 },
-      { key: 'title', label: 'Topic Title', width: 25 },
-      { key: 'topicId', label: 'Topic ID', width: 15 },
-      { key: 'createdAt', label: 'Created At', width: 20 }
+      { key: "chapterId", label: "Chapter ID", width: 10 },
+      { key: "chapterTitle", label: "Chapter Title", width: 25 },
+      { key: "title", label: "Topic Title", width: 25 },
+      { key: "topicId", label: "Topic ID", width: 15 },
+      { key: "createdAt", label: "Created At", width: 20 },
     ];
 
-    const data = topics.map(topic => ({
+    const data = topics.map((topic) => ({
       ...topic,
-      createdAt: new Date(topic.createdAt).toLocaleString()
+      createdAt: new Date(topic.createdAt).toLocaleString(),
     }));
 
-    await generateReport(res, data, headers, 'content-report', format);
-
+    await generateReport(res, data, headers, "content-report", format);
   } catch (error) {
-    res.status(500).json({ error: 'Failed to generate report', details: error.message });
+    res
+      .status(500)
+      .json({ error: "Failed to generate report", details: error.message });
   }
 });
 
 // Quiz Report
-app.get('/api/report/quiz', adminAuth, async (req, res) => {
+app.get("/api/report/quiz", adminAuth, async (req, res) => {
   try {
-    const format = req.query.format || 'pdf';
+    const format = req.query.format || "pdf";
     const quizzes = await Quiz.find().lean();
 
     const headers = [
-      { key: 'chapterId', label: 'Chapter ID', width: 10 },
-      { key: 'question', label: 'Question', width: 40 },
-      { key: 'options', label: 'Options', width: 30 },
-      { key: 'answer', label: 'Answer', width: 20 }
+      { key: "chapterId", label: "Chapter ID", width: 10 },
+      { key: "question", label: "Question", width: 40 },
+      { key: "options", label: "Options", width: 30 },
+      { key: "answer", label: "Answer", width: 20 },
     ];
 
-    const data = quizzes.map(quiz => ({
+    const data = quizzes.map((quiz) => ({
       ...quiz,
-      options: quiz.options.join(', ')
+      options: quiz.options.join(", "),
     }));
 
-    await generateReport(res, data, headers, 'quiz-report', format);
-
+    await generateReport(res, data, headers, "quiz-report", format);
   } catch (error) {
-    res.status(500).json({ error: 'Failed to generate report', details: error.message });
+    res
+      .status(500)
+      .json({ error: "Failed to generate report", details: error.message });
   }
 });
-
 
 app.get("/api/blogs", async (req, res) => {
   try {
     const blogs = await Blog.find().sort({ createdAt: -1 });
     res.json(blogs);
   } catch (error) {
-    res.status(500).json({ error: "Failed to fetch blogs", details: error.message });
+    res
+      .status(500)
+      .json({ error: "Failed to fetch blogs", details: error.message });
   }
 });
 
@@ -920,15 +935,19 @@ app.put("/api/blogs/:id", async (req, res) => {
         title,
         author,
         content,
-        excerpt: content.replace(/\n/g, ' ').slice(0, 120) + (content.length > 120 ? '...' : ''),
-        image
+        excerpt:
+          content.replace(/\n/g, " ").slice(0, 120) +
+          (content.length > 120 ? "..." : ""),
+        image,
       },
       { new: true }
     );
     if (!blog) return res.status(404).json({ error: "Blog not found" });
     res.json(blog);
   } catch (error) {
-    res.status(500).json({ error: "Failed to update blog", details: error.message });
+    res
+      .status(500)
+      .json({ error: "Failed to update blog", details: error.message });
   }
 });
 
@@ -938,7 +957,9 @@ app.get("/api/blogs/:id", async (req, res) => {
     if (!blog) return res.status(404).json({ error: "Blog not found" });
     res.json(blog);
   } catch (error) {
-    res.status(500).json({ error: "Failed to fetch blog", details: error.message });
+    res
+      .status(500)
+      .json({ error: "Failed to fetch blog", details: error.message });
   }
 });
 
@@ -964,7 +985,9 @@ app.put("/api/blogs/:id", async (req, res) => {
     if (!blog) return res.status(404).json({ error: "Blog not found" });
     res.json(blog);
   } catch (error) {
-    res.status(500).json({ error: "Failed to update blog", details: error.message });
+    res
+      .status(500)
+      .json({ error: "Failed to update blog", details: error.message });
   }
 });
 
@@ -974,38 +997,38 @@ app.get("/api/blogs/:id", async (req, res) => {
     if (!blog) return res.status(404).json({ error: "Blog not found" });
     res.json(blog);
   } catch (error) {
-    res.status(500).json({ error: "Failed to fetch blog", details: error.message });
+    res
+      .status(500)
+      .json({ error: "Failed to fetch blog", details: error.message });
   }
 });
 
 // Blogs Report
-app.get('/api/report/blogs', adminAuth, async (req, res) => {
+app.get("/api/report/blogs", adminAuth, async (req, res) => {
   try {
-    const format = req.query.format || 'pdf';
+    const format = req.query.format || "pdf";
     const blogs = await Blog.find().lean();
 
     const headers = [
-      { key: 'title', label: 'Title', width: 30 },
-      { key: 'author', label: 'Author', width: 20 },
-      { key: 'createdAt', label: 'Created At', width: 20 },
-      { key: 'excerpt', label: 'Excerpt', width: 40 }
+      { key: "title", label: "Title", width: 30 },
+      { key: "author", label: "Author", width: 20 },
+      { key: "createdAt", label: "Created At", width: 20 },
+      { key: "excerpt", label: "Excerpt", width: 40 },
     ];
 
-    const data = blogs.map(blog => ({
+    const data = blogs.map((blog) => ({
       ...blog,
       createdAt: new Date(blog.createdAt).toLocaleString(),
-      excerpt: blog.excerpt || blog.content.substring(0, 100) + '...'
+      excerpt: blog.excerpt || blog.content.substring(0, 100) + "...",
     }));
 
-    await generateReport(res, data, headers, 'blogs-report', format);
-
+    await generateReport(res, data, headers, "blogs-report", format);
   } catch (error) {
-    res.status(500).json({ error: 'Failed to generate report', details: error.message });
+    res
+      .status(500)
+      .json({ error: "Failed to generate report", details: error.message });
   }
 });
-
-
-
 
 // ---------------- Quiz Result Management ---------------- //
 
@@ -1192,7 +1215,9 @@ app.get("/api/notes", async (req, res) => {
     }
     res.status(200).json(note);
   } catch (error) {
-    res.status(500).json({ error: "Internal server error", details: error.message });
+    res
+      .status(500)
+      .json({ error: "Internal server error", details: error.message });
   }
 });
 
@@ -1237,7 +1262,9 @@ app.get("/api/quizzes", async (req, res) => {
     const quizzes = await Quiz.find();
     res.json(quizzes);
   } catch (error) {
-    res.status(500).json({ error: "Failed to fetch quizzes", details: error.message });
+    res
+      .status(500)
+      .json({ error: "Failed to fetch quizzes", details: error.message });
   }
 });
 
@@ -1247,12 +1274,11 @@ app.get("/api/quizzes/:chapterId", async (req, res) => {
     const questions = await Quiz.find({ chapterId: req.params.chapterId });
     res.json(questions);
   } catch (error) {
-    res.status(500).json({ error: "Failed to fetch questions", details: error.message });
+    res
+      .status(500)
+      .json({ error: "Failed to fetch questions", details: error.message });
   }
 });
-
-
-
 
 app.get("/api/quizs/all", async (req, res) => {
   try {
@@ -1263,7 +1289,6 @@ app.get("/api/quizs/all", async (req, res) => {
     res.status(500).json({ error: "Failed to fetch quiz questions" });
   }
 });
-
 
 // POST add a new quiz question
 app.post("/api/quizs", async (req, res) => {
@@ -1276,7 +1301,9 @@ app.post("/api/quizs", async (req, res) => {
     await quiz.save();
     res.status(201).json(quiz);
   } catch (error) {
-    res.status(500).json({ error: "Failed to add question", details: error.message });
+    res
+      .status(500)
+      .json({ error: "Failed to add question", details: error.message });
   }
 });
 
@@ -1292,7 +1319,9 @@ app.put("/api/quizzes/:id", async (req, res) => {
     if (!quiz) return res.status(404).json({ error: "Question not found" });
     res.json(quiz);
   } catch (error) {
-    res.status(500).json({ error: "Failed to update question", details: error.message });
+    res
+      .status(500)
+      .json({ error: "Failed to update question", details: error.message });
   }
 });
 
@@ -1303,7 +1332,9 @@ app.delete("/api/quizzes/:id", async (req, res) => {
     if (!quiz) return res.status(404).json({ error: "Question not found" });
     res.json({ message: "Question deleted" });
   } catch (error) {
-    res.status(500).json({ error: "Failed to delete question", details: error.message });
+    res
+      .status(500)
+      .json({ error: "Failed to delete question", details: error.message });
   }
 });
 
@@ -1329,7 +1360,6 @@ app.get("/api/docs/:topicId", async (req, res) => {
     res.status(500).send("Internal server error");
   }
 });
-
 
 // Add this endpoint for saving markdown content
 app.put("/api/topics/:id", upload.none(), async (req, res) => {
@@ -1361,11 +1391,10 @@ app.put("/api/topics/:id", upload.none(), async (req, res) => {
     console.error("Update error:", error);
     res.status(500).json({
       error: "Failed to update topic",
-      details: error.message
+      details: error.message,
     });
   }
 });
-
 
 // Fetch all topics/chapters from the database
 // Updated /api/topics endpoint
@@ -1373,8 +1402,10 @@ app.put("/api/topics/:id", upload.none(), async (req, res) => {
 // Updated /api/topics endpoint
 app.get("/api/topics", async (req, res) => {
   try {
-    const topics = await Topic.find({}, { "images.data": 0, "video.data": 0 })
-      .sort({ chapterId: 1, topicId: 1 });
+    const topics = await Topic.find(
+      {},
+      { "images.data": 0, "video.data": 0 }
+    ).sort({ chapterId: 1, topicId: 1 });
 
     // Group topics by chapter
     const chaptersMap = new Map();
@@ -1397,20 +1428,19 @@ app.get("/api/topics", async (req, res) => {
     });
 
     // Convert to array and sort by chapterId
-    const chapters = Array.from(chaptersMap.values())
-      .sort((a, b) => a.chapterId - b.chapterId);
+    const chapters = Array.from(chaptersMap.values()).sort(
+      (a, b) => a.chapterId - b.chapterId
+    );
 
     res.json(chapters);
   } catch (err) {
     console.error("Error fetching topics:", err);
     res.status(500).json({
       error: "Failed to fetch topics",
-      details: err.message
+      details: err.message,
     });
   }
 });
-
-
 
 app.post("/api/chapters", async (req, res) => {
   try {
@@ -1427,7 +1457,9 @@ app.post("/api/chapters", async (req, res) => {
     await newTopic.save();
     res.status(201).json({ chapterId, chapterTitle });
   } catch (error) {
-    res.status(500).json({ error: "Failed to create chapter", details: error.message });
+    res
+      .status(500)
+      .json({ error: "Failed to create chapter", details: error.message });
   }
 });
 
@@ -1439,10 +1471,7 @@ app.put("/api/chapters/:id", async (req, res) => {
     // Convert to number
     const chapterId = parseInt(id, 10);
 
-    await Topic.updateMany(
-      { chapterId },
-      { $set: { chapterTitle } }
-    );
+    await Topic.updateMany({ chapterId }, { $set: { chapterTitle } });
 
     res.json({ chapterId, chapterTitle });
   } catch (err) {
@@ -1460,13 +1489,14 @@ app.post(
   ]),
   async (req, res) => {
     try {
-      const { chapterId, chapterTitle, topicId, title, markdownPath } = req.body;
+      const { chapterId, chapterTitle, topicId, title, markdownPath } =
+        req.body;
       const videoFile = req.files["video"]?.[0];
       const imageFiles = req.files["images"] || [];
 
       // You can optionally move the uploaded files, rename them, or store their paths
       const videoPath = videoFile ? videoFile.path : null;
-      const imagePaths = imageFiles.map(file => file.path); // array of paths
+      const imagePaths = imageFiles.map((file) => file.path); // array of paths
 
       const newTopic = new Topic({
         chapterId,
@@ -1497,7 +1527,9 @@ app.delete("/api/topics/:id", async (req, res) => {
 
     res.status(204).send();
   } catch (error) {
-    res.status(500).json({ error: "Failed to delete topic", details: error.message });
+    res
+      .status(500)
+      .json({ error: "Failed to delete topic", details: error.message });
   }
 });
 
@@ -1520,21 +1552,44 @@ app.get("/api/image/:topicId/:filename", async (req, res) => {
 });
 
 app.get("/api/video/:topicId", async (req, res) => {
-  try {
-    const { topicId } = req.params;
-    const topic = await Topic.findOne({ topicId });
+  const { topicId } = req.params;
+  const topic = await Topic.findOne({ topicId });
 
-    if (!topic || !topic.videoPath)
-      return res.status(404).send("Video not found");
+  if (!topic || !topic.videoPath)
+    return res.status(404).send("Video not found");
 
-    const videoFullPath = path.join(__dirname, topic.videoPath);
-    if (!fs.existsSync(videoFullPath))
-      return res.status(404).send("Video file not found");
+  const videoFullPath = path.join(__dirname, topic.videoPath);
+  if (!fs.existsSync(videoFullPath))
+    return res.status(404).send("Video file not found");
 
-    res.sendFile(videoFullPath);
-  } catch (err) {
-    console.error("Error serving video:", err);
-    res.status(500).send("Internal server error");
+  const stat = fs.statSync(videoFullPath);
+  const fileSize = stat.size;
+  const range = req.headers.range;
+
+  if (range) {
+    const parts = range.replace(/bytes=/, "").split("-");
+    const start = parseInt(parts[0], 10);
+    const end = parts[1] ? parseInt(parts[1], 10) : fileSize - 1;
+
+    const chunksize = end - start + 1;
+    const file = fs.createReadStream(videoFullPath, { start, end });
+
+    const head = {
+      "Content-Range": `bytes ${start}-${end}/${fileSize}`,
+      "Accept-Ranges": "bytes",
+      "Content-Length": chunksize,
+      "Content-Type": "video/mp4",
+    };
+
+    res.writeHead(206, head);
+    file.pipe(res);
+  } else {
+    const head = {
+      "Content-Length": fileSize,
+      "Content-Type": "video/mp4",
+    };
+    res.writeHead(200, head);
+    fs.createReadStream(videoFullPath).pipe(res);
   }
 });
 
@@ -1551,14 +1606,16 @@ app.delete("/api/chapters/:id", async (req, res) => {
     // Delete all topics in this chapter first
     const deleteResult = await Topic.deleteMany({ chapterId });
 
-    console.log(`Deleted ${deleteResult.deletedCount} topics for chapter ${chapterId}`);
+    console.log(
+      `Deleted ${deleteResult.deletedCount} topics for chapter ${chapterId}`
+    );
 
     res.status(204).send();
   } catch (err) {
     console.error("Error deleting chapter:", err);
     res.status(500).json({
       error: "Failed to delete chapter",
-      details: err.message
+      details: err.message,
     });
   }
 });
@@ -1588,7 +1645,6 @@ topicSchema.pre("save", function (next) {
 app.listen(PORT, () => {
   console.log(`Server started on http://localhost:${PORT}`);
 });
-
 
 // Add this at the end of your server file
 setInterval(() => {
