@@ -3,7 +3,7 @@ import { Link, useNavigate, useLocation } from "react-router-dom";
 import heroLightBackground from "../assets/wave-background-light.png";
 import heroDarkBackground from "../assets/wave-background-dark.png";
 
-const Hero = () => {
+const Hero = ({ onLearnMoreClick }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const [isLoaded, setIsLoaded] = useState(false);
@@ -107,12 +107,12 @@ const Hero = () => {
           >
             Get Started
           </button>
-          <Link
+          <button onClick={onLearnMoreClick}
             to="/about"
             className="bg-[#F9FAFB] hover:bg-[#E5E7EB] text-[#1F2937] dark:bg-[#282525] dark:text-[#F3F4F6] dark:hover:bg-[#ffffff0a] dark:hover:text-[#cdd5ff] dark:hover:border-[#818cf8] py-3 px-6 sm:px-8 text-sm sm:text-base border border-[#1f293763] dark:border-[#323232] rounded-lg transition-all duration-200 hover:backdrop-blur-[1px] shadow-[0px_0px_7px_3px_rgba(0,0,0,0.2)] transform hover:scale-105 hover:shadow-xl"
           >
             Learn more
-          </Link>
+          </button>
         </div>
       </div>
 

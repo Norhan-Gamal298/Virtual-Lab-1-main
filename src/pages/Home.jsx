@@ -1,3 +1,5 @@
+import { useRef } from "react";
+
 import imageDefinition from "../assets/homepage-defintion.jpg";
 import Hero from "../components/Hero";
 import ImageApplications from "../components/ImageApplications";
@@ -20,6 +22,15 @@ import featureIsolationLightImg from "../assets/Isolation_Mode-light.png";
 
 
 const Home = () => {
+  const pageIntroRef = useRef(null);
+  const scrollToIntro = () => {
+    if (pageIntroRef.current) {
+      pageIntroRef.current.scrollIntoView({
+        behavior: 'smooth',
+        block: 'center'
+      });
+    }
+  };
 
   const features = [
     {
@@ -56,8 +67,8 @@ const Home = () => {
 
   return (
     <div className="text-center relative h-full w-full">
-      <Hero />
-      <PageIntro />
+      <Hero onLearnMoreClick={scrollToIntro} />
+      <PageIntro ref={pageIntroRef} />
       <ImageFeatures />
       <hr className="w-[90%] mx-[auto] featuresDivider" />
       <ImageApplications features={features} />
