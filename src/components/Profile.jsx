@@ -21,7 +21,6 @@ const Profile = () => {
             </div>
         );
     }
-    console.log("Full user object:", user.createAt);
 
 
     return (
