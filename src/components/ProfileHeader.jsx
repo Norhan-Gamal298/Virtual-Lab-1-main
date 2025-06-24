@@ -8,16 +8,21 @@ const ProfileHeader = ({ user }) => {
     const [image, setImage] = useState(null);
     const [uploading, setUploading] = useState(false);
     const [error, setError] = useState(null);
+    const [imageLoaded, setImageLoaded] = useState(false);
     const token = useSelector(state => state.auth.token);
     const dispatch = useDispatch();
 
     // Load profile image on component mount
     useEffect(() => {
-        if (user.hasProfileImage) {
-            const imageUrl = authAPI.getProfileImageUrl(user.id);
+        if (user?.hasProfileImage && user?.id) {
+            const imageUrl = `${authAPI.getProfileImageUrl(user.id)}?t=${Date.now()}`;
             setImage(imageUrl);
+            setImageLoaded(true);
+        } else {
+            setImage(defaultAvatar);
+            setImageLoaded(true);
         }
-    }, [user.hasProfileImage, user.id]);
+    }, [user?.hasProfileImage, user?.id]);
 
     const handleImageUpload = async (e) => {
         const file = e.target.files[0];
@@ -40,14 +45,16 @@ const ProfileHeader = ({ user }) => {
 
         try {
             // Upload image to server
-            await authAPI.uploadProfileImage(file, token);
+            const response = await authAPI.uploadProfileImage(file, token);
 
             // Update Redux state
             dispatch(updateProfileImageStatus({ hasProfileImage: true }));
 
-            // Update local image display
-            const imageUrl = authAPI.getProfileImageUrl(user.id);
-            setImage(`${imageUrl}?t=${Date.now()}`); // Add timestamp to prevent caching
+            // Update local image display with timestamp to prevent caching
+            const imageUrl = `${authAPI.getProfileImageUrl(user.id)}?t=${Date.now()}`;
+            setImage(imageUrl);
+
+            console.log("Image uploaded successfully:", response);
 
         } catch (error) {
             console.error("Error uploading profile image:", error);
@@ -58,17 +65,21 @@ const ProfileHeader = ({ user }) => {
     };
 
     const handleImageDelete = async () => {
-        if (!user.hasProfileImage) return;
+        if (!user?.hasProfileImage) return;
 
         setUploading(true);
+        setError(null);
+
         try {
             await authAPI.deleteProfileImage(token);
 
             // Update Redux state
             dispatch(updateProfileImageStatus({ hasProfileImage: false }));
 
-            // Reset local image display
-            setImage(null);
+            // Reset local image display to default
+            setImage(defaultAvatar);
+
+            console.log("Image deleted successfully");
 
         } catch (error) {
             console.error("Error deleting profile image:", error);
@@ -78,6 +89,16 @@ const ProfileHeader = ({ user }) => {
         }
     };
 
+    const handleImageError = () => {
+        console.log("Image failed to load, falling back to default avatar");
+        setImage(defaultAvatar);
+    };
+
+    // Don't render until we have user data
+    if (!user) {
+        return <div>Loading...</div>;
+    }
+
     return (
         <div className="flex flex-col sm:flex-row items-center gap-6">
             <div className="relative group">
@@ -85,7 +106,8 @@ const ProfileHeader = ({ user }) => {
                     src={image || defaultAvatar}
                     alt="Profile"
                     className="w-32 h-32 rounded-full object-cover border-4 border-white dark:border-[#323232] shadow-md"
-                    onError={() => setImage(defaultAvatar)} // Fallback to default avatar on error
+                    onError={handleImageError}
+                    onLoad={() => setImageLoaded(true)}
                 />
 
                 {/* Upload overlay */}

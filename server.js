@@ -404,13 +404,16 @@ app.get("/api/profile/image/:userId", async (req, res) => {
       return res.status(404).json({ error: "Profile image not found" });
     }
 
+    // Convert binary data to buffer
+    const imgBuffer = Buffer.from(user.profileImage.data.buffer);
+
     res.set({
       'Content-Type': user.profileImage.contentType,
-      'Content-Length': user.profileImage.data.length,
+      'Content-Length': imgBuffer.length,
       'Cache-Control': 'public, max-age=86400' // Cache for 1 day
     });
 
-    res.send(user.profileImage.data);
+    res.send(imgBuffer);
   } catch (error) {
     console.error("Error fetching profile image:", error);
     res.status(500).json({ error: "Failed to fetch profile image" });
@@ -478,6 +481,10 @@ const userAuth = [
 ];
 
 
+const hasProfileImage = (user) => {
+  return user.profileImage && user.profileImage.data && user.profileImage.data.length > 0;
+};
+
 app.post("/api/profile/upload-image", userAuth, profileImageUpload.single('profileImage'), async (req, res) => {
   try {
     if (!req.file) {
@@ -500,7 +507,8 @@ app.post("/api/profile/upload-image", userAuth, profileImageUpload.single('profi
 
     res.json({
       message: "Profile image uploaded successfully",
-      imageId: user._id // We'll use user ID to retrieve the image
+      imageId: user._id,
+      hasProfileImage: true // Add this line
     });
   } catch (error) {
     console.error("Profile image upload error:", error);
@@ -519,7 +527,10 @@ app.delete("/api/profile/image", userAuth, async (req, res) => {
     user.profileImage = undefined;
     await user.save();
 
-    res.json({ message: "Profile image deleted successfully" });
+    res.json({
+      message: "Profile image deleted successfully",
+      hasProfileImage: false // Add this line
+    });
   } catch (error) {
     console.error("Error deleting profile image:", error);
     res.status(500).json({ error: "Failed to delete profile image" });
@@ -646,6 +657,7 @@ app.post("/api/admin/login", async (req, res) => {
         lastName: user.lastName,
         email: user.email,
         role: user.role,
+        hasProfileImage: hasProfileImage(user) // Add this line
       },
       token,
     });
@@ -728,6 +740,8 @@ app.post("/api/register", async (req, res) => {
   try {
     const verificationToken = crypto.randomBytes(32).toString("hex");
 
+    const hashedPassword = await bcrypt.hash(password, 10);
+
     console.log("Signup request received:", req.body);
 
     // Create and save new user
@@ -735,7 +749,7 @@ app.post("/api/register", async (req, res) => {
       firstName,
       lastName,
       email,
-      password,
+      password: hashedPassword, // Use the hashed password
       verificationToken,
       isVerified: false,
     });
@@ -801,6 +815,7 @@ app.get("/api/verify-email", async (req, res) => {
   }
 });
 
+
 // Sign-In Route
 app.post("/api/signin", async (req, res) => {
   const { email, password } = req.body;
@@ -818,6 +833,12 @@ app.post("/api/signin", async (req, res) => {
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) return res.status(401).json({ error: "Invalid credentials" });
 
+    if (!user.isVerified) {
+      return res
+        .status(403)
+        .json({ error: "Please verify your email before logging in." });
+    }
+
     const token = jwt.sign(
       {
         id: user._id,
@@ -828,20 +849,15 @@ app.post("/api/signin", async (req, res) => {
       { expiresIn: "1h" }
     );
 
-    if (!user.isVerified) {
-      return res
-        .status(403)
-        .json({ error: "Please verify your email before logging in." });
-    }
-
     res.status(200).json({
       user: {
         id: user._id,
         firstName: user.firstName,
         lastName: user.lastName,
         email: user.email,
-        createdAt: user.createdAt, // Make sure this is included
-        isVerified: user.isVerified, // Include other fields you might need
+        createdAt: user.createdAt,
+        isVerified: user.isVerified,
+        hasProfileImage: hasProfileImage(user) // Add this line
       },
       token,
     });
@@ -933,26 +949,27 @@ app.post("/api/reset-password", async (req, res) => {
 });
 
 // Fetch User Profile by Email
-app.get("/api/profile", async (req, res) => {
-  const { email } = req.query;
+app.get("/api/profile", userAuth, async (req, res) => {
   try {
-    const user = await User.findOne({ email });
+    const user = await User.findById(req.user.id).select("-password");
     if (!user) {
       return res.status(404).json({ error: "User not found" });
     }
-    const fullName = `${user.firstName} ${user.lastName}`;
+
     res.json({
-      id: user._id,
-      firstName: user.firstName,
-      lastName: user.lastName,
-      email: user.email,
-      role: user.role,
-      createdAt: user.createdAt, // Make sure this is included
-      isVerified: user.isVerified,
-      hasProfileImage: !!(user.profileImage && user.profileImage.data),
+      user: {
+        id: user._id,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+        createdAt: user.createdAt,
+        isVerified: user.isVerified,
+        hasProfileImage: hasProfileImage(user) // Add this line
+      }
     });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error("Error fetching profile:", error);
+    res.status(500).json({ error: "Failed to fetch profile" });
   }
 });
 
