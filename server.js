@@ -223,6 +223,11 @@ const userSchema = new mongoose.Schema({
   isBlocked: { type: Boolean, default: false },
   isVerified: { type: Boolean, default: false },
   verificationToken: { type: String },
+  profileImage: {
+    data: Buffer,
+    contentType: String,
+    filename: String
+  },
   createdAt: { type: Date, default: Date.now },
 });
 
@@ -311,7 +316,6 @@ const blogSchema = new mongoose.Schema({
 const Blog = mongoose.model("Blog", blogSchema);
 
 // Create a new blog
-
 app.post("/api/blogs", async (req, res) => {
   try {
     const { title, author, content, image } = req.body;
@@ -371,6 +375,50 @@ app.post(
 // Make sure to serve static files
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
+
+const profileImageStorage = multer.memoryStorage(); // Store in memory for database storage
+const profileImageUpload = multer({
+  storage: profileImageStorage,
+  limits: {
+    fileSize: 5 * 1024 * 1024, // 5MB limit
+  },
+  fileFilter: (req, file, cb) => {
+    if (file.mimetype === 'image/jpeg' || file.mimetype === 'image/png') {
+      cb(null, true);
+    } else {
+      cb(new Error('Only JPEG and PNG files are allowed'), false);
+    }
+  }
+});
+
+
+
+
+
+// 5. Get profile image endpoint
+app.get("/api/profile/image/:userId", async (req, res) => {
+  try {
+    const user = await User.findById(req.params.userId);
+
+    if (!user || !user.profileImage || !user.profileImage.data) {
+      return res.status(404).json({ error: "Profile image not found" });
+    }
+
+    res.set({
+      'Content-Type': user.profileImage.contentType,
+      'Content-Length': user.profileImage.data.length,
+      'Cache-Control': 'public, max-age=86400' // Cache for 1 day
+    });
+
+    res.send(user.profileImage.data);
+  } catch (error) {
+    console.error("Error fetching profile image:", error);
+    res.status(500).json({ error: "Failed to fetch profile image" });
+  }
+});
+
+
+
 // ---------------- Routes ---------------- //
 
 const adminAuth = [
@@ -402,6 +450,81 @@ const adminAuth = [
     }
   },
 ];
+
+
+const userAuth = [
+  checkBlacklist,
+  async (req, res, next) => {
+    const token = req.headers.authorization?.split(" ")[1];
+    if (!token) return res.status(401).json({ error: "Unauthorized" });
+
+    try {
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      const user = await User.findById(decoded.id);
+
+      if (!user) {
+        return res.status(403).json({ error: "User not found" });
+      }
+      if (user.isBlocked) {
+        return res.status(403).json({ error: "Account is blocked" });
+      }
+
+      req.user = user;
+      next();
+    } catch (error) {
+      res.status(401).json({ error: "Invalid token", details: error.message });
+    }
+  },
+];
+
+
+app.post("/api/profile/upload-image", userAuth, profileImageUpload.single('profileImage'), async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ error: "No image file uploaded" });
+    }
+
+    const user = await User.findById(req.user.id);
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    // Save image data to user document
+    user.profileImage = {
+      data: req.file.buffer,
+      contentType: req.file.mimetype,
+      filename: req.file.originalname
+    };
+
+    await user.save();
+
+    res.json({
+      message: "Profile image uploaded successfully",
+      imageId: user._id // We'll use user ID to retrieve the image
+    });
+  } catch (error) {
+    console.error("Profile image upload error:", error);
+    res.status(500).json({ error: "Failed to upload profile image" });
+  }
+});
+
+
+app.delete("/api/profile/image", userAuth, async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id);
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    user.profileImage = undefined;
+    await user.save();
+
+    res.json({ message: "Profile image deleted successfully" });
+  } catch (error) {
+    console.error("Error deleting profile image:", error);
+    res.status(500).json({ error: "Failed to delete profile image" });
+  }
+});
 
 // Temporary admin creation route (remove after use!)
 // Add this with your other routes in server.js
@@ -826,6 +949,7 @@ app.get("/api/profile", async (req, res) => {
       role: user.role,
       createdAt: user.createdAt, // Make sure this is included
       isVerified: user.isVerified,
+      hasProfileImage: !!(user.profileImage && user.profileImage.data),
     });
   } catch (error) {
     res.status(500).json({ error: error.message });

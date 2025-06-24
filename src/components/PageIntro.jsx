@@ -18,8 +18,8 @@ const PageIntro = forwardRef((props, ref) => {
                 }
             },
             {
-                threshold: 0.2, // Trigger when 20% of the component is visible
-                rootMargin: '0px 0px -100px 0px' // Start animation slightly before it comes into view
+                threshold: 0.1, // Reduced threshold for earlier trigger
+                rootMargin: '0px 0px -50px 0px' // Reduced margin for earlier trigger
             }
         );
 
@@ -27,13 +27,30 @@ const PageIntro = forwardRef((props, ref) => {
             observer.observe(sectionRef.current);
         }
 
-        if (sectionRef.current) observer.observe(sectionRef.current);
         return () => observer.disconnect();
+    }, []);
+
+    // Fallback: Set visible if component is already in viewport on mount
+    useEffect(() => {
+        const checkIfInView = () => {
+            if (sectionRef.current) {
+                const rect = sectionRef.current.getBoundingClientRect();
+                const windowHeight = window.innerHeight;
+
+                // If the element is already in view when component mounts
+                if (rect.top < windowHeight && rect.bottom > 0) {
+                    setIsVisible(true);
+                }
+            }
+        };
+
+        // Check immediately after mount
+        const timer = setTimeout(checkIfInView, 100);
+        return () => clearTimeout(timer);
     }, []);
 
     return (
         <div
-
             className='mt-[8rem] md:mt-[12rem] lg:mt-[16rem] mb-[20rem] md:mb-[30rem] lg:mb-[40rem] relative transition-colors duration-200 text-[28px] sm:text-[36px] md:text-[40px] lg:text-[44px] poppins-regular px-4 sm:px-6 lg:px-8'
         >
             {/* Main heading with reveal animation */}

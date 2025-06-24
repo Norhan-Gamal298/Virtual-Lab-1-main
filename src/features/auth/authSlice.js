@@ -5,13 +5,13 @@ const getLocalStorageItem = (key) => {
     try {
         const item = localStorage.getItem(key);
         if (item === "undefined") {
-            localStorage.removeItem(key); // Clean up invalid data
+            localStorage.removeItem(key);
             return null;
         }
         return item ? JSON.parse(item) : null;
     } catch (error) {
         console.error(`Error parsing localStorage item "${key}":`, error);
-        localStorage.removeItem(key); // Remove corrupt data
+        localStorage.removeItem(key);
         return null;
     }
 };
@@ -35,16 +35,24 @@ const authSlice = createSlice({
                 lastName: action.payload.user.lastName,
                 email: action.payload.user.email,
                 role: action.payload.user.role,
-                createdAt: action.payload.user.createdAt // This should now be included
+                createdAt: action.payload.user.createdAt,
+                hasProfileImage: action.payload.user.hasProfileImage || false
             };
             state.token = action.payload.token;
-            localStorage.setItem('user', JSON.stringify(action.payload.user));
+            localStorage.setItem('user', JSON.stringify(state.user));
             localStorage.setItem('token', action.payload.token);
             console.log("Auth payload:", action.payload);
         },
         updateUser: (state, action) => {
             state.user = { ...state.user, ...action.payload };
             localStorage.setItem('user', JSON.stringify(state.user));
+        },
+        // New action for updating profile image status
+        updateProfileImageStatus: (state, action) => {
+            if (state.user) {
+                state.user.hasProfileImage = action.payload.hasProfileImage;
+                localStorage.setItem('user', JSON.stringify(state.user));
+            }
         },
         updateQuizScore: (state, action) => {
             const { quizId, score } = action.payload;
@@ -88,6 +96,7 @@ export const {
     setCredentials,
     logout,
     updateUser,
+    updateProfileImageStatus,
     updateQuizScore,
     updateChapterProgress,
     markTopicCompleted,

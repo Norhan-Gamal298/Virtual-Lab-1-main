@@ -12,6 +12,8 @@ import { FiSearch, FiMenu, FiX } from "react-icons/fi";
 import { motion, AnimatePresence } from "framer-motion";
 import { FiMoon, FiSun } from "react-icons/fi";
 import { useTheme } from "../ThemeProvider";
+import { authAPI } from "../features/auth/authAPI"; // Add this import
+
 
 const Navbar = () => {
   const [activeModal, setActiveModal] = useState(null);
@@ -23,11 +25,23 @@ const Navbar = () => {
   const location = useLocation();
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [completionRate, setCompletionRate] = useState(0);
+  const [profileImage, setProfileImage] = useState(null);
+  const token = useSelector(state => state.auth.token);
 
   const isDocsPage = location.pathname.startsWith("/docs");
   const dropdownRef = useRef(null);
   const mobileMenuRef = useRef(null);
 
+  useEffect(() => {
+    if (user?.id) {
+      if (user.hasProfileImage) {
+        const imageUrl = authAPI.getProfileImageUrl(user.id);
+        setProfileImage(imageUrl);
+      } else {
+        setProfileImage(null);
+      }
+    }
+  }, [user?.id, user?.hasProfileImage]);
   // Get theme context
   const { theme, toggleTheme } = useTheme();
   const isDark = theme === "dark";
@@ -253,7 +267,7 @@ const Navbar = () => {
                   }}
                 >
                   <img
-                    src={`${user.image || defaultAvatar}?v=${Date.now()}`}
+                    src={profileImage || defaultAvatar}
                     alt="User"
                     className="w-12 h-12 rounded-md object-cover border border-neutral-border bg-[#F5F7FA] dark:bg-[#1f1f1f] dark:border-[#3b3b3b] transition-all duration-200"
                   />

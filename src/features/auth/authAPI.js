@@ -25,7 +25,6 @@ export const authAPI = {
         });
 
         if (!response.ok) {
-            // Try to get error message from response
             let errorMsg = "Login failed";
             try {
                 const errorData = await response.json();
@@ -66,4 +65,45 @@ export const authAPI = {
         }
         return await response.json();
     },
+
+    // New profile image functions
+    async uploadProfileImage(file, token) {
+        const formData = new FormData();
+        formData.append('profileImage', file);
+
+        const response = await fetch(`${API_URL}/profile/upload-image`, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+            },
+            body: formData,
+        });
+
+        if (!response.ok) {
+            const error = await response.json();
+            throw new Error(error.error || "Failed to upload profile image");
+        }
+
+        return await response.json();
+    },
+
+    getProfileImageUrl(userId) {
+        return `${API_URL}/profile/image/${userId}`;
+    },
+
+    async deleteProfileImage(token) {
+        const response = await fetch(`${API_URL}/profile/image`, {
+            method: 'DELETE',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+            },
+        });
+
+        if (!response.ok) {
+            const error = await response.json();
+            throw new Error(error.error || "Failed to delete profile image");
+        }
+
+        return await response.json();
+    }
 };
