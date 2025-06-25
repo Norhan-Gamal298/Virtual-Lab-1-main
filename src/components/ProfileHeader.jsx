@@ -15,7 +15,7 @@ const ProfileHeader = ({ user }) => {
     // Load profile image on component mount
     useEffect(() => {
         if (user?.hasProfileImage && user?.id) {
-            const imageUrl = `${authAPI.getProfileImageUrl(user.id)}?t=${Date.now()}`;
+            const imageUrl = `${authAPI.getProfileImageUrl(user.id)}`;
             setImage(imageUrl);
             setImageLoaded(true);
         } else {

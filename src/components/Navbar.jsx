@@ -140,38 +140,56 @@ const Navbar = () => {
   }, [showMobileMenu]);
 
   useEffect(() => {
-    const user = JSON.parse(localStorage.getItem("user"));
-    const email = user?.email;
-
     const fetchProgress = async () => {
       try {
-        if (!email) return;
+        const user = JSON.parse(localStorage.getItem("user"));
+        const email = user?.email;
+
+        if (!email) {
+          setCompletionRate(0);
+          return;
+        }
 
         const [chaptersRes, progressRes] = await Promise.all([
           fetch("http://localhost:8080/api/topics"),
           fetch(`http://localhost:8080/api/user-progress/${email}`),
         ]);
 
+        if (!chaptersRes.ok || !progressRes.ok) {
+          throw new Error("Failed to fetch progress data");
+        }
+
         const chaptersData = await chaptersRes.json();
         const progressData = await progressRes.json();
 
+        // Handle both array and object response formats
+        let completedTopics = 0;
+        if (Array.isArray(progressData)) {
+          completedTopics = progressData.filter(t => t.completed).length;
+        } else {
+          completedTopics = Object.values(progressData).filter(Boolean).length;
+        }
+
         const totalTopics = chaptersData.reduce(
-          (total, chapter) => total + chapter.topics.length,
-          0
+          (total, chapter) => total + chapter.topics.length, 0
         );
 
-        const completedCount = Array.isArray(progressData)
-          ? progressData.filter((t) => t.completed).length
-          : Object.values(progressData).filter(Boolean).length;
-
-        setCompletionRate(totalTopics ? (completedCount / totalTopics) * 100 : 0);
+        const rate = totalTopics > 0 ? Math.round((completedTopics / totalTopics) * 100) : 0;
+        setCompletionRate(rate);
       } catch (err) {
         console.error("Failed to calculate user progress:", err);
+        setCompletionRate(0);
       }
     };
 
+    // Fetch immediately
     fetchProgress();
-  }, []);
+
+    // Set up interval to refresh progress periodically (every 5 minutes)
+    const interval = setInterval(fetchProgress, 300000);
+
+    return () => clearInterval(interval);
+  }, [user?.email]); // Re-run when user email changes
 
   return (
     <nav className="sticky top-0 left-0 right-0 z-50 bg-brand-background dark:bg-dark-brand-background border-neutral-border shadow-sm px-4 py-3 poppins-regular transition-colors duration-300 dark:border-dark-neutral-border">
@@ -260,9 +278,10 @@ const Navbar = () => {
                 className="flex items-center gap-2   rounded-lg transition-colors"
               >
                 <div
-                  className="p-[4px] rounded-lg transition-all duration-200 hover:bg-gray-100 dark:hover:bg-[#2a2a2a]"
+                  className="p-[4px] rounded-lg transition-all duration-300 hover:bg-gray-100 dark:hover:bg-[#2a2a2a]"
                   style={{
-                    background: `conic-gradient(#7c3aed ${completionRate}%, ${document.documentElement.classList.contains('dark') ? '#d1d1d1' : '#303135'
+                    background: `conic-gradient(${isDark ? '#7c3aed' : '#7c3aed'
+                      } ${completionRate}%, ${isDark ? '#303135' : '#d1d1d1'
                       } ${completionRate}%)`,
                   }}
                 >
