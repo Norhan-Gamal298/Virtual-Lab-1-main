@@ -13,6 +13,7 @@ import BlogDetail from "./components/BlogDetail";
 import Blogs from "./pages/Blogs";
 import ResetPassword from "./pages/ResetPassword";
 import BlogsLayout from "./layout/BlogsLayout";
+import RegistrationPage from "./pages/RegistrationPage";
 import TermsAndPrivacy from "./pages/TermsAndPrivacy"; // New import
 // Admin imports
 import AdminLayout from "./layout/AdminLayout";
@@ -27,6 +28,7 @@ import AdminLogin from "./pages/admin/Login";
 import AdminRoute from "./components/AdminRoute";
 import Faq from "./pages/Faq";
 import ProtectedCongratulations from "./components/ProtectedCongratulations";
+import LoginForm from "./components/LoginForm";
 
 function App() {
   return (
@@ -37,6 +39,8 @@ function App() {
         <Route path="/community" element={<Community />} />
         <Route path="/about" element={<About />} />
         <Route path="/faq" element={<Faq />} />
+        <Route path="/register" element={<RegistrationPage />} />
+        <Route path="login" element={<LoginForm />} />
 
         {/* Terms and Privacy routes */}
         <Route path="/terms" element={<TermsAndPrivacy />} />
@@ -83,6 +87,9 @@ function App() {
         <Route path="quizzes" element={<AdminQuizzes />} />
         <Route path="profile" element={<AdminProfile />} />
         <Route path="admins" element={<AdminAdmins />} />
+
+
+
       </Route>
 
       {/* 404 fallback */}

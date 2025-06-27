@@ -23,12 +23,12 @@ const AdminSidebar = () => {
 
 
     const menuItems = [
-        /* {
+        {
             label: 'Dashboard',
             icon: <TbDashboard size={28} />,
             path: '/admin',
             exact: true
-        }, */
+        },
         {
             label: 'Users Management',
             icon: <TbUsers className='text-[#1F2937] dark:text-[#fff]' size={22} />,

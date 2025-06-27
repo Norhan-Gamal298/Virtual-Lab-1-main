@@ -36,7 +36,16 @@ const authSlice = createSlice({
                 email: action.payload.user.email,
                 role: action.payload.user.role,
                 createdAt: action.payload.user.createdAt,
-                hasProfileImage: action.payload.user.hasProfileImage || false
+                hasProfileImage: action.payload.user.hasProfileImage || false,
+                phoneNumber: action.payload.user.phoneNumber,
+                gender: action.payload.user.gender,
+                country: action.payload.user.country,
+                dateOfBirth: action.payload.user.dateOfBirth,
+                educationalLevel: action.payload.user.educationalLevel,
+                fieldOfStudy: action.payload.user.fieldOfStudy,
+                professionalStatus: action.payload.user.professionalStatus,
+                emailNotifications: action.payload.user.emailNotifications,
+                timeZone: action.payload.user.timeZone,
             };
             state.token = action.payload.token;
             localStorage.setItem('user', JSON.stringify(state.user));

@@ -316,12 +316,13 @@ const Navbar = () => {
               )}
             </div>
           ) : (
-            <button
+            <Link
+              to="/register"
               className="px-7 py-[12px] rounded-lg bg-[#F5F7FA] text-[14px] dark:bg-[#1f1f1f] border border-neutral-border dark:border-[#3b3b3b] text-primary-text dark:text-dark-text-primary transition-colors font-medium hover:bg-gray-100 dark:hover:bg-[#2a2a2a]"
-              onClick={() => setActiveModal("signup")}
+            /* onClick={() => setActiveModal("signup")} */
             >
               Sign Up
-            </button>
+            </Link>
           )}
         </div>
 
