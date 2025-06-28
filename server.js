@@ -248,6 +248,9 @@ const userSchema = new mongoose.Schema({
   },
   emailNotifications: { type: Boolean, default: false },
   timeZone: { type: String },
+  lastActive: { type: Date, default: Date.now },
+  loginCount: { type: Number, default: 0 },
+  lastLogin: { type: Date },
 });
 
 
@@ -904,6 +907,12 @@ app.post("/api/signin", async (req, res) => {
       { expiresIn: "1h" }
     );
 
+    user.lastActive = new Date();
+    user.loginCount += 1;
+    user.lastLogin = new Date();
+
+    await user.save();
+
     res.status(200).json({
       user: {
         id: user._id,
@@ -913,6 +922,7 @@ app.post("/api/signin", async (req, res) => {
         createdAt: user.createdAt,
         isVerified: user.isVerified,
         hasProfileImage: hasProfileImage(user) // Add this line
+
       },
       token,
     });
@@ -1522,6 +1532,11 @@ app.put("/api/quizzes/:id", async (req, res) => {
   }
 });
 
+app.get('/api/debug/quiz-results', async (req, res) => {
+  const results = await QuizResult.find().populate('quizId');
+  res.json(results);
+});
+
 // DELETE a quiz question
 app.delete("/api/quizzes/:id", async (req, res) => {
   try {
@@ -1817,299 +1832,148 @@ app.delete("/api/chapters/:id", async (req, res) => {
   }
 });
 
-
-// Add these API endpoints to server.js
-app.get('/api/user-registrations', adminAuth, async (req, res) => {
+// Add to server.js
+// Add to server.js
+app.get('/api/dashboard/data', adminAuth, async (req, res) => {
   try {
-    const data = await User.aggregate([
+    // User statistics
+    const totalUsers = await User.countDocuments();
+    const activeUsers = await User.countDocuments({ lastActive: { $gt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000) } });
+    const newUsers = await User.countDocuments({ createdAt: { $gt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000) } });
+
+    const roleDistribution = await User.aggregate([
+      { $group: { _id: "$role", count: { $sum: 1 } } },
+      { $project: { role: "$_id", count: 1, _id: 0 } }
+    ]);
+
+    const educationLevel = await User.aggregate([
+      { $match: { educationalLevel: { $ne: "" } } },
+      { $group: { _id: "$educationalLevel", count: { $sum: 1 } } }
+    ]);
+
+    const professionalStatus = await User.aggregate([
+      { $match: { professionalStatus: { $ne: "" } } },
+      { $group: { _id: "$professionalStatus", count: { $sum: 1 } } }
+    ]);
+
+    // Content statistics - Fixed the distinct count issue
+    const chapterIds = await Topic.distinct("chapterId");
+    const chapters = chapterIds.length;
+    const topics = await Topic.countDocuments();
+    const quizzes = await Quiz.countDocuments();
+    const blogs = await Blog.countDocuments();
+
+    // Quiz statistics
+    const quizStats = await QuizResult.aggregate([
       {
         $group: {
-          _id: {
-            $dateToString: { format: "%Y-%m-%d", date: "$createdAt" }
+          _id: null,
+          averageScore: { $avg: { $multiply: [{ $divide: ["$score", "$totalQuestions"] }, 100] } },
+          completedQuizzes: { $sum: 1 }
+        }
+      }
+    ]);
+
+    // Recent activity
+    const recentSignups = await User.find().sort({ createdAt: -1 }).limit(5);
+    const recentProgress = await UserProgress.find().sort({ date: -1 }).limit(5);
+    const recentContent = await Topic.find().sort({ createdAt: -1 }).limit(5);
+
+    // Get user details for progress
+    const progressWithUsers = await Promise.all(recentProgress.map(async progress => {
+      const user = await User.findById(progress.userEmail);
+      return {
+        ...progress.toObject(),
+        user: user ? { firstName: user.firstName, lastName: user.lastName } : null
+      };
+    }));
+
+    const recentActivity = [
+      ...recentSignups.map(u => ({
+        user: `${u.firstName} ${u.lastName}`,
+        action: 'Registered',
+        timestamp: u.createdAt
+      })),
+      ...progressWithUsers.map(p => ({
+        user: p.user ? `${p.user.firstName} ${p.user.lastName}` : 'Unknown User',
+        action: `Completed topic ${p.topicId}`,
+        timestamp: p.date
+      })),
+      ...recentContent.map(t => ({
+        user: 'Admin',
+        action: `Added topic: ${t.title}`,
+        timestamp: t.createdAt
+      }))
+    ].sort((a, b) => b.timestamp - a.timestamp).slice(0, 10);
+
+    // Quiz performance by chapter
+    const quizPerformance = await QuizResult.aggregate([
+      {
+        $group: {
+          _id: "$quizId",
+          averageScore: {
+            $avg: {
+              $multiply: [
+                { $divide: ["$score", "$totalQuestions"] },
+                100
+              ]
+            }
           },
           count: { $sum: 1 }
         }
       },
-      { $sort: { _id: 1 } },
-      { $limit: 30 } // Last 30 days
-    ]);
-    res.json(data);
-  } catch (error) {
-    console.error('Error fetching user registrations:', error);
-    res.status(500).json({ error: 'Failed to fetch user registrations' });
-  }
-});
-
-app.get('/api/user-demographics', adminAuth, async (req, res) => {
-  const data = await User.aggregate([
-    { $group: { _id: "$country", count: { $sum: 1 } } },
-    { $sort: { count: -1 } },
-    { $limit: 10 }
-  ]);
-  res.json(data);
-});
-
-
-
-app.get('/api/content-engagement', adminAuth, async (req, res) => {
-  try {
-    const [chapters, topics, quizzes, blogs] = await Promise.all([
-      Topic.distinct('chapterId').then(ids => ids.length),
-      Topic.countDocuments(),
-      Quiz.countDocuments(),
-      Blog.countDocuments()
-    ]);
-
-    res.json({
-      chapters,
-      topics,
-      quizzes,
-      blogs
-    });
-  } catch (error) {
-    console.error('Error fetching content engagement:', error);
-    res.status(500).json({ error: 'Failed to fetch content engagement data' });
-  }
-});
-
-
-app.get('/api/recent-activity', adminAuth, async (req, res) => {
-  try {
-    // Get recent user signups
-    const recentSignups = await User.find()
-      .sort({ createdAt: -1 })
-      .limit(5)
-      .select('firstName lastName email createdAt role')
-      .lean();
-
-    // Get recent content updates
-    const recentContent = await Topic.find()
-      .sort({ updatedAt: -1 })
-      .limit(5)
-      .select('title chapterTitle updatedAt')
-      .lean();
-
-    // Format as activity items
-    const activities = [
-      ...recentSignups.map(user => ({
-        action: `New ${user.role} registered`,
-        details: `${user.firstName} ${user.lastName} (${user.email})`,
-        timestamp: user.createdAt
-      })),
-      ...recentContent.map(topic => ({
-        action: 'Content updated',
-        details: `${topic.chapterTitle} - ${topic.title}`,
-        timestamp: topic.updatedAt
-      }))
-    ].sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))
-      .slice(0, 5); // Get top 5 most recent
-
-    res.json(activities);
-  } catch (error) {
-    console.error('Error fetching recent activity:', error);
-    res.status(500).json({ error: 'Failed to fetch recent activity' });
-  }
-});
-
-
-app.get('/api/popular-content', adminAuth, async (req, res) => {
-  const data = await UserProgress.aggregate([
-    {
-      $group: {
-        _id: "$topicId",
-        views: { $sum: 1 },
-        completions: {
-          $sum: { $cond: [{ $eq: ["$completed", true] }, 1, 0] }
+      {
+        $project: {
+          chapter: {
+            $substr: ["$_id", 7, 1] // Extract chapter number from "chapterX"
+          },
+          averageScore: { $round: ["$averageScore", 2] },
+          count: 1,
+          _id: 0
         }
-      }
-    },
-    { $sort: { views: -1 } },
-    { $limit: 5 },
-    {
-      $lookup: {
-        from: "topics",
-        localField: "_id",
-        foreignField: "topicId",
-        as: "topic"
-      }
-    },
-    { $unwind: "$topic" }
-  ]);
-
-  res.json(data);
-});
-
-
-
-app.get('/api/quiz-performance', adminAuth, async (req, res) => {
-  const data = await QuizResult.aggregate([
-    {
-      $group: {
-        _id: "$quizId",
-        attempts: { $sum: 1 },
-        avgScore: { $avg: { $divide: ["$score", "$totalQuestions"] } }
-      }
-    },
-    { $sort: { attempts: -1 } },
-    {
-      $lookup: {
-        from: "quizzes",
-        localField: "_id",
-        foreignField: "_id",
-        as: "quiz"
-      }
-    },
-    { $unwind: "$quiz" }
-  ]);
-
-  res.json(data);
-});
-
-app.get('/api/user-stats', adminAuth, async (req, res) => {
-  try {
-    const [totalUsers, activeUsers, blockedUsers] = await Promise.all([
-      User.countDocuments(),
-      User.countDocuments({ isBlocked: false }),
-      User.countDocuments({ isBlocked: true })
+      },
+      { $sort: { chapter: 1 } }
     ]);
+
+    // Average progress calculation
+    const allProgress = await UserProgress.aggregate([
+      { $group: { _id: "$userEmail", completed: { $sum: 1 } } }
+    ]);
+    const avgProgress = allProgress.length > 0
+      ? Math.round(
+        allProgress.reduce((sum, p) => sum + p.completed, 0) / allProgress.length) : 0;
 
     res.json({
-      totalUsers,
-      activeUsers,
-      blockedUsers
+      userStats: {
+        totalUsers,
+        activeUsers,
+        newUsers,
+        roleDistribution,
+        educationLevel:
+          Object.fromEntries(
+            educationLevel.map(e => [e._id, e.count])) || {},
+        professionalStatus: Object.fromEntries(professionalStatus.map(p => [p._id, p.count])) || {},
+        avgProgress
+      },
+      contentStats: {
+        chapters,
+        topics,
+        quizzes,
+        blogs
+      },
+      quizStats: quizStats[0] || { averageScore: 0, completedQuizzes: 0 },
+      quizPerformance,
+      recentActivity
     });
+
   } catch (error) {
-    console.error('Error fetching user stats:', error);
-    res.status(500).json({ error: 'Failed to fetch user statistics' });
+    console.error('Dashboard data error:', error);
+    res.status(500).json({ error: 'Failed to generate dashboard data', details: error.message });
   }
 });
 
 
-app.get('/api/system-health', adminAuth, async (req, res) => {
-  const [users, topics, quizzes, blogs] = await Promise.all([
-    User.countDocuments(),
-    Topic.countDocuments(),
-    Quiz.countDocuments(),
-    Blog.countDocuments()
-  ]);
 
-  const memoryUsage = process.memoryUsage();
-  const uptime = process.uptime();
-
-  res.json({
-    collections: { users, topics, quizzes, blogs },
-    system: {
-      memory: {
-        rss: memoryUsage.rss,
-        heapTotal: memoryUsage.heapTotal,
-        heapUsed: memoryUsage.heapUsed
-      },
-      uptime
-    }
-  });
-});
-
-
-
-// In server.js, enhance your report generation// Add this to your server.js file
-
-// Comprehensive Report Endpoint
-app.get('/api/report/full', adminAuth, async (req, res) => {
-  try {
-    const format = req.query.format || 'pdf';
-
-    // Fetch all data in parallel
-    const [users, topics, quizzes, blogs, quizResults] = await Promise.all([
-      User.find().select('-password -verificationToken').lean(),
-      Topic.find().lean(),
-      Quiz.find().lean(),
-      Blog.find().lean(),
-      QuizResult.aggregate([
-        {
-          $group: {
-            _id: '$quizId',
-            totalAttempts: { $sum: 1 },
-            averageScore: { $avg: { $multiply: [{ $divide: ['$score', '$totalQuestions'] }, 100] } }
-          }
-        },
-        {
-          $lookup: {
-            from: 'quizzes',
-            localField: '_id',
-            foreignField: '_id',
-            as: 'quizDetails'
-          }
-        },
-        { $unwind: '$quizDetails' },
-        { $limit: 10 }
-      ])
-    ]);
-
-    // Prepare data for the report
-    const reportData = {
-      summary: {
-        totalUsers: users.length,
-        totalAdmins: users.filter(u => ['admin', 'root'].includes(u.role)).length,
-        totalContent: topics.length,
-        totalQuizzes: quizzes.length,
-        totalBlogs: blogs.length
-      },
-      users: users.map(user => ({
-        id: user._id,
-        email: user.email,
-        role: user.role,
-        status: user.isBlocked ? 'Blocked' : 'Active',
-        joined: user.createdAt.toISOString().split('T')[0]
-      })),
-      popularQuizzes: quizResults.map(result => ({
-        quizId: result._id,
-        question: result.quizDetails.question,
-        attempts: result.totalAttempts,
-        averageScore: Math.round(result.averageScore) + '%'
-      })),
-      generatedAt: new Date().toISOString()
-    };
-
-    // Define report headers
-    const headers = [
-      // Summary headers
-      { key: 'summary.totalUsers', label: 'Total Users', width: 15 },
-      { key: 'summary.totalAdmins', label: 'Total Admins', width: 15 },
-      { key: 'summary.totalContent', label: 'Content Items', width: 15 },
-      { key: 'summary.totalQuizzes', label: 'Total Quizzes', width: 15 },
-      { key: 'summary.totalBlogs', label: 'Total Blogs', width: 15 },
-
-      // User headers
-      { key: 'users.id', label: 'User ID', width: 20 },
-      { key: 'users.email', label: 'Email', width: 30 },
-      { key: 'users.role', label: 'Role', width: 15 },
-      { key: 'users.status', label: 'Status', width: 15 },
-      { key: 'users.joined', label: 'Joined Date', width: 20 },
-
-      // Quiz headers
-      { key: 'popularQuizzes.quizId', label: 'Quiz ID', width: 20 },
-      { key: 'popularQuizzes.question', label: 'Question', width: 40 },
-      { key: 'popularQuizzes.attempts', label: 'Attempts', width: 15 },
-      { key: 'popularQuizzes.averageScore', label: 'Avg Score', width: 15 }
-    ];
-
-    // Generate the report using your existing function
-    await generateReport(
-      res,
-      reportData,
-      headers,
-      'full-system-report',
-      format
-    );
-
-  } catch (error) {
-    console.error('Error generating full report:', error);
-    res.status(500).json({
-      error: 'Failed to generate report',
-      details: error.message
-    });
-  }
-});
 
 
 // Add this to server.js

@@ -25,7 +25,7 @@ const AdminSidebar = () => {
     const menuItems = [
         {
             label: 'Dashboard',
-            icon: <TbDashboard size={28} />,
+            icon: <TbDashboard size={22} />,
             path: '/admin',
             exact: true
         },

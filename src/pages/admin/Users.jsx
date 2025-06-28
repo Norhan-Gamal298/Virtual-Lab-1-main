@@ -213,6 +213,48 @@ export default function Users() {
             )
         },
         {
+            field: 'phoneNumber',
+            headerName: 'Phone',
+            width: 160,
+            renderCell: (params) => (
+                <span className="text-slate-800 font-medium">{params.value || 'N/A'}</span>
+            )
+        },
+        {
+            field: 'country',
+            headerName: 'Country',
+            width: 120,
+            renderCell: (params) => (
+                <span className="text-slate-800 font-medium">{params.value || 'N/A'}</span>
+            )
+        },
+        {
+            field: 'educationalLevel',
+            headerName: 'Education',
+            width: 160,
+            renderCell: (params) => (
+                <span className="text-slate-800 font-medium">{params.value || 'N/A'}</span>
+            )
+        },
+        {
+            field: 'professionalStatus',
+            headerName: 'Profession',
+            width: 160,
+            renderCell: (params) => (
+                <span className="text-slate-800 font-medium">{params.value || 'N/A'}</span>
+            )
+        },
+        {
+            field: 'createdAt',
+            headerName: 'Joined',
+            width: 160,
+            renderCell: (params) => (
+                <span className="text-slate-800 font-medium">
+                    {new Date(params.value).toLocaleDateString()}
+                </span>
+            )
+        },
+        {
             field: 'actions',
             headerName: 'Actions',
             width: 200,
