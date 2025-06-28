@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, PieChart, Pie, Cell, ResponsiveContainer } from 'recharts';
-import { FiUsers, FiBook, FiAward, FiActivity, FiTrendingUp, FiBarChart2 } from 'react-icons/fi';
-
+import { FiUsers, FiBook, FiAward, FiActivity, FiTrendingUp, FiBarChart2, FiUser } from 'react-icons/fi';
 const Dashboard = () => {
     const [dashboardData, setDashboardData] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -73,6 +72,101 @@ const Dashboard = () => {
             </PieChart>
         </ResponsiveContainer>
     );
+
+    // Top Contributors Component
+    const TopContributors = ({ contributors }) => {
+        if (!contributors || contributors.length === 0) {
+            return (
+                <div className="dark:bg-[#2a2a2a] bg-white rounded-xl shadow-sm border dark:border-[#3a3a3a] border-gray-200 overflow-hidden">
+                    <div className="px-6 py-5 border-b dark:border-[#3a3a3a] border-gray-200">
+                        <h3 className="text-lg font-medium leading-6 dark:text-white text-gray-900">Top Contributors</h3>
+                        <p className="mt-1 text-sm dark:text-gray-400 text-gray-500">No contributor data available</p>
+                    </div>
+                    <div className="p-6 text-center dark:text-gray-400 text-gray-500">
+                        No users have completed topics yet
+                    </div>
+                </div>
+            );
+        }
+
+        return (
+            <div className="dark:bg-[#2a2a2a] bg-white rounded-xl shadow-sm border dark:border-[#3a3a3a] border-gray-200 overflow-hidden">
+                <div className="px-6 py-5 border-b dark:border-[#3a3a3a] border-gray-200">
+                    <h3 className="text-lg font-medium leading-6 dark:text-white text-gray-900">Top Contributors</h3>
+                    <p className="mt-1 text-sm dark:text-gray-400 text-gray-500">Users with most completed topics</p>
+                </div>
+                <div className="p-6">
+                    <ul className="divide-y dark:divide-[#3a3a3a] divide-gray-200">
+                        {contributors.map((contributor, index) => (
+                            <li key={index} className="py-4 flex items-center">
+                                <div className="flex-shrink-0">
+                                    {contributor.profileImage ? (
+                                        <img
+                                            className="h-10 w-10 rounded-full"
+                                            src={contributor.profileImage}
+                                            alt={contributor.name}
+                                        />
+                                    ) : (
+                                        <div className="h-10 w-10 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center">
+                                            <FiUser className="h-5 w-5 text-gray-500 dark:text-gray-400" />
+                                        </div>
+                                    )}
+                                </div>
+                                <div className="ml-4 flex-1 min-w-0">
+                                    <p className="text-sm font-medium dark:text-white text-gray-900 truncate">
+                                        {contributor.name}
+                                    </p>
+                                    <p className="text-sm dark:text-gray-400 text-gray-500 truncate">
+                                        {contributor.email || 'No email'}
+                                    </p>
+                                </div>
+                                <div className="ml-4">
+                                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200">
+                                        {contributor.completedTopics} topics
+                                    </span>
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            </div>
+        );
+    };
+
+    // Most Achieved Topics Component
+    const MostAchievedTopics = ({ topics }) => {
+        return (
+            <div className="dark:bg-[#2a2a2a] bg-white rounded-xl shadow-sm border dark:border-[#3a3a3a] border-gray-200 overflow-hidden">
+                <div className="px-6 py-5 border-b dark:border-[#3a3a3a] border-gray-200">
+                    <h3 className="text-lg font-medium leading-6 dark:text-white text-gray-900">Most Achieved Topics</h3>
+                    <p className="mt-1 text-sm dark:text-gray-400 text-gray-500">Topics completed by most users</p>
+                </div>
+                <div className="p-6">
+                    <ul className="divide-y dark:divide-[#3a3a3a] divide-gray-200">
+                        {topics.map((topic, index) => (
+                            <li key={index} className="py-4">
+                                <div className="flex items-center justify-between">
+                                    <div className="flex-1 min-w-0">
+                                        <p className="text-sm font-medium dark:text-white text-gray-900 truncate">
+                                            {topic.title}
+                                        </p>
+                                        <p className="text-sm dark:text-gray-400 text-gray-500 truncate">
+                                            {topic.chapterTitle}
+                                        </p>
+                                    </div>
+                                    <div className="ml-4">
+                                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200">
+                                            {topic.completedCount} completions
+                                        </span>
+                                    </div>
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            </div>
+        );
+    };
 
     // Content stats chart
     const ContentStatsChart = () => (
@@ -361,6 +455,9 @@ const Dashboard = () => {
 
                 {/* Charts Section */}
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+                    <TopContributors contributors={dashboardData.topContributors} />
+                    <MostAchievedTopics topics={dashboardData.mostAchievedTopics} />
+
                     <div className="dark:bg-[#2a2a2a] bg-white rounded-xl shadow-sm border dark:border-[#3a3a3a] border-gray-200 overflow-hidden">
                         <div className="px-6 py-5 border-b dark:border-[#3a3a3a] border-gray-200">
                             <h3 className="text-lg font-medium leading-6 dark:text-white text-gray-900">User Distribution</h3>

@@ -226,6 +226,11 @@ export default function MarkdownPage() {
 
   const handleNextTopicClick = () => {
     if (user) {
+      const topicExists = allTopics.some(t => t.id === topicId);
+      if (!topicExists) {
+        console.error(`Topic ${topicId} not found`);
+        return navigate(`/docs/${nextTopic.id}`);
+      }
       fetch("http://localhost:8080/api/update-progress", {
         method: "POST",
         headers: {

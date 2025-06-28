@@ -1834,6 +1834,7 @@ app.delete("/api/chapters/:id", async (req, res) => {
 
 // Add to server.js
 // Add to server.js
+// Updated dashboard API endpoint with better debugging and data fetching
 app.get('/api/dashboard/data', adminAuth, async (req, res) => {
   try {
     // User statistics
@@ -1856,7 +1857,135 @@ app.get('/api/dashboard/data', adminAuth, async (req, res) => {
       { $group: { _id: "$professionalStatus", count: { $sum: 1 } } }
     ]);
 
-    // Content statistics - Fixed the distinct count issue
+    // FIXED: Better top contributors aggregation with debugging
+    console.log('Fetching top contributors...');
+
+    // First, let's see what data we have in UserProgress
+    const sampleProgress = await UserProgress.find().limit(5);
+    console.log('Sample UserProgress data:', sampleProgress);
+
+    // Get top contributors with only completed topics
+    // Get top contributors with only completed topics that exist
+    const topContributors = await UserProgress.aggregate([
+      {
+        $match: { completed: true }
+      },
+      {
+        $lookup: {
+          from: "topics",
+          localField: "topicId",
+          foreignField: "topicId",
+          as: "topic"
+        }
+      },
+      {
+        $match: {
+          "topic.0": { $exists: true } // Only count if topic exists
+        }
+      },
+      {
+        $group: {
+          _id: "$email",
+          completedTopics: { $sum: 1 }
+        }
+      },
+      { $sort: { completedTopics: -1 } },
+      { $limit: 10 }
+    ]);
+
+    console.log('Top contributors aggregation result:', topContributors);
+
+    // Get user details for contributors
+    const contributorsWithDetails = await Promise.all(
+      topContributors.map(async (contributor) => {
+        const user = await User.findOne({ email: contributor._id });
+
+        if (!user) {
+          console.warn(`User not found for email: ${contributor._id}`);
+          return null; // Skip non-existent users
+        }
+
+        return {
+          email: contributor._id,
+          name: `${user.firstName} ${user.lastName}`,
+          completedTopics: contributor.completedTopics,
+          profileImage: user?.profileImage ? `/api/profile/image/${user._id}` : null
+        };
+      })
+    );
+
+
+    for (const contributor of topContributors) {
+      console.log(`Looking up user with email: ${contributor._id}`);
+      const user = await User.findOne({ email: contributor._id });
+
+      if (user) {
+        console.log(`Found user: ${user.firstName} ${user.lastName}`);
+        contributorsWithDetails.push({
+          email: contributor._id,
+          name: `${user.firstName} ${user.lastName}`,
+          completedTopics: contributor.completedTopics,
+          profileImage: user?.profileImage ? `/api/profile/image/${user._id}` : null
+        });
+      } else {
+        console.log(`User not found for email: ${contributor._id}`);
+        // Still include the entry but mark as unknown
+        contributorsWithDetails.push({
+          email: contributor._id,
+          name: 'Unknown User (Data Mismatch)',
+          completedTopics: contributor.completedTopics,
+          profileImage: null
+        });
+      }
+    }
+
+    // Limit to top 5 after filtering
+    const finalContributors = contributorsWithDetails
+      .filter(contributor => contributor !== null)
+      .slice(0, 5);
+    console.log('Final contributors with details:', finalContributors);
+
+    // Most achieved topics
+    const mostAchievedTopics = await UserProgress.aggregate([
+      {
+        $match: { completed: true }
+      },
+      {
+        $lookup: {
+          from: "topics",
+          localField: "topicId",
+          foreignField: "topicId",
+          as: "topic"
+        }
+      },
+      {
+        $match: {
+          "topic.0": { $exists: true } // Only count if topic exists
+        }
+      },
+      {
+        $group: {
+          _id: "$topicId",
+          completedCount: { $sum: 1 }
+        }
+      },
+      { $sort: { completedCount: -1 } },
+      { $limit: 5 }
+    ]);
+
+    const topicsWithDetails = await Promise.all(
+      mostAchievedTopics.map(async topic => {
+        const topicDetails = await Topic.findOne({ topicId: topic._id });
+        return {
+          topicId: topic._id,
+          title: topicDetails?.title || 'Unknown Topic',
+          chapterTitle: topicDetails?.chapterTitle || 'Unknown Chapter',
+          completedCount: topic.completedCount
+        };
+      })
+    );
+
+    // Content statistics
     const chapterIds = await Topic.distinct("chapterId");
     const chapters = chapterIds.length;
     const topics = await Topic.countDocuments();
@@ -1876,12 +2005,12 @@ app.get('/api/dashboard/data', adminAuth, async (req, res) => {
 
     // Recent activity
     const recentSignups = await User.find().sort({ createdAt: -1 }).limit(5);
-    const recentProgress = await UserProgress.find().sort({ date: -1 }).limit(5);
+    const recentProgress = await UserProgress.find({ completed: true }).sort({ createdAt: -1 }).limit(5);
     const recentContent = await Topic.find().sort({ createdAt: -1 }).limit(5);
 
     // Get user details for progress
     const progressWithUsers = await Promise.all(recentProgress.map(async progress => {
-      const user = await User.findById(progress.userEmail);
+      const user = await User.findOne({ email: progress.email }); // Fixed: use email not userEmail
       return {
         ...progress.toObject(),
         user: user ? { firstName: user.firstName, lastName: user.lastName } : null
@@ -1897,7 +2026,7 @@ app.get('/api/dashboard/data', adminAuth, async (req, res) => {
       ...progressWithUsers.map(p => ({
         user: p.user ? `${p.user.firstName} ${p.user.lastName}` : 'Unknown User',
         action: `Completed topic ${p.topicId}`,
-        timestamp: p.date
+        timestamp: p.createdAt || new Date() // Fallback if no timestamp
       })),
       ...recentContent.map(t => ({
         user: 'Admin',
@@ -1925,7 +2054,7 @@ app.get('/api/dashboard/data', adminAuth, async (req, res) => {
       {
         $project: {
           chapter: {
-            $substr: ["$_id", 7, 1] // Extract chapter number from "chapterX"
+            $substr: ["$_id", 7, 1]
           },
           averageScore: { $round: ["$averageScore", 2] },
           count: 1,
@@ -1937,11 +2066,18 @@ app.get('/api/dashboard/data', adminAuth, async (req, res) => {
 
     // Average progress calculation
     const allProgress = await UserProgress.aggregate([
-      { $group: { _id: "$userEmail", completed: { $sum: 1 } } }
+      { $match: { completed: true } },
+      { $group: { _id: "$email", completed: { $sum: 1 } } }
     ]);
     const avgProgress = allProgress.length > 0
-      ? Math.round(
-        allProgress.reduce((sum, p) => sum + p.completed, 0) / allProgress.length) : 0;
+      ? Math.round(allProgress.reduce((sum, p) => sum + p.completed, 0) / allProgress.length)
+      : 0;
+
+    // Debug output
+    console.log('Dashboard data summary:');
+    console.log('- Total users:', totalUsers);
+    console.log('- Contributors found:', finalContributors.length);
+    console.log('- Most achieved topics:', topicsWithDetails.length);
 
     res.json({
       userStats: {
@@ -1949,9 +2085,7 @@ app.get('/api/dashboard/data', adminAuth, async (req, res) => {
         activeUsers,
         newUsers,
         roleDistribution,
-        educationLevel:
-          Object.fromEntries(
-            educationLevel.map(e => [e._id, e.count])) || {},
+        educationLevel: Object.fromEntries(educationLevel.map(e => [e._id, e.count])) || {},
         professionalStatus: Object.fromEntries(professionalStatus.map(p => [p._id, p.count])) || {},
         avgProgress
       },
@@ -1963,7 +2097,9 @@ app.get('/api/dashboard/data', adminAuth, async (req, res) => {
       },
       quizStats: quizStats[0] || { averageScore: 0, completedQuizzes: 0 },
       quizPerformance,
-      recentActivity
+      recentActivity,
+      topContributors: finalContributors,
+      mostAchievedTopics: topicsWithDetails
     });
 
   } catch (error) {
@@ -1972,8 +2108,227 @@ app.get('/api/dashboard/data', adminAuth, async (req, res) => {
   }
 });
 
+// Add this endpoint to your server.js file
+app.delete('/api/clean-duplicate-progress', adminAuth, async (req, res) => {
+  try {
+    console.log('Starting duplicate progress cleanup...');
+
+    // First, identify all duplicate entries
+    const duplicates = await UserProgress.aggregate([
+      {
+        $group: {
+          _id: {
+            email: "$email",
+            topicId: "$topicId"
+          },
+          count: { $sum: 1 },
+          ids: { $push: "$_id" }
+        }
+      },
+      {
+        $match: {
+          count: { $gt: 1 }
+        }
+      }
+    ]);
+
+    console.log(`Found ${duplicates.length} duplicate progress entries`);
+
+    // Process each duplicate group
+    let deletedCount = 0;
+    for (const group of duplicates) {
+      // Keep the first document and delete the rest
+      const idsToDelete = group.ids.slice(1);
+
+      if (idsToDelete.length > 0) {
+        const deleteResult = await UserProgress.deleteMany({
+          _id: { $in: idsToDelete }
+        });
+
+        deletedCount += deleteResult.deletedCount;
+        console.log(`Deleted ${deleteResult.deletedCount} duplicates for ${group._id.email} - ${group._id.topicId}`);
+      }
+    }
+
+    res.json({
+      message: 'Duplicate progress cleanup completed',
+      duplicateGroupsFound: duplicates.length,
+      duplicatesDeleted: deletedCount,
+      remainingDuplicates: duplicates.reduce((sum, group) => sum + (group.count - 1), 0) - deletedCount
+    });
+  } catch (error) {
+    console.error('Error during duplicate cleanup:', error);
+    res.status(500).json({
+      error: 'Failed to clean duplicate progress entries',
+      details: error.message
+    });
+  }
+});
 
 
+// Add this endpoint to clean up orphaned progress records
+app.post('/api/clean-orphaned-progress', adminAuth, async (req, res) => {
+  try {
+    console.log('Cleaning orphaned progress records...');
+
+    // Get all current topic IDs
+    const topics = await Topic.find({}, 'topicId');
+    const currentTopicIds = topics.map(t => t.topicId);
+
+    // Delete progress records for topics that no longer exist
+    const result = await UserProgress.deleteMany({
+      topicId: { $nin: currentTopicIds }
+    });
+
+    res.json({
+      message: 'Orphaned progress cleanup completed',
+      deletedCount: result.deletedCount
+    });
+  } catch (error) {
+    console.error('Error cleaning orphaned progress:', error);
+    res.status(500).json({
+      error: 'Failed to clean orphaned progress',
+      details: error.message
+    });
+  }
+});
+// Add these debug endpoints to your server to investigate the data
+
+// Debug endpoint to check UserProgress data
+app.get('/api/debug/user-progress', adminAuth, async (req, res) => {
+  try {
+    const totalProgress = await UserProgress.countDocuments();
+    const completedProgress = await UserProgress.countDocuments({ completed: true });
+    const sampleData = await UserProgress.find().limit(10);
+    const uniqueEmails = await UserProgress.distinct('email');
+
+    console.log('UserProgress Debug Info:');
+    console.log('- Total records:', totalProgress);
+    console.log('- Completed records:', completedProgress);
+    console.log('- Unique emails:', uniqueEmails.length);
+
+    res.json({
+      totalRecords: totalProgress,
+      completedRecords: completedProgress,
+      uniqueEmails: uniqueEmails.length,
+      emailList: uniqueEmails,
+      sampleData: sampleData
+    });
+  } catch (error) {
+    console.error('Debug error:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Debug endpoint to check User data
+app.get('/api/debug/users', adminAuth, async (req, res) => {
+  try {
+    const totalUsers = await User.countDocuments();
+    const userEmails = await User.distinct('email');
+    const sampleUsers = await User.find({}, { firstName: 1, lastName: 1, email: 1 }).limit(10);
+
+    console.log('Users Debug Info:');
+    console.log('- Total users:', totalUsers);
+    console.log('- User emails count:', userEmails.length);
+
+    res.json({
+      totalUsers,
+      userEmailsCount: userEmails.length,
+      userEmails: userEmails,
+      sampleUsers: sampleUsers
+    });
+  } catch (error) {
+    console.error('Debug error:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Debug endpoint to check data alignment
+app.get('/api/debug/data-alignment', adminAuth, async (req, res) => {
+  try {
+    // Get all unique emails from UserProgress
+    const progressEmails = await UserProgress.distinct('email');
+    const userEmails = await User.distinct('email');
+
+    // Find mismatches
+    const progressEmailsNotInUsers = progressEmails.filter(email => !userEmails.includes(email));
+    const userEmailsNotInProgress = userEmails.filter(email => !progressEmails.includes(email));
+
+    // Get top contributors raw data
+    const topContributorsRaw = await UserProgress.aggregate([
+      { $match: { completed: true } },
+      { $group: { _id: "$email", completedTopics: { $sum: 1 } } },
+      { $sort: { completedTopics: -1 } },
+      { $limit: 10 }
+    ]);
+
+    console.log('Data Alignment Debug:');
+    console.log('- Progress emails not in Users:', progressEmailsNotInUsers);
+    console.log('- User emails not in Progress:', userEmailsNotInProgress);
+    console.log('- Top contributors raw:', topContributorsRaw);
+
+    res.json({
+      progressEmails: progressEmails.length,
+      userEmails: userEmails.length,
+      progressEmailsNotInUsers,
+      userEmailsNotInProgress,
+      topContributorsRaw,
+      dataAlignmentIssues: progressEmailsNotInUsers.length > 0
+    });
+  } catch (error) {
+    console.error('Debug error:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Endpoint to manually create some test progress data (for testing only)
+app.post('/api/debug/create-test-progress', adminAuth, async (req, res) => {
+  try {
+    // Get some real user emails
+    const users = await User.find({}, { email: 1 }).limit(3);
+
+    if (users.length === 0) {
+      return res.json({ message: 'No users found to create test data' });
+    }
+
+    const testProgress = [];
+    const topics = ['topic1', 'topic2', 'topic3', 'topic4', 'topic5'];
+
+    // Create some test progress for existing users
+    for (const user of users) {
+      const numTopics = Math.floor(Math.random() * 5) + 1; // 1-5 topics
+      const userTopics = topics.slice(0, numTopics);
+
+      for (const topicId of userTopics) {
+        const existingProgress = await UserProgress.findOne({
+          email: user.email,
+          topicId: topicId
+        });
+
+        if (!existingProgress) {
+          testProgress.push({
+            email: user.email,
+            topicId: topicId,
+            completed: true
+          });
+        }
+      }
+    }
+
+    if (testProgress.length > 0) {
+      await UserProgress.insertMany(testProgress);
+    }
+
+    res.json({
+      message: 'Test progress created',
+      recordsCreated: testProgress.length,
+      testProgress
+    });
+  } catch (error) {
+    console.error('Test creation error:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
 
 
 // Add this to server.js

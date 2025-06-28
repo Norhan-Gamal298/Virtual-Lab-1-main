@@ -140,6 +140,7 @@ const Navbar = () => {
   }, [showMobileMenu]);
 
   useEffect(() => {
+    // Replace the existing fetchProgress function with this updated version
     const fetchProgress = async () => {
       try {
         const user = JSON.parse(localStorage.getItem("user"));
@@ -162,18 +163,30 @@ const Navbar = () => {
         const chaptersData = await chaptersRes.json();
         const progressData = await progressRes.json();
 
-        // Handle both array and object response formats
+        // Create a set of all current topic IDs
+        const currentTopicIds = new Set();
+        chaptersData.forEach(chapter => {
+          chapter.topics.forEach(topic => {
+            currentTopicIds.add(topic.id);
+          });
+        });
+
         let completedTopics = 0;
         if (Array.isArray(progressData)) {
-          completedTopics = progressData.filter(t => t.completed).length;
+          // Only count completed topics that exist in current content
+          completedTopics = progressData.filter(
+            item => item.completed && currentTopicIds.has(item.topicId)
+          ).length;
         } else {
-          completedTopics = Object.values(progressData).filter(Boolean).length;
+          // Only count completed topics that exist in current content
+          for (const [topicId, completed] of Object.entries(progressData)) {
+            if (completed && currentTopicIds.has(topicId)) {
+              completedTopics++;
+            }
+          }
         }
 
-        const totalTopics = chaptersData.reduce(
-          (total, chapter) => total + chapter.topics.length, 0
-        );
-
+        const totalTopics = currentTopicIds.size;
         const rate = totalTopics > 0 ? Math.round((completedTopics / totalTopics) * 100) : 0;
         setCompletionRate(rate);
       } catch (err) {

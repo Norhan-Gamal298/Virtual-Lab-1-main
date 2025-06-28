@@ -40,11 +40,25 @@ const UserAchievements = () => {
       (total, chapter) => total + chapter.topics.length,
       0
     );
+
+    if (totalTopics === 0) return 0;
+
+    let actualCompleted = 0;
+    chapters.forEach(chapter => {
+      chapter.topics.forEach(topic => {
+        if (topicProgress[topic.id]) {
+          actualCompleted++;
+        }
+      });
+    });
+
+    // Ensure we don't count more completed topics than exist
+    const validCompletedCount = Math.min(actualCompleted, totalTopics);
+
     const percentage = totalTopics > 0
-      ? Math.round((completedTopicsCount / totalTopics) * 100)
+      ? Math.round((validCompletedCount / totalTopics) * 100)
       : 0;
 
-    // Ensure percentage never exceeds 100
     return Math.min(percentage, 100);
   };
 
@@ -89,9 +103,18 @@ const UserAchievements = () => {
             : progressData;
 
           setTopicProgress(progress);
-          setCompletedTopicsCount(
-            Object.keys(progress).filter(id => progress[id]).length
-          );
+
+          if (chaptersData.length > 0) {
+            let completedCount = 0;
+            chaptersData.forEach(chapter => {
+              chapter.topics.forEach(topic => {
+                if (progress[topic.id]) {
+                  completedCount++;
+                }
+              });
+            });
+            setCompletedTopicsCount(completedCount);
+          }
           setLoading(prev => ({ ...prev, progress: false }));
         }
 
