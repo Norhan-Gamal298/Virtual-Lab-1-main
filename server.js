@@ -254,6 +254,8 @@ const userSchema = new mongoose.Schema({
 });
 
 
+
+
 // Pre-save Hook: Hash password before saving to DB
 // Add pre-save hook to track original role
 userSchema.pre("save", function (next) {
@@ -361,6 +363,12 @@ app.post("/api/blogs", async (req, res) => {
     });
 
     await blog.save();
+
+    await logActivity(req.user._id, req.user.email, 'blog_created', {
+      blogId: blog._id,
+      title: blog.title
+    });
+
     res.status(201).json(blog);
   } catch (error) {
     res
@@ -368,6 +376,58 @@ app.post("/api/blogs", async (req, res) => {
       .json({ error: "Failed to create blog", details: error.message });
   }
 });
+
+
+// Activity Log Schema
+const activityLogSchema = new mongoose.Schema({
+  userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+  userEmail: { type: String, required: true },
+  actionType: {
+    type: String,
+    required: true,
+    enum: [
+      // User actions
+      'user_registered',
+      'user_logged_in',
+      'topic_completed',
+      'quiz_attempted',
+
+      // Admin actions
+      'blog_created',
+      'blog_updated',
+      'blog_deleted',
+      'chapter_created',
+      'chapter_updated',
+      'chapter_deleted',
+      'topic_created',
+      'topic_updated',
+      'topic_deleted',
+      'quiz_created',
+      'quiz_updated',
+      'quiz_deleted'
+    ]
+  },
+  details: { type: mongoose.Schema.Types.Mixed },
+  timestamp: { type: Date, default: Date.now }
+});
+
+const ActivityLog = mongoose.model('ActivityLog', activityLogSchema);
+
+
+// Utility function to log activities
+const logActivity = async (userId, userEmail, actionType, details = {}) => {
+  try {
+    const activity = new ActivityLog({
+      userId,
+      userEmail,
+      actionType,
+      details
+    });
+    await activity.save();
+  } catch (error) {
+    console.error('Error logging activity:', error);
+  }
+};
 
 // Configure multer for image uploads
 const blogImageStorage = multer.diskStorage({
@@ -812,6 +872,10 @@ app.post("/api/register", async (req, res) => {
       timeZone,
     });
     await user.save();
+    await logActivity(user._id, user.email, 'user_registered', {
+      firstName: user.firstName,
+      lastName: user.lastName
+    });
 
     // Send verification email
     const transporter = nodemailer.createTransport({
@@ -843,6 +907,10 @@ app.post("/api/register", async (req, res) => {
 `,
     });
 
+    await logActivity(user._id, user.email, 'user_registered', {
+      firstName: user.firstName,
+      lastName: user.lastName
+    });
     console.log("User created successfully:", user);
     res.status(201).json({ success: true }); // Just return success
   } catch (err) {
@@ -912,7 +980,7 @@ app.post("/api/signin", async (req, res) => {
     user.lastLogin = new Date();
 
     await user.save();
-
+    await logActivity(user._id, user.email, 'user_logged_in');
     res.status(200).json({
       user: {
         id: user._id,
@@ -1149,6 +1217,13 @@ app.put("/api/blogs/:id", async (req, res) => {
       { new: true }
     );
     if (!blog) return res.status(404).json({ error: "Blog not found" });
+
+    await logActivity(req.user._id, req.user.email, 'blog_updated', {
+      blogId: req.params.id,
+      title: blog.title,
+      changes: req.body
+    });
+
     res.json(blog);
   } catch (error) {
     res
@@ -1189,6 +1264,12 @@ app.put("/api/blogs/:id", async (req, res) => {
       { new: true }
     );
     if (!blog) return res.status(404).json({ error: "Blog not found" });
+
+    await logActivity(req.user._id, req.user.email, 'blog_updated', {
+      blogId: req.params.id,
+      title: blog.title,
+      changes: req.body
+    });
     res.json(blog);
   } catch (error) {
     res
@@ -1206,6 +1287,24 @@ app.get("/api/blogs/:id", async (req, res) => {
     res
       .status(500)
       .json({ error: "Failed to fetch blog", details: error.message });
+  }
+});
+
+app.delete("/api/blogs/:id", async (req, res) => {
+  try {
+    const blog = await Blog.findByIdAndDelete(req.params.id);
+    if (!blog) return res.status(404).json({ error: "Blog not found" });
+
+    await logActivity(req.user._id, req.user.email, 'blog_deleted', {
+      blogId: req.params.id,
+      title: blog.title
+    });
+
+    res.json({ message: "Blog deleted successfully" });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ error: "Failed to delete blog", details: error.message });
   }
 });
 
@@ -1267,6 +1366,15 @@ app.post("/api/quiz-results", async (req, res) => {
       existingResult.score = score;
       existingResult.totalQuestions = totalQuestions;
       await existingResult.save();
+      const user = await User.findOne({ email });
+
+      await logActivity(user._id, user.email, 'quiz_attempted', {
+        quizId,
+        score,
+        totalQuestions,
+        percentage: Math.round((score / totalQuestions) * 100)
+      });
+
       res.status(200).json({
         message: "Quiz result updated successfully",
         result: existingResult,
@@ -1316,25 +1424,34 @@ const userProgressSchema = new mongoose.Schema({
 const UserProgress = mongoose.model("UserProgress", userProgressSchema);
 
 // Update User Progress (Mark topic as completed)
+// In your /api/update-progress endpoint
 app.post("/api/update-progress", async (req, res) => {
   const { email, topicId } = req.body;
 
-  if (!email || !topicId) {
-    return res.status(400).json({ error: "Missing required fields" });
-  }
-
   try {
-    const existingProgress = await UserProgress.findOne({ email, topicId });
-
-    if (existingProgress) {
-      existingProgress.completed = true;
-      await existingProgress.save();
-      res.status(200).json({ message: "Progress updated successfully" });
-    } else {
-      const newProgress = new UserProgress({ email, topicId, completed: true });
-      await newProgress.save();
-      res.status(201).json({ message: "Progress saved successfully" });
+    // First check if topic exists
+    const topicExists = await Topic.exists({ topicId });
+    if (!topicExists) {
+      return res.status(400).json({ error: "Topic does not exist" });
     }
+
+    // Use updateOne with upsert to prevent duplicates
+    await UserProgress.updateOne(
+      { email, topicId },
+      { $set: { completed: true } },
+      { upsert: true }
+    );
+
+    const user = await User.findOne({ email });
+    const topic = await Topic.findOne({ topicId });
+
+    await logActivity(user._id, user.email, 'topic_completed', {
+      topicId,
+      topicTitle: topic?.title || 'Unknown',
+      chapterTitle: topic?.chapterTitle || 'Unknown'
+    });
+
+    res.status(200).json({ message: "Progress updated successfully" });
   } catch (error) {
     console.error("Error updating progress:", error);
     res.status(500).json({ error: "Internal server error" });
@@ -1506,6 +1623,11 @@ app.post("/api/quizs", async (req, res) => {
     }
     const quiz = new Quiz({ chapterId, question, options, answer });
     await quiz.save();
+    await logActivity(req.user._id, req.user.email, 'quiz_created', {
+      quizId: quiz._id,
+      chapterId: quiz.chapterId,
+      question: quiz.question
+    });
     res.status(201).json(quiz);
   } catch (error) {
     res
@@ -1524,6 +1646,10 @@ app.put("/api/quizzes/:id", async (req, res) => {
       { new: true }
     );
     if (!quiz) return res.status(404).json({ error: "Question not found" });
+    await logActivity(req.user._id, req.user.email, 'quiz_updated', {
+      quizId: req.params.id,
+      changes: req.body
+    });
     res.json(quiz);
   } catch (error) {
     res
@@ -1542,6 +1668,9 @@ app.delete("/api/quizzes/:id", async (req, res) => {
   try {
     const quiz = await Quiz.findByIdAndDelete(req.params.id);
     if (!quiz) return res.status(404).json({ error: "Question not found" });
+    await logActivity(req.user._id, req.user.email, 'quiz_deleted', {
+      quizId: req.params.id
+    });
     res.json({ message: "Question deleted" });
   } catch (error) {
     res
@@ -1592,6 +1721,14 @@ app.put("/api/topics/:id", upload.none(), async (req, res) => {
     // Save updated topic
     await topic.save();
 
+    await logActivity(req.user._id, req.user.email, 'topic_updated', {
+      topicId: id,
+      changes: {
+        title: req.body.title,
+        chapterId: req.body.chapterId
+      }
+    });
+
     // Write markdown content to file
     if (topic.markdownPath) {
       const fullPath = path.join(__dirname, topic.markdownPath);
@@ -1605,6 +1742,22 @@ app.put("/api/topics/:id", upload.none(), async (req, res) => {
       error: "Failed to update topic",
       details: error.message,
     });
+  }
+});
+
+app.get("/api/activity-logs", adminAuth, async (req, res) => {
+  try {
+    const { limit = 20 } = req.query;
+
+    const activities = await ActivityLog.find()
+      .sort({ timestamp: -1 })
+      .limit(parseInt(limit))
+      .populate('userId', 'firstName lastName email role');
+
+    res.json(activities);
+  } catch (error) {
+    console.error("Error fetching activity logs:", error);
+    res.status(500).json({ error: "Failed to fetch activity logs" });
   }
 });
 
@@ -1667,6 +1820,10 @@ app.post("/api/chapters", async (req, res) => {
       markdownPath: `/docs/chapter_${chapterId}/placeholder.md`,
     });
     await newTopic.save();
+    await logActivity(req.user._id, req.user.email, 'chapter_created', {
+      chapterId,
+      chapterTitle
+    });
     res.status(201).json({ chapterId, chapterTitle });
   } catch (error) {
     res
@@ -1684,6 +1841,10 @@ app.put("/api/chapters/:id", async (req, res) => {
     const chapterId = parseInt(id, 10);
 
     await Topic.updateMany({ chapterId }, { $set: { chapterTitle } });
+    await logActivity(req.user._id, req.user.email, 'chapter_updated', {
+      chapterId,
+      newTitle: chapterTitle
+    });
 
     res.json({ chapterId, chapterTitle });
   } catch (err) {
@@ -1721,6 +1882,11 @@ app.post(
       });
 
       await newTopic.save();
+      await logActivity(req.user._id, req.user.email, 'topic_created', {
+        topicId: newTopic.topicId,
+        title: newTopic.title,
+        chapterId: newTopic.chapterId
+      });
       res.status(201).json(newTopic);
     } catch (err) {
       console.error(err);
@@ -1737,6 +1903,9 @@ app.delete("/api/topics/:id", async (req, res) => {
     const result = await Topic.findOneAndDelete({ topicId: id });
     if (!result) return res.status(404).json({ error: "Topic not found" });
 
+    await logActivity(req.user._id, req.user.email, 'topic_deleted', {
+      topicId: req.params.id
+    });
     res.status(204).send();
   } catch (error) {
     res
@@ -1821,7 +1990,9 @@ app.delete("/api/chapters/:id", async (req, res) => {
     console.log(
       `Deleted ${deleteResult.deletedCount} topics for chapter ${chapterId}`
     );
-
+    await logActivity(req.user._id, req.user.email, 'chapter_deleted', {
+      chapterId: parseInt(req.params.id, 10)
+    });
     res.status(204).send();
   } catch (err) {
     console.error("Error deleting chapter:", err);
@@ -1835,12 +2006,17 @@ app.delete("/api/chapters/:id", async (req, res) => {
 // Add to server.js
 // Add to server.js
 // Updated dashboard API endpoint with better debugging and data fetching
-app.get('/api/dashboard/data', adminAuth, async (req, res) => {
+// User Statistics Endpoint
+app.get('/api/dashboard/user-stats', adminAuth, async (req, res) => {
   try {
     // User statistics
     const totalUsers = await User.countDocuments();
-    const activeUsers = await User.countDocuments({ lastActive: { $gt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000) } });
-    const newUsers = await User.countDocuments({ createdAt: { $gt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000) } });
+    const activeUsers = await User.countDocuments({
+      lastActive: { $gt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000) }
+    });
+    const newUsers = await User.countDocuments({
+      createdAt: { $gt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000) }
+    });
 
     const roleDistribution = await User.aggregate([
       { $group: { _id: "$role", count: { $sum: 1 } } },
@@ -1857,95 +2033,160 @@ app.get('/api/dashboard/data', adminAuth, async (req, res) => {
       { $group: { _id: "$professionalStatus", count: { $sum: 1 } } }
     ]);
 
-    // FIXED: Better top contributors aggregation with debugging
+    // Average progress calculation
+    const allProgress = await UserProgress.aggregate([
+      { $match: { completed: true } },
+      { $group: { _id: "$email", completed: { $sum: 1 } } }
+    ]);
+    const avgProgress = allProgress.length > 0
+      ? Math.round(allProgress.reduce((sum, p) => sum + p.completed, 0) / allProgress.length)
+      : 0;
+
+    res.json({
+      totalUsers,
+      activeUsers,
+      newUsers,
+      roleDistribution,
+      educationLevel: Object.fromEntries(educationLevel.map(e => [e._id, e.count])) || {},
+      professionalStatus: Object.fromEntries(professionalStatus.map(p => [p._id, p.count])) || {},
+      avgProgress
+    });
+
+  } catch (error) {
+    console.error('User stats error:', error);
+    res.status(500).json({ error: 'Failed to fetch user statistics', details: error.message });
+  }
+});
+// Content Statistics Endpoint
+app.get('/api/dashboard/content-stats', adminAuth, async (req, res) => {
+  try {
+    const chapterIds = await Topic.distinct("chapterId");
+    const chapters = chapterIds.length;
+    const topics = await Topic.countDocuments();
+    const quizzes = await Quiz.countDocuments();
+    const blogs = await Blog.countDocuments();
+
+    res.json({
+      chapters,
+      topics,
+      quizzes,
+      blogs
+    });
+
+  } catch (error) {
+    console.error('Content stats error:', error);
+    res.status(500).json({ error: 'Failed to fetch content statistics', details: error.message });
+  }
+});
+// Quiz Statistics Endpoint
+app.get('/api/dashboard/quiz-stats', adminAuth, async (req, res) => {
+  try {
+    const quizStats = await QuizResult.aggregate([
+      {
+        $group: {
+          _id: null,
+          averageScore: { $avg: { $multiply: [{ $divide: ["$score", "$totalQuestions"] }, 100] } },
+          completedQuizzes: { $sum: 1 }
+        }
+      }
+    ]);
+
+    res.json(quizStats[0] || { averageScore: 0, completedQuizzes: 0 });
+
+  } catch (error) {
+    console.error('Quiz stats error:', error);
+    res.status(500).json({ error: 'Failed to fetch quiz statistics', details: error.message });
+  }
+});
+// Top Contributors Endpoint
+app.get('/api/dashboard/top-contributors', adminAuth, async (req, res) => {
+  try {
+    const currentTopicIds = (await Topic.find({}, 'topicId')).map(t => t.topicId);
+
     console.log('Fetching top contributors...');
 
-    // First, let's see what data we have in UserProgress
-    const sampleProgress = await UserProgress.find().limit(5);
-    console.log('Sample UserProgress data:', sampleProgress);
-
-    // Get top contributors with only completed topics
-    // Get top contributors with only completed topics that exist
     const topContributors = await UserProgress.aggregate([
       {
-        $match: { completed: true }
-      },
-      {
-        $lookup: {
-          from: "topics",
-          localField: "topicId",
-          foreignField: "topicId",
-          as: "topic"
-        }
-      },
-      {
         $match: {
-          "topic.0": { $exists: true } // Only count if topic exists
+          completed: true,
+          topicId: { $in: currentTopicIds }
         }
       },
       {
         $group: {
-          _id: "$email",
+          _id: {
+            email: "$email",
+            topicId: "$topicId"
+          }
+        }
+      },
+      {
+        $group: {
+          _id: "$_id.email",
           completedTopics: { $sum: 1 }
         }
       },
       { $sort: { completedTopics: -1 } },
-      { $limit: 10 }
+      { $limit: 5 },
+      {
+        $lookup: {
+          from: "users",
+          localField: "_id",
+          foreignField: "email",
+          as: "user"
+        }
+      },
+      {
+        $project: {
+          email: "$_id",
+          userId: { $arrayElemAt: ["$user._id", 0] },
+          name: {
+            $concat: [
+              { $arrayElemAt: ["$user.firstName", 0] },
+              " ",
+              { $arrayElemAt: ["$user.lastName", 0] }
+            ]
+          },
+          completedTopics: 1,
+          profileImage: {
+            $cond: {
+              if: { $gt: [{ $size: "$user" }, 0] },
+              then: { $arrayElemAt: ["$user.profileImage", 0] },
+              else: null
+            }
+          }
+        }
+      }
     ]);
 
-    console.log('Top contributors aggregation result:', topContributors);
+    const finalContributors = topContributors.map(contributor => {
+      const user = Array.isArray(contributor.user) && contributor.user.length > 0
+        ? contributor.user[0]
+        : null;
 
-    // Get user details for contributors
-    const contributorsWithDetails = await Promise.all(
-      topContributors.map(async (contributor) => {
-        const user = await User.findOne({ email: contributor._id });
+      return {
+        email: contributor._id,
+        name: user
+          ? `${user.firstName || ''} ${user.lastName || ''}`.trim()
+          : contributor._id,
+        completedTopics: contributor.completedTopics,
+        profileImage: user?.profileImage
+          ? `/api/profile/image/${user._id}`
+          : null
+      };
+    });
 
-        if (!user) {
-          console.warn(`User not found for email: ${contributor._id}`);
-          return null; // Skip non-existent users
-        }
-
-        return {
-          email: contributor._id,
-          name: `${user.firstName} ${user.lastName}`,
-          completedTopics: contributor.completedTopics,
-          profileImage: user?.profileImage ? `/api/profile/image/${user._id}` : null
-        };
-      })
-    );
-
-
-    for (const contributor of topContributors) {
-      console.log(`Looking up user with email: ${contributor._id}`);
-      const user = await User.findOne({ email: contributor._id });
-
-      if (user) {
-        console.log(`Found user: ${user.firstName} ${user.lastName}`);
-        contributorsWithDetails.push({
-          email: contributor._id,
-          name: `${user.firstName} ${user.lastName}`,
-          completedTopics: contributor.completedTopics,
-          profileImage: user?.profileImage ? `/api/profile/image/${user._id}` : null
-        });
-      } else {
-        console.log(`User not found for email: ${contributor._id}`);
-        // Still include the entry but mark as unknown
-        contributorsWithDetails.push({
-          email: contributor._id,
-          name: 'Unknown User (Data Mismatch)',
-          completedTopics: contributor.completedTopics,
-          profileImage: null
-        });
-      }
-    }
-
-    // Limit to top 5 after filtering
-    const finalContributors = contributorsWithDetails
-      .filter(contributor => contributor !== null)
-      .slice(0, 5);
     console.log('Final contributors with details:', finalContributors);
+    res.json(finalContributors);
 
-    // Most achieved topics
+  } catch (error) {
+    console.error('Top contributors error:', error);
+    res.status(500).json({ error: 'Failed to fetch top contributors', details: error.message });
+  }
+});
+// Most Achieved Topics Endpoint
+app.get('/api/dashboard/most-achieved-topics', adminAuth, async (req, res) => {
+  try {
     const mostAchievedTopics = await UserProgress.aggregate([
       {
         $match: { completed: true }
@@ -1960,7 +2201,7 @@ app.get('/api/dashboard/data', adminAuth, async (req, res) => {
       },
       {
         $match: {
-          "topic.0": { $exists: true } // Only count if topic exists
+          "topic.0": { $exists: true }
         }
       },
       {
@@ -1985,57 +2226,16 @@ app.get('/api/dashboard/data', adminAuth, async (req, res) => {
       })
     );
 
-    // Content statistics
-    const chapterIds = await Topic.distinct("chapterId");
-    const chapters = chapterIds.length;
-    const topics = await Topic.countDocuments();
-    const quizzes = await Quiz.countDocuments();
-    const blogs = await Blog.countDocuments();
+    res.json(topicsWithDetails);
 
-    // Quiz statistics
-    const quizStats = await QuizResult.aggregate([
-      {
-        $group: {
-          _id: null,
-          averageScore: { $avg: { $multiply: [{ $divide: ["$score", "$totalQuestions"] }, 100] } },
-          completedQuizzes: { $sum: 1 }
-        }
-      }
-    ]);
-
-    // Recent activity
-    const recentSignups = await User.find().sort({ createdAt: -1 }).limit(5);
-    const recentProgress = await UserProgress.find({ completed: true }).sort({ createdAt: -1 }).limit(5);
-    const recentContent = await Topic.find().sort({ createdAt: -1 }).limit(5);
-
-    // Get user details for progress
-    const progressWithUsers = await Promise.all(recentProgress.map(async progress => {
-      const user = await User.findOne({ email: progress.email }); // Fixed: use email not userEmail
-      return {
-        ...progress.toObject(),
-        user: user ? { firstName: user.firstName, lastName: user.lastName } : null
-      };
-    }));
-
-    const recentActivity = [
-      ...recentSignups.map(u => ({
-        user: `${u.firstName} ${u.lastName}`,
-        action: 'Registered',
-        timestamp: u.createdAt
-      })),
-      ...progressWithUsers.map(p => ({
-        user: p.user ? `${p.user.firstName} ${p.user.lastName}` : 'Unknown User',
-        action: `Completed topic ${p.topicId}`,
-        timestamp: p.createdAt || new Date() // Fallback if no timestamp
-      })),
-      ...recentContent.map(t => ({
-        user: 'Admin',
-        action: `Added topic: ${t.title}`,
-        timestamp: t.createdAt
-      }))
-    ].sort((a, b) => b.timestamp - a.timestamp).slice(0, 10);
-
-    // Quiz performance by chapter
+  } catch (error) {
+    console.error('Most achieved topics error:', error);
+    res.status(500).json({ error: 'Failed to fetch most achieved topics', details: error.message });
+  }
+});
+// Quiz Performance Endpoint
+app.get('/api/dashboard/quiz-performance', adminAuth, async (req, res) => {
+  try {
     const quizPerformance = await QuizResult.aggregate([
       {
         $group: {
@@ -2064,42 +2264,108 @@ app.get('/api/dashboard/data', adminAuth, async (req, res) => {
       { $sort: { chapter: 1 } }
     ]);
 
-    // Average progress calculation
-    const allProgress = await UserProgress.aggregate([
-      { $match: { completed: true } },
-      { $group: { _id: "$email", completed: { $sum: 1 } } }
-    ]);
-    const avgProgress = allProgress.length > 0
-      ? Math.round(allProgress.reduce((sum, p) => sum + p.completed, 0) / allProgress.length)
-      : 0;
+    res.json(quizPerformance);
 
-    // Debug output
-    console.log('Dashboard data summary:');
-    console.log('- Total users:', totalUsers);
-    console.log('- Contributors found:', finalContributors.length);
-    console.log('- Most achieved topics:', topicsWithDetails.length);
+  } catch (error) {
+    console.error('Quiz performance error:', error);
+    res.status(500).json({ error: 'Failed to fetch quiz performance', details: error.message });
+  }
+});
+// Recent Activity Endpoint
+app.get('/api/dashboard/recent-activity', adminAuth, async (req, res) => {
+  try {
+    const showAll = req.query.showAll === 'true';
+    const activityLimit = showAll ? 100 : 20;
+
+    const recentActivity = await ActivityLog.find()
+      .sort({ timestamp: -1 })
+      .limit(activityLimit)
+      .populate('userId', 'firstName lastName email');
+
+    const formattedActivities = recentActivity.map(log => {
+      let action = '';
+      let details = '';
+
+      switch (log.actionType) {
+        case 'user_registered':
+          action = 'Registered';
+          break;
+        case 'user_logged_in':
+          action = 'Logged in';
+          break;
+        case 'topic_completed':
+          action = 'Completed topic';
+          details = log.details?.topicTitle || log.details?.topicId || '';
+          break;
+        case 'quiz_attempted':
+          action = 'Completed quiz';
+          details = `Score: ${log.details?.score}/${log.details?.totalQuestions}`;
+          break;
+        default:
+          action = log.actionType;
+      }
+
+      return {
+        user: log.userId
+          ? `${log.userId.firstName} ${log.userId.lastName}`
+          : log.userEmail,
+        action,
+        details,
+        timestamp: log.timestamp
+      };
+    });
+
+    res.json(formattedActivities);
+
+  } catch (error) {
+    console.error('Recent activity error:', error);
+    res.status(500).json({ error: 'Failed to fetch recent activity', details: error.message });
+  }
+});
+// Optional: Combined dashboard endpoint for backward compatibility
+app.get('/api/dashboard/data', adminAuth, async (req, res) => {
+  try {
+    const [
+      userStats,
+      contentStats,
+      quizStats,
+      topContributors,
+      mostAchievedTopics,
+      quizPerformance,
+      recentActivity
+    ] = await Promise.all([
+      // Make internal requests to our new endpoints
+      fetch(`${req.protocol}://${req.get('host')}/api/dashboard/user-stats`, {
+        headers: { 'Authorization': req.headers.authorization }
+      }).then(r => r.json()),
+      fetch(`${req.protocol}://${req.get('host')}/api/dashboard/content-stats`, {
+        headers: { 'Authorization': req.headers.authorization }
+      }).then(r => r.json()),
+      fetch(`${req.protocol}://${req.get('host')}/api/dashboard/quiz-stats`, {
+        headers: { 'Authorization': req.headers.authorization }
+      }).then(r => r.json()),
+      fetch(`${req.protocol}://${req.get('host')}/api/dashboard/top-contributors`, {
+        headers: { 'Authorization': req.headers.authorization }
+      }).then(r => r.json()),
+      fetch(`${req.protocol}://${req.get('host')}/api/dashboard/most-achieved-topics`, {
+        headers: { 'Authorization': req.headers.authorization }
+      }).then(r => r.json()),
+      fetch(`${req.protocol}://${req.get('host')}/api/dashboard/quiz-performance`, {
+        headers: { 'Authorization': req.headers.authorization }
+      }).then(r => r.json()),
+      fetch(`${req.protocol}://${req.get('host')}/api/dashboard/recent-activity${req.url.includes('showAll') ? '?showAll=true' : ''}`, {
+        headers: { 'Authorization': req.headers.authorization }
+      }).then(r => r.json())
+    ]);
 
     res.json({
-      userStats: {
-        totalUsers,
-        activeUsers,
-        newUsers,
-        roleDistribution,
-        educationLevel: Object.fromEntries(educationLevel.map(e => [e._id, e.count])) || {},
-        professionalStatus: Object.fromEntries(professionalStatus.map(p => [p._id, p.count])) || {},
-        avgProgress
-      },
-      contentStats: {
-        chapters,
-        topics,
-        quizzes,
-        blogs
-      },
-      quizStats: quizStats[0] || { averageScore: 0, completedQuizzes: 0 },
+      userStats,
+      contentStats,
+      quizStats,
       quizPerformance,
       recentActivity,
-      topContributors: finalContributors,
-      mostAchievedTopics: topicsWithDetails
+      topContributors,
+      mostAchievedTopics
     });
 
   } catch (error) {
