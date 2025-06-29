@@ -1,7 +1,7 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { TbLayoutSidebarRightCollapse, TbLayoutSidebarLeftCollapse } from "react-icons/tb";
 import { TbDashboard, TbUsers, TbBook, TbNews, TbSettings, TbUser, TbLogout } from "react-icons/tb";
-import { motion, AnimatePresence, delay } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { logout } from '../features/auth/authSlice';
@@ -9,10 +9,14 @@ import { FiChevronDown, FiChevronRight } from "react-icons/fi";
 import { FiMoon, FiSun } from "react-icons/fi";
 import { useTheme } from "../ThemeProvider";
 import { PiExamFill } from "react-icons/pi";
-
+import { HiOutlineUserGroup, HiOutlineShieldCheck } from "react-icons/hi";
 
 const AdminSidebar = () => {
-    const [sidebarCollapsed, setSidebarCollapsed] = useState(true);
+    const [sidebarCollapsed, setSidebarCollapsed] = useState(() => {
+        const saved = localStorage.getItem('sidebarCollapsed');
+        return saved ? JSON.parse(saved) : true;
+    });
+
     const [expandedItems, setExpandedItems] = useState({});
     const { user } = useSelector((state) => state.auth);
     const location = useLocation();
@@ -21,6 +25,9 @@ const AdminSidebar = () => {
     const { theme, toggleTheme } = useTheme();
     const isDark = theme === "dark";
 
+    useEffect(() => {
+        localStorage.setItem('sidebarCollapsed', JSON.stringify(sidebarCollapsed));
+    }, [sidebarCollapsed]);
 
     const menuItems = [
         {
@@ -31,53 +38,46 @@ const AdminSidebar = () => {
         },
         {
             label: 'Users Management',
-            icon: <TbUsers className='text-[#1F2937] dark:text-[#fff]' size={22} />,
+            icon: <TbUsers size={22} />,
             path: '/admin/users',
             hasSubItems: true,
             subItems: [
                 {
                     label: 'Students',
-                    path: '/admin/users'
+                    path: '/admin/users',
+                    icon: <HiOutlineUserGroup size={18} />,
+                    description: 'Manage student accounts'
                 },
                 {
                     label: 'Administrators',
                     path: '/admin/users/admins',
+                    icon: <HiOutlineShieldCheck size={18} />,
+                    description: 'Manage admin users',
                     allowedRoles: ['root']
                 }
             ],
         },
         {
             label: 'Course Management',
-            icon: <TbBook className='text-[#1F2937] dark:text-[#fff]' size={22} />,
+            icon: <TbBook size={22} />,
             path: '/admin/content'
         },
         {
             label: 'Blogs Management',
-            icon: <TbNews className='text-[#1F2937] dark:text-[#fff]' size={22} />,
+            icon: <TbNews size={22} />,
             path: '/admin/blogs'
         },
         {
             label: 'Quizzes Management',
-            icon: <PiExamFill className='text-[#1F2937] dark:text-[#fff]' size={22} />, // You can replace this with a quiz-related icon if you like
+            icon: <PiExamFill size={22} />,
             path: '/admin/quizzes'
         },
-        /* {
-            label: 'Settings',
-            icon: <TbSettings size={28} />,
-            path: '/admin/settings'
-        },
-        {
-            label: 'Profile',
-            icon: <TbUser size={28} />,
-            path: '/admin/profile'
-        } */
     ];
 
     const isActive = (path, exact) => {
         return exact ? location.pathname === path : location.pathname.startsWith(path);
     };
 
-    // Check if any sub-item is active for parent item styling
     const isParentActive = (item) => {
         if (!item.hasSubItems) return false;
         return item.subItems.some(subItem => isActive(subItem.path));
@@ -95,10 +95,9 @@ const AdminSidebar = () => {
         navigate('/admin/login');
     };
 
-    // Animation variants for consistent transitions
     const sidebarVariants = {
         expanded: { width: 300 },
-        collapsed: { width: 60 }
+        collapsed: { width: 80 }
     };
 
     const itemVariants = {
@@ -122,21 +121,40 @@ const AdminSidebar = () => {
     };
 
     const subItemVariants = {
-        hidden: { opacity: 0, maxHeight: 0 },
+        hidden: {
+            opacity: 0,
+            maxHeight: 0,
+            y: -10
+        },
         visible: {
             opacity: 1,
-            maxHeight: 200, // Adjust based on your content needs
+            maxHeight: 300,
+            y: 0,
             transition: {
-                duration: 0.2,
-                ease: "easeOut"
+                duration: 0.3,
+                ease: "easeOut",
+                staggerChildren: 0.1
             }
         },
         exit: {
             opacity: 0,
             maxHeight: 0,
+            y: -10,
             transition: {
                 duration: 0.2,
                 ease: "easeIn"
+            }
+        }
+    };
+
+    const subItemChildVariants = {
+        hidden: { opacity: 0, x: -20 },
+        visible: {
+            opacity: 1,
+            x: 0,
+            transition: {
+                duration: 0.2,
+                ease: "easeOut"
             }
         }
     };
@@ -146,133 +164,192 @@ const AdminSidebar = () => {
         duration: 0.2
     };
 
+    // Fixed button classes with proper hover, focus, and active states
+    const buttonBaseClasses = "w-full h-12 flex items-center rounded-lg text-[#1F2937] dark:text-[#ffffff] bg-[#F5F7FA] dark:bg-[#1f1f1f] border border-[#E5E7EB] dark:border-[#3b3b3b] hover:bg-[#E0E7FF] hover:dark:bg-[#2d2d2d] focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50 focus:bg-[#E0E7FF] focus:dark:bg-[#2d2d2d] active:bg-[#C7D2FE] active:dark:bg-[#3d3d3d] transition-all duration-200";
+
+    // Fixed nav item classes with proper states
+    const getNavItemClasses = (isActiveItem) => {
+        return `w-full h-12 flex items-center rounded-lg text-[#1F2937] dark:text-[#ffffff] border transition-all duration-200 ${isActiveItem
+            ? 'bg-indigo-50 dark:bg-[#2d2d2d] border-indigo-500 dark:border-indigo-500'
+            : 'bg-[#F5F7FA] dark:bg-[#1f1f1f] border-[#E5E7EB] dark:border-[#3b3b3b] hover:bg-[#E0E7FF] hover:dark:bg-[#2d2d2d] focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50 focus:bg-[#E0E7FF] focus:dark:bg-[#2d2d2d] active:bg-[#C7D2FE] active:dark:bg-[#3d3d3d]'
+            }`;
+    };
+
     return (
-        <motion.aside
-            layout
-            initial={sidebarCollapsed ? "collapsed" : "expanded"}
-            animate={sidebarCollapsed ? "collapsed" : "expanded"}
-            variants={sidebarVariants}
-            transition={{ duration: 0.5, ease: "easeInOut" }}
-            className="h-full bg-[#fff] dark:bg-[#1a1a1a] text-[#1F2937] sticky top-0 z-40 overflow-hidden shadow-lg flex flex-col transition-colors duration-300"
-        >
-            <div className="flex-1 flex flex-col">
-                <div className="p-2 border-b border-gray-800">
-                    <motion.button
-                        onClick={() => setSidebarCollapsed(prev => !prev)}
-                        className="p-2 text-[#1F2937] dark:text-[#ffffff] bg-[#F5F7FA] dark:bg-[#1f1f1f] border border-[#323232] dark:border-[#3b3b3b] hover:dark:bg-[#454545] hover:bg-[#dedbf5] rounded-lg w-full flex justify-end transition-colors duration-300"
-                        transition={hoverTransition}
-                    >
-                        {sidebarCollapsed ? (
-                            <TbLayoutSidebarRightCollapse size={28} />
-                        ) : (
-                            <TbLayoutSidebarLeftCollapse size={28} />
-                        )}
-                    </motion.button>
-                </div>
-
-                <nav className="flex-1 overflow-y-auto overflow-x-hidden p-2">
-                    <ul className="space-y-1">
-                        {menuItems.map((item) => (
-                            <li key={item.label} className="place-items-start">
-                                {item.hasSubItems ? (
-                                    <motion.div
-                                        layout
-                                        className={`rounded-lg mr-auto flex flex-col whitespace-nowrap border transition-colors duration-300 ${isParentActive(item)
-                                            ? 'border-[#6366f1] bg-[#e0e7ff] dark:bg-[#374151] dark:border-[#6366f1]'
-                                            : 'border-[#525252] bg-[#F5F7FA] dark:bg-[#1f1f1f] dark:border-[#3b3b3b] hover:dark:bg-[#374151] hover:bg-[#e5e7eb]'
-                                            }`}
+        <div className="relative">
+            <motion.aside
+                layout
+                initial={sidebarCollapsed ? "collapsed" : "expanded"}
+                animate={sidebarCollapsed ? "collapsed" : "expanded"}
+                variants={sidebarVariants}
+                transition={{ duration: 0.3, ease: "easeInOut" }}
+                className="h-full bg-[#ffffff] dark:bg-[#1a1a1a] text-[#1F2937] sticky top-0 z-40 overflow-hidden shadow-lg flex flex-col transition-colors duration-300"
+            >
+                <div className="flex-1 flex flex-col">
+                    {/* Header with toggle button */}
+                    <div className="p-3 border-b dark:border-[#2d2d2d] border-[#E5E7EB]">
+                        <motion.button
+                            onClick={() => setSidebarCollapsed(prev => !prev)}
+                            className={`${buttonBaseClasses} px-3`}
+                            whileTap={{ scale: 0.98 }}
+                        >
+                            <div className={`flex items-center ${sidebarCollapsed ? 'justify-center' : 'justify-between'} w-full`}>
+                                <span className="flex-shrink-0">
+                                    {sidebarCollapsed ? (
+                                        <TbLayoutSidebarRightCollapse size={22} className="text-indigo-600 dark:text-indigo-400" />
+                                    ) : (
+                                        <TbLayoutSidebarLeftCollapse size={22} className="text-indigo-600 dark:text-indigo-400" />
+                                    )}
+                                </span>
+                                {!sidebarCollapsed && (
+                                    <motion.span
+                                        className="ml-3 text-sm font-medium whitespace-nowrap flex-1 text-left"
+                                        initial="hidden"
+                                        animate="visible"
+                                        exit="exit"
+                                        variants={itemVariants}
                                     >
-                                        <motion.button
-                                            onClick={() => !sidebarCollapsed && toggleItemExpansion(item.label)}
-                                            className={`flex items-center p-2 w-full rounded-lg justify-between transition-all duration-300 text-[#1F2937] dark:text-[#ffffff] justify-start mr-auto ${sidebarCollapsed ? '' : ''}`}
-                                            transition={hoverTransition}
+                                        Collapse
+                                    </motion.span>
+                                )}
+                            </div>
+                        </motion.button>
+                    </div>
+
+                    {/* Navigation */}
+                    <nav className="flex-1 overflow-y-auto overflow-x-hidden p-3">
+                        <ul className="space-y-2 mt-[5px]">
+                            {menuItems.map((item) => (
+                                <li key={item.label}>
+                                    {item.hasSubItems ? (
+                                        <motion.div
+                                            className={`rounded-lg transition-all duration-300 ${isParentActive(item)
+                                                ? 'border-indigo-500 bg-gradient-to-r from-indigo-50 to-blue-50 dark:from-[#2d3748] dark:to-[#3b4455] dark:border-indigo-500 shadow-sm'
+                                                : 'border-[#E5E7EB] bg-[#F5F7FA] dark:bg-[#1f1f1f] dark:border-[#3b3b3b] hover:bg-indigo-50 hover:dark:bg-[#2d2d2d] hover:shadow-sm'
+                                                } border`}
                                         >
-                                            <div className="flex items-center">
-                                                <span className="text-xl">{item.icon}</span>
-                                                <AnimatePresence>
+                                            <motion.button
+                                                onClick={() => !sidebarCollapsed && toggleItemExpansion(item.label)}
+                                                className="w-full h-12 flex items-center px-3 bg-transparent border-none rounded-lg hover:bg-[#E0E7FF] hover:dark:bg-[#2d2d2d] focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50 focus:bg-[#E0E7FF] focus:dark:bg-[#2d2d2d] active:bg-[#C7D2FE] active:dark:bg-[#3d3d3d] transition-all duration-200"
+                                                whileHover={{ scale: sidebarCollapsed ? 1.05 : 1.02 }}
+                                                whileTap={{ scale: 0.98 }}
+                                            >
+                                                <div className={`flex items-center ${sidebarCollapsed ? 'justify-center' : 'justify-between'} w-full`}>
+                                                    <span className="text-xl flex-shrink-0 text-indigo-600 dark:text-indigo-400">{item.icon}</span>
                                                     {!sidebarCollapsed && (
-                                                        <motion.span
-                                                            className="ml-2 text-sm"
-                                                            initial="hidden"
-                                                            animate="visible"
-                                                            exit="exit"
-                                                            variants={itemVariants}
-                                                        >
-                                                            {item.label}
-                                                        </motion.span>
-                                                    )}
-                                                </AnimatePresence>
-                                            </div>
-                                            {!sidebarCollapsed && item.hasSubItems && (
-                                                <motion.span
-                                                    animate={{
-                                                        rotate: expandedItems[item.label] ? 90 : 0
-                                                    }}
-                                                    transition={{ duration: 0.2 }}
-                                                    className="text-xs"
-                                                >
-                                                    <FiChevronRight size={18} />
-                                                </motion.span>
-                                            )}
-                                        </motion.button>
-
-                                        <AnimatePresence>
-                                            {(!sidebarCollapsed && expandedItems[item.label]) && (
-                                                <motion.ul
-                                                    layout
-                                                    initial="hidden"
-                                                    animate="visible"
-                                                    exit="exit"
-                                                    variants={subItemVariants}
-                                                    className="ml-6 overflow-hidden pb-2 bg-transparent"
-                                                >
-                                                    {item.subItems.map((subItem) => {
-                                                        if (subItem.allowedRoles && !subItem.allowedRoles.includes(user?.role)) return null;
-                                                        const isCurrentSubActive = location.pathname === subItem.path;
-                                                        return (
-                                                            <li key={subItem.label}>
-                                                                <motion.div
-                                                                    transition={hoverTransition}
-                                                                    className="rounded-lg w-full"
+                                                        <>
+                                                            <motion.span
+                                                                className="ml-3 text-sm font-medium whitespace-nowrap flex-1 text-left dark:text-white"
+                                                                initial="hidden"
+                                                                animate="visible"
+                                                                exit="exit"
+                                                                variants={itemVariants}
+                                                            >
+                                                                {item.label}
+                                                            </motion.span>
+                                                            {item.hasSubItems && (
+                                                                <motion.span
+                                                                    animate={{
+                                                                        rotate: expandedItems[item.label] ? 90 : 0
+                                                                    }}
+                                                                    transition={{ duration: 0.3, ease: "easeInOut" }}
+                                                                    className="flex-shrink-0 text-gray-500 dark:text-white"
                                                                 >
-                                                                    <NavLink
-                                                                        to={subItem.path}
-                                                                        className={`flex items-center p-2 justify-start text-sm rounded-lg w-full whitespace-nowrap mb-1 transition-all duration-300 ${isCurrentSubActive
-                                                                            ? 'bg-[#3b82f6] text-white dark:bg-[#3b82f6] dark:text-white shadow-sm'
-                                                                            : 'bg-transparent text-[#374151] dark:text-[#d1d5db] hover:bg-[#f3f4f6] dark:hover:bg-[#4b5563]'
-                                                                            }`}
-                                                                    >
-                                                                        <motion.span
-                                                                            variants={itemVariants}
-                                                                        >
-                                                                            {subItem.label}
-                                                                        </motion.span>
-                                                                    </NavLink>
-                                                                </motion.div>
-                                                            </li>
-                                                        );
-                                                    })}
-                                                </motion.ul>
-                                            )}
-                                        </AnimatePresence>
-                                    </motion.div>
-                                ) : (
-                                    <motion.div
-                                        transition={hoverTransition}
-                                        className="rounded-lg w-full mr-auto flex"
-                                    >
+                                                                    <FiChevronRight size={16} />
+                                                                </motion.span>
+                                                            )}
+                                                        </>
+                                                    )}
+                                                </div>
+                                            </motion.button>
+
+                                            <AnimatePresence>
+                                                {(!sidebarCollapsed && expandedItems[item.label]) && (
+                                                    <motion.div
+                                                        initial="hidden"
+                                                        animate="visible"
+                                                        exit="exit"
+                                                        variants={subItemVariants}
+                                                        className="overflow-hidden"
+                                                    >
+                                                        <div className="px-3 pb-3">
+                                                            <div className="border-l-2 border-indigo-200 dark:border-indigo-800 pl-4">
+                                                                <motion.ul
+                                                                    className="space-y-2"
+                                                                    variants={subItemVariants}
+                                                                >
+                                                                    {item.subItems.map((subItem) => {
+                                                                        if (subItem.allowedRoles && !subItem.allowedRoles.includes(user?.role)) return null;
+                                                                        const isCurrentSubActive = location.pathname === subItem.path;
+                                                                        return (
+                                                                            <motion.li
+                                                                                key={subItem.label}
+                                                                                variants={subItemChildVariants}
+                                                                            >
+                                                                                <NavLink
+                                                                                    to={subItem.path}
+                                                                                    className={`group flex items-center p-3 rounded-lg transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50 ${isCurrentSubActive
+                                                                                        ? 'bg-gradient-to-r from-indigo-600 to-indigo-500 text-white shadow-md transform scale-[1.02]'
+                                                                                        : 'bg-[#f8fafc] dark:bg-[#393939] text-[#374151] dark:text-[#e2e8f0] hover:bg-indigo-50 dark:hover:bg-[#3b4455] hover:shadow-sm hover:transform hover:scale-[1.01] active:bg-indigo-100 dark:active:bg-[#4a5568]'
+                                                                                        }`}
+                                                                                >
+                                                                                    <div className="flex items-center space-x-3 w-full">
+                                                                                        <span className={`flex-shrink-0 ${isCurrentSubActive ? 'text-white' : 'text-indigo-500 dark:text-indigo-400 group-hover:text-indigo-600 dark:group-hover:text-indigo-300'}`}>
+                                                                                            {subItem.icon}
+                                                                                        </span>
+                                                                                        <div className="flex-1 min-w-0">
+                                                                                            <motion.span
+                                                                                                variants={itemVariants}
+                                                                                                className="text-sm font-medium block truncate"
+                                                                                            >
+                                                                                                {subItem.label}
+                                                                                            </motion.span>
+                                                                                            {subItem.description && (
+                                                                                                <motion.span
+                                                                                                    variants={itemVariants}
+                                                                                                    className={`text-xs block truncate mt-0.5 ${isCurrentSubActive
+                                                                                                        ? 'text-indigo-100'
+                                                                                                        : 'text-gray-500 dark:text-gray-400 group-hover:text-gray-600 dark:group-hover:text-gray-300'
+                                                                                                        }`}
+                                                                                                >
+                                                                                                    {subItem.description}
+                                                                                                </motion.span>
+                                                                                            )}
+                                                                                        </div>
+                                                                                        {isCurrentSubActive && (
+                                                                                            <motion.div
+                                                                                                initial={{ scale: 0 }}
+                                                                                                animate={{ scale: 1 }}
+                                                                                                className="w-2 h-2 bg-white rounded-full"
+                                                                                            />
+                                                                                        )}
+                                                                                    </div>
+                                                                                </NavLink>
+                                                                            </motion.li>
+                                                                        );
+                                                                    })}
+                                                                </motion.ul>
+                                                            </div>
+                                                        </div>
+                                                    </motion.div>
+                                                )}
+                                            </AnimatePresence>
+                                        </motion.div>
+                                    ) : (
                                         <NavLink
                                             to={item.path}
                                             end={item.exact}
-                                            className={({ isActive }) =>
-                                                `flex items-center text-[#1F2937] dark:text-[#ffffff] bg-[#F5F7FA] dark:bg-[#1f1f1f] border border-[#323232] dark:border-[#3b3b3b] transition-colors duration-300 p-[12px] dark:hover:bg-[#454545] hover:bg-[#dedbf5] rounded-lg w-[350px] whitespace-nowrap justify-start mr-auto  ${isActive ? 'dark:bg-[#454545] bg-[#dedbf5]' : ''} ${sidebarCollapsed ? "justify-center" : "justify-start "}`
+                                            className={({ isActive: isActiveLink }) =>
+                                                `${getNavItemClasses(isActiveLink)} px-3`
                                             }
                                         >
-                                            <span className="text-xl">{item.icon}</span>
-                                            <AnimatePresence>
+                                            <div className={`flex items-center ${sidebarCollapsed ? 'justify-center' : ''} w-full`}>
+                                                <span className={`text-xl flex-shrink-0 ${isActive(item.path, item.exact) ? 'text-indigo-600 dark:text-indigo-400' : 'text-gray-600 dark:text-white'}`}>
+                                                    {item.icon}
+                                                </span>
                                                 {!sidebarCollapsed && (
                                                     <motion.span
-                                                        className="ml-2 text-sm"
+                                                        className="ml-3 text-sm font-medium whitespace-nowrap flex-1 text-left dark:text-white"
                                                         initial="hidden"
                                                         animate="visible"
                                                         exit="exit"
@@ -281,75 +358,79 @@ const AdminSidebar = () => {
                                                         {item.label}
                                                     </motion.span>
                                                 )}
-                                            </AnimatePresence>
+                                            </div>
                                         </NavLink>
-                                    </motion.div>
-                                )}
-                            </li>
-                        ))}
-                    </ul>
-                </nav>
-            </div>
+                                    )}
+                                </li>
+                            ))}
+                        </ul>
+                    </nav>
+                </div>
 
-            <div className="p-2 border-t border-gray-800 flex flex-col">
-                <motion.button
-                    className={`p-[12px] text-[#1F2937] dark:text-[#ffffff] rounded-lg bg-[#F5F7FA] dark:bg-[#1f1f1f] dark:border-[#3b3b3b] transition-colors duration-300 border border-[#525252] mb-[10px] flex ${sidebarCollapsed ? '' : ''}`}
-                    onClick={toggleTheme}
-                    aria-label={`Switch to ${isDark ? "light" : "dark"} mode`}
-                    transition={hoverTransition}
-                >
-                    <AnimatePresence mode="wait" initial={false}>
-                        <motion.div
-                            key={theme}
-                            initial={{ scale: 0.8, opacity: 0 }}
-                            animate={{ scale: 1, opacity: 1 }}
-                            exit={{ scale: 0.8, opacity: 0 }}
-                            transition={{ duration: 0.2 }}
-                        >
-                            {isDark ? (
-                                <FiSun className="text-yellow-300" size={22} />
-                            ) : (
-                                <FiMoon className="text-gray-700" size={22} />
+                {/* Footer with theme toggle and logout */}
+                <div className="p-3 border-t dark:border-[#2d2d2d] border-[#E5E7EB] space-y-2">
+                    <motion.button
+                        className={`${buttonBaseClasses} px-3`}
+                        onClick={toggleTheme}
+                        aria-label={`Switch to ${isDark ? "light" : "dark"} mode`}
+                        whileTap={{ scale: 0.98 }}
+                    >
+                        <div className={`flex items-center ${sidebarCollapsed ? 'justify-center' : ''} w-full`}>
+                            <AnimatePresence mode="wait" initial={false}>
+                                <motion.div
+                                    key={theme}
+                                    initial={{ scale: 0.8, opacity: 0 }}
+                                    animate={{ scale: 1, opacity: 1 }}
+                                    exit={{ scale: 0.8, opacity: 0 }}
+                                    transition={{ duration: 0.2 }}
+                                    className="flex-shrink-0"
+                                >
+                                    {isDark ? (
+                                        <FiSun className="text-yellow-300" size={22} />
+                                    ) : (
+                                        <FiMoon className="text-indigo-600" size={22} />
+                                    )}
+                                </motion.div>
+                            </AnimatePresence>
+                            {!sidebarCollapsed && (
+                                <motion.span
+                                    className="ml-3 text-sm font-medium whitespace-nowrap flex-1 text-left"
+                                    initial="hidden"
+                                    animate="visible"
+                                    exit="exit"
+                                    variants={itemVariants}
+                                >
+                                    Switch Theme
+                                </motion.span>
                             )}
-                        </motion.div>
-                    </AnimatePresence>
-                    <AnimatePresence>
-                        {!sidebarCollapsed && (
-                            <motion.span
-                                className="ml-2 text-sm whitespace-nowrap"
-                                initial="hidden"
-                                animate="visible"
-                                exit="exit"
-                                variants={itemVariants}
-                            >
-                                Switch mode
-                            </motion.span>
-                        )}
-                    </AnimatePresence>
-                </motion.button>
+                        </div>
+                    </motion.button>
 
-                <motion.button
-                    onClick={handleLogout}
-                    className="p-[12px] text-[#1F2937] dark:text-[#ffffff] flex rounded-lg bg-[#F5F7FA] dark:bg-[#1f1f1f] dark:border-[#3b3b3b] transition-colors duration-300 border border-[#525252]"
-                    transition={hoverTransition}
-                >
-                    <span className="text-xl"><TbLogout className='' size={22} /></span>
-                    <AnimatePresence>
-                        {!sidebarCollapsed && (
-                            <motion.span
-                                className="ml-2 text-sm whitespace-nowrap"
-                                initial="hidden"
-                                animate="visible"
-                                exit="exit"
-                                variants={itemVariants}
-                            >
-                                Logout
-                            </motion.span>
-                        )}
-                    </AnimatePresence>
-                </motion.button>
-            </div>
-        </motion.aside>
+                    <motion.button
+                        onClick={handleLogout}
+                        className={`${buttonBaseClasses} px-3`}
+                        whileTap={{ scale: 0.98 }}
+                    >
+                        <div className={`flex items-center ${sidebarCollapsed ? 'justify-center' : ''} w-full`}>
+                            <span className="text-xl flex-shrink-0 ">
+                                <TbLogout size={22} />
+                            </span>
+                            {!sidebarCollapsed && (
+                                <motion.span
+                                    className="ml-3 text-sm font-medium whitespace-nowrap flex-1 text-left"
+                                    initial="hidden"
+                                    animate="visible"
+                                    exit="exit"
+                                    variants={itemVariants}
+                                >
+                                    Logout
+                                </motion.span>
+                            )}
+                        </div>
+                    </motion.button>
+                </div>
+            </motion.aside>
+        </div>
     );
 };
 

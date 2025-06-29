@@ -45,7 +45,7 @@ export default function AdminLogin() {
 
             // Save credentials and redirect
             dispatch(setCredentials({ user: data.user, token: data.token }));
-            navigate('/admin/users');
+            navigate('/admin');
         } catch (err) {
             setError(err.message);
         } finally {

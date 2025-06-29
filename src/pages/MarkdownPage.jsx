@@ -430,7 +430,7 @@ export default function MarkdownPage() {
                             </pre>
                             <div className="mt-3">
                               <button
-                                className="text-[#fff] bg-[#1F2937] dark:bg-[#612EBE] hover:bg-primary-hover text-primary-on px-4 py-2 rounded-lg transition-colors duration-200 poppins-regular"
+                                className="text-[#fff] bg-[#1F2937] dark:bg-[#612EBE] hover:bg-primary-hover text-primary-on px-4 py-2 rounded-lg transition-colors duration-200 poppins-regular float-right top-[-4rem] relative left-[-1rem]"
                                 onClick={() =>
                                   navigate(
                                     `/terminal-page?code=${encodedCode}`,
