@@ -8,6 +8,7 @@ import { FiMail, FiLock, FiUser, FiArrowRight, FiArrowLeft } from 'react-icons/f
 import logoLight from '../assets/logo-light.png';
 import logoDark from '../assets/logo-dark.png';
 
+
 const LoginForm = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
@@ -74,9 +75,46 @@ const LoginForm = () => {
 
             navigate("/profile");
         } catch (error) {
-            toast.error(error.message || "Login failed. Please try again.", {
+            let errorMessage = "Login failed. Please try again.";
+            let autoClose = 5000;
+
+            // Handle specific error cases
+            if (error.message.includes("Invalid credentials")) {
+                errorMessage = "Invalid email or password. Please try again.";
+            } else if (error.message.includes("Account is blocked")) {
+                errorMessage = "Your account has been blocked. Please contact support.";
+                autoClose = 8000;
+            } else if (error.message.includes("verify your email")) {
+                errorMessage = (
+                    <div>
+                        Please verify your email before logging in.
+                        <br />
+                        <button
+                            onClick={() => {
+                                toast.dismiss();
+                                handleResendVerification();
+                            }}
+                            style={{
+                                marginTop: '8px',
+                                background: 'transparent',
+                                border: 'none',
+                                color: '#fff',
+                                textDecoration: 'underline',
+                                cursor: 'pointer'
+                            }}
+                        >
+                            Resend verification email
+                        </button>
+                    </div>
+                );
+                autoClose = 10000;
+            } else if (error.message.includes("network")) {
+                errorMessage = "Network error. Please check your internet connection.";
+            }
+
+            toast.error(errorMessage, {
                 position: "top-right",
-                autoClose: 5000,
+                autoClose,
                 hideProgressBar: false,
                 closeOnClick: true,
                 pauseOnHover: true,
@@ -86,6 +124,42 @@ const LoginForm = () => {
             });
         } finally {
             setIsLoading(false);
+        }
+    };
+
+    const handleResendVerification = async () => {
+        try {
+            const response = await fetch("http://localhost:8080/api/resend-verification", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ email: formData.email }),
+            });
+
+            if (!response.ok) {
+                throw new Error("Failed to resend verification email");
+            }
+
+            toast.success("Verification email resent. Please check your inbox.", {
+                position: "top-right",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "colored",
+            });
+        } catch (error) {
+            toast.error("Failed to resend verification email. Please try again later.", {
+                position: "top-right",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "colored",
+            });
         }
     };
 

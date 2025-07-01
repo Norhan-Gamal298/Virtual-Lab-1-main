@@ -7,14 +7,23 @@ export const authAPI = {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(userData),
         });
+
         if (!response.ok) {
-            const error = await response.json();
-            throw new Error(error.error || "Failed to register");
+            let errorMsg = "Registration failed";
+            try {
+                const errorData = await response.json();
+                errorMsg = errorData.error || errorMsg;
+
+                // Handle specific error cases
+                if (response.status === 400 && errorData.error.includes("already exists")) {
+                    errorMsg = "This email is already registered";
+                }
+            } catch (e) {
+                console.error("Error parsing error response:", e);
+            }
+            throw new Error(errorMsg);
         }
-        return {
-            success: true,
-            email: userData.email
-        };
+        return await response.json();
     },
 
     async login(credentials) {
@@ -63,6 +72,23 @@ export const authAPI = {
             const error = await response.json();
             throw new Error(error.error || "Failed to fetch profile");
         }
+        return await response.json();
+    },
+
+    // New email existence check method
+    async checkEmailExists(email) {
+        const response = await fetch(`${API_URL}/check-email`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email }),
+        });
+
+        if (!response.ok) {
+            // If there's an error, assume email doesn't exist to avoid blocking registration
+            console.error('Error checking email existence:', await response.text());
+            return { exists: false };
+        }
+
         return await response.json();
     },
 

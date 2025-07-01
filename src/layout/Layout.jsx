@@ -3,7 +3,8 @@ import Navbar from "../components/Navbar";
 import { ThemeProvider } from "../ThemeProvider";
 import Footer from "../components/Footer";
 import ScrollToTop from "../components/ScrollToTop";
-
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export default function Layout() {
     return (
@@ -14,6 +15,7 @@ export default function Layout() {
             </main>
             <Footer />
             <ScrollToTop />
+            <ToastContainer />
         </div>
     );
 }

@@ -681,6 +681,22 @@ app.delete("/api/profile/image", userAuth, async (req, res) => {
   }
 });
 
+
+// Email existence check endpoint
+app.post('/api/check-email', async (req, res) => {
+  try {
+    const { email } = req.body;
+    if (!email) {
+      return res.status(400).json({ error: 'Email is required' });
+    }
+
+    const user = await User.findOne({ email });
+    res.json({ exists: !!user });
+  } catch (error) {
+    console.error('Error checking email:', error);
+    res.status(500).json({ error: 'Error checking email' });
+  }
+});
 // Temporary admin creation route (remove after use!)
 // Add this with your other routes in server.js
 
@@ -905,7 +921,10 @@ app.post("/api/register", async (req, res) => {
     // Check if user already exists
     const existingUser = await User.findOne({ email });
     if (existingUser) {
-      return res.status(400).json({ error: "Email already exists" });
+      return res.status(400).json({
+        error: "Email already registered",
+        field: "email"  // Add this to identify which field caused the error
+      });
     }
 
 
@@ -1167,6 +1186,59 @@ app.get("/api/profile", userAuth, async (req, res) => {
   }
 });
 
+
+// Resend verification email endpoint
+app.post("/api/resend-verification", async (req, res) => {
+  const { email } = req.body;
+
+  try {
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    if (user.isVerified) {
+      return res.status(400).json({ error: "Email is already verified" });
+    }
+
+    // Generate new verification token
+    const verificationToken = crypto.randomBytes(32).toString("hex");
+    user.verificationToken = verificationToken;
+    await user.save();
+
+    // Send verification email
+    const transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: process.env.GMAIL_USER,
+        pass: process.env.GMAIL_PASS,
+      },
+    });
+
+    const verifyUrl = `http://localhost:8080/api/verify-email?token=${verificationToken}&email=${email}`;
+
+    await transporter.sendMail({
+      from: process.env.GMAIL_USER,
+      to: email,
+      subject: "Please verify your email address",
+      html: `
+        <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
+          <h2>Email Verification</h2>
+          <p>We received a request to verify your email address. Please click the button below to complete your registration:</p>
+          <p style="text-align: center; margin: 30px 0;">
+            <a href="${verifyUrl}" style="background-color: #4CAF50; color: white; padding: 12px 20px; text-decoration: none; border-radius: 5px; display: inline-block;">Verify Email</a>
+          </p>
+          <p>If you didn't request this, you can safely ignore this email.</p>
+        </div>
+      `,
+    });
+
+    res.json({ message: "Verification email resent successfully" });
+  } catch (error) {
+    console.error("Error resending verification email:", error);
+    res.status(500).json({ error: "Failed to resend verification email" });
+  }
+});
 app.get("/api/report/users", adminAuth, async (req, res) => {
   try {
     const format = req.query.format || "pdf";

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { authAPI } from "../features/auth/authAPI";
@@ -24,9 +24,12 @@ const MultiStepRegistration = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [isHovered, setIsHovered] = useState(false);
     const [direction, setDirection] = useState(1); // 1 for forward, -1 for backward
-
+    const [serverErrors, setServerErrors] = useState({});
     const { theme, toggleTheme } = useTheme();
     const isDark = theme === "dark";
+    const [emailExists, setEmailExists] = useState(false);
+    const [checkingEmail, setCheckingEmail] = useState(false);
+    const [debounceTimer, setDebounceTimer] = useState(null);
 
     // Form data state
     const [formData, setFormData] = useState({
@@ -59,12 +62,72 @@ const MultiStepRegistration = () => {
     const namePattern = /^[A-Za-z]+$/;
     const phonePattern = /^\+?[\d\s-]{10,}$/;
 
+    useEffect(() => {
+        return () => {
+            if (debounceTimer) {
+                clearTimeout(debounceTimer);
+            }
+        };
+    }, [debounceTimer]);
+
+    useEffect(() => {
+        // Clear errors when step changes
+        setErrors({});
+    }, [step]);
+
     const handleChange = (e) => {
         const { name, value, type, checked } = e.target;
         setFormData(prev => ({
             ...prev,
             [name]: type === 'checkbox' ? checked : value
         }));
+
+        // Clear any existing errors for this field
+        if (errors[name]) {
+            setErrors(prev => ({ ...prev, [name]: undefined }));
+        }
+
+        if (name === 'email') {
+            setEmailExists(false);
+
+            if (value && emailPattern.test(value)) {
+                if (debounceTimer) {
+                    clearTimeout(debounceTimer);
+                }
+
+                setCheckingEmail(true);
+                setDebounceTimer(setTimeout(async () => {
+                    try {
+                        const response = await authAPI.checkEmailExists(value);
+                        setEmailExists(response.exists);
+                        if (response.exists) {
+                            setErrors(prev => ({
+                                ...prev,
+                                email: "This email is already registered"
+                            }));
+                        } else {
+                            // Clear email error if it was previously set
+                            setErrors(prev => ({ ...prev, email: undefined }));
+                        }
+                    } catch (error) {
+                        console.error('Error checking email:', error);
+                        setEmailExists(false);
+                        setErrors(prev => ({ ...prev, email: undefined }));
+                    } finally {
+                        setCheckingEmail(false);
+                    }
+                }, 500));
+            } else if (value && !emailPattern.test(value)) {
+                // Set invalid format error immediately
+                setErrors(prev => ({
+                    ...prev,
+                    email: "Invalid email format"
+                }));
+                setCheckingEmail(false);
+            } else {
+                setCheckingEmail(false);
+            }
+        }
     };
 
     const validateStep = () => {
@@ -87,6 +150,10 @@ const MultiStepRegistration = () => {
                 newErrors.email = "Email is required";
             } else if (!emailPattern.test(formData.email)) {
                 newErrors.email = "Invalid email format";
+            } else if (checkingEmail) {
+                newErrors.email = "Validating email...";
+            } else if (emailExists) {
+                newErrors.email = "This email is already registered";
             }
 
             if (!formData.password) {
@@ -123,21 +190,26 @@ const MultiStepRegistration = () => {
 
     const nextStep = (e) => {
         e.preventDefault();
+        // Clear all errors before validation
+        setErrors({});
+
         if (validateStep()) {
             setDirection(1);
             setStep(prev => prev + 1);
         } else {
             Object.values(errors).forEach(error => {
-                toast.error(error, {
-                    position: "top-right",
-                    autoClose: 5000,
-                    hideProgressBar: false,
-                    closeOnClick: true,
-                    pauseOnHover: true,
-                    draggable: true,
-                    progress: undefined,
-                    theme: "colored",
-                });
+                if (error) {
+                    toast.error(error, {
+                        position: "top-right",
+                        autoClose: 5000,
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        draggable: true,
+                        progress: undefined,
+                        theme: "colored",
+                    });
+                }
             });
         }
     };
@@ -156,15 +228,76 @@ const MultiStepRegistration = () => {
         try {
             setIsLoading(true);
             const response = await authAPI.register(formData);
-            setRegisteredEmail(formData.email);
-            setShowConfirmation(true);
 
-            if (response.user && response.token) {
-                dispatch(setCredentials({ user: response.user, token: response.token }));
-                navigate("/profile");
+            if (response.success) {
+                setRegisteredEmail(formData.email);
+                setShowConfirmation(true);
+
+                // Optionally log the user in immediately after registration
+                try {
+                    const loginResponse = await authAPI.login({
+                        email: formData.email,
+                        password: formData.password
+                    });
+
+                    dispatch(setCredentials({
+                        user: loginResponse.user,
+                        token: loginResponse.token
+                    }));
+                    navigate("/profile");
+                } catch (loginError) {
+                    // Handle login error specifically for unverified users
+                    if (loginError.message.includes("verify your email")) {
+                        toast.warning(loginError.message, {
+                            position: "top-right",
+                            autoClose: 5000,
+                            hideProgressBar: false,
+                            closeOnClick: true,
+                            pauseOnHover: true,
+                            draggable: true,
+                            progress: undefined,
+                            theme: "colored",
+                        });
+                    } else {
+                        // For other errors, show as error
+                        toast.error(loginError.message, {
+                            position: "top-right",
+                            autoClose: 5000,
+                            hideProgressBar: false,
+                            closeOnClick: true,
+                            pauseOnHover: true,
+                            draggable: true,
+                            progress: undefined,
+                            theme: "colored",
+                        });
+                    }
+                }
             }
         } catch (error) {
-            toast.error(error.message || "Registration failed. Please try again.");
+            // Handle registration errors
+            if (error.message.includes("verify your email")) {
+                toast.warning(error.message, {
+                    position: "top-right",
+                    autoClose: 5000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "colored",
+                });
+            } else {
+                toast.error(error.message || "Registration failed. Please try again.", {
+                    position: "top-right",
+                    autoClose: 5000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "colored",
+                });
+            }
         } finally {
             setIsLoading(false);
         }
@@ -172,22 +305,22 @@ const MultiStepRegistration = () => {
 
     // Animation variants
     const containerVariants = {
-        hidden: { opacity: 0, x: direction > 0 ? 20 : -20 }, // Reduced from 100px
+        hidden: { opacity: 0, x: direction > 0 ? 20 : -20 },
         visible: {
             opacity: 1,
             x: 0,
             transition: {
-                type: 'tween', // Simpler than spring
-                duration: 0.1, // Faster transition
+                type: 'tween',
+                duration: 0.1,
                 when: "beforeChildren",
-                staggerChildren: 0.05 // Reduced stagger
+                staggerChildren: 0.05
             }
         },
         exit: { opacity: 0, x: direction > 0 ? -20 : 20 }
     };
 
     const itemVariants = {
-        hidden: { opacity: 0, y: 10 }, // Reduced from 20px
+        hidden: { opacity: 0, y: 10 },
         visible: { opacity: 1, y: 0 }
     };
 
@@ -346,6 +479,11 @@ const MultiStepRegistration = () => {
                                             placeholder="your@email.com"
                                             required
                                         />
+                                        {checkingEmail && (
+                                            <div className="absolute right-3 top-3">
+                                                <div className="w-4 h-4 border-2 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+                                            </div>
+                                        )}
                                     </div>
                                     {errors.email && (
                                         <p className="mt-2 text-sm text-red-600">{errors.email}</p>
@@ -445,7 +583,6 @@ const MultiStepRegistration = () => {
                                             <option value="">Select gender</option>
                                             <option value="male">Male</option>
                                             <option value="female">Female</option>
-                                            <option value="other">Other</option>
                                             <option value="prefer-not-to-say">Prefer not to say</option>
                                         </select>
                                         <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -664,10 +801,11 @@ const MultiStepRegistration = () => {
                             type="button"
                             onClick={nextStep}
                             className="px-6 py-3 rounded-lg bg-blue-600 dark:bg-[#7C3AED] text-white font-medium hover:bg-blue-700 dark:hover:bg-[#6D28D9] focus:ring-4 focus:ring-blue-200 dark:focus:ring-blue-800 transition-colors duration-300 flex items-center"
+                            disabled={emailExists || Object.keys(errors).some(key => errors[key] !== undefined) || checkingEmail}
                             onMouseEnter={() => setIsHovered(true)}
                             onMouseLeave={() => setIsHovered(false)}
-                            whileHover={{ scale: 1.05 }}
-                            whileTap={{ scale: 0.95 }}
+                            whileHover={!emailExists && Object.keys(errors).length === 0 && !checkingEmail ? { scale: 1.05 } : {}}
+                            whileTap={!emailExists && Object.keys(errors).length === 0 && !checkingEmail ? { scale: 0.95 } : {}}
                         >
                             Continue
                             <FiArrowRight className={`ml-2 transition-transform duration-200 ${isHovered ? 'translate-x-1' : ''}`} />
