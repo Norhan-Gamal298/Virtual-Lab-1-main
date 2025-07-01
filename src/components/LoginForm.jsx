@@ -4,6 +4,9 @@ import { useDispatch } from 'react-redux';
 import { setCredentials } from '../features/auth/authSlice';
 import { authAPI } from '../features/auth/authAPI';
 import { toast } from 'react-toastify';
+import { FiMail, FiLock, FiUser, FiArrowRight, FiArrowLeft } from 'react-icons/fi';
+import logoLight from '../assets/logo-light.png';
+import logoDark from '../assets/logo-dark.png';
 
 const LoginForm = () => {
     const dispatch = useDispatch();
@@ -18,6 +21,7 @@ const LoginForm = () => {
     const [showReset, setShowReset] = useState(false);
     const [resetEmail, setResetEmail] = useState('');
     const [isLoading, setIsLoading] = useState(false);
+    const [isHovered, setIsHovered] = useState(false);
 
     const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
@@ -150,193 +154,208 @@ const LoginForm = () => {
     };
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-indigo-900 p-4 flex items-center justify-center">
+        <div className="min-h-screen flex items-center justify-center p-4 poppins-regular transition-all duration-200">
             <div className="w-full max-w-md">
-                {/* Decorative background elements */}
-                <div className="absolute inset-0 overflow-hidden pointer-events-none">
-                    <div className="absolute -top-4 -right-4 w-72 h-72 bg-purple-300 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse"></div>
-                    <div className="absolute -bottom-8 -left-4 w-72 h-72 bg-indigo-300 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse delay-1000"></div>
+                <div className="relative">
+                    {/* Glassmorphism container */}
+                    <div className="bg-white/80 dark:bg-[#1e1e1e] backdrop-blur-lg rounded-xl shadow-xl overflow-hidden border border-white/20 dark:border-gray-700/30">
+                        {/* Decorative accent */}
+
+                        {/* Logo */}
+                        <div className="flex justify-center pt-8">
+                            <img
+                                src={logoLight}
+                                alt="Logo"
+                                className="h-12 dark:hidden"
+                            />
+                            <img
+                                src={logoDark}
+                                alt="Logo"
+                                className="h-12 hidden dark:block"
+                            />
+                        </div>
+
+                        {showReset ? (
+                            <div className="px-8 py-8">
+                                <button
+                                    onClick={() => setShowReset(false)}
+                                    className="flex items-center text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 mb-6 transition-colors"
+                                >
+                                    <FiArrowLeft className="mr-2" />
+                                    Back to login
+                                </button>
+
+                                <h2 className="text-2xl font-bold text-center text-gray-800 dark:text-white mb-2">
+                                    Reset Password
+                                </h2>
+                                <p className="text-center text-gray-600 dark:text-gray-400 mb-8">
+                                    Enter your email to receive a password reset link
+                                </p>
+
+                                <form onSubmit={handleResetSubmit} className="space-y-6">
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                            Email Address
+                                        </label>
+                                        <div className="relative">
+                                            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                                <FiMail className="text-gray-400" />
+                                            </div>
+                                            <input
+                                                type="email"
+                                                value={resetEmail}
+                                                onChange={(e) => setResetEmail(e.target.value)}
+                                                className="block w-full pl-10 pr-3 py-3 rounded-lg border border-gray-300 dark:border-[#323232] bg-white/50 dark:bg-gray-700/50 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:focus:ring-purple-500 dark:focus:border-purple-500 transition-all duration-200"
+                                                placeholder="your@email.com"
+                                                required
+                                            />
+                                        </div>
+                                    </div>
+
+                                    <button
+                                        type="submit"
+                                        disabled={isLoading}
+                                        className={`w-full flex justify-center items-center py-3 px-4 rounded-lg dark:bg-[#7C3AED] text-white font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition-all duration-200 ${isLoading ? 'opacity-75' : ''}`}
+                                        onMouseEnter={() => setIsHovered(true)}
+                                        onMouseLeave={() => setIsHovered(false)}
+                                    >
+                                        {isLoading ? (
+                                            <>
+                                                <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                                </svg>
+                                                Sending...
+                                            </>
+                                        ) : (
+                                            <>
+                                                Send Reset Link
+                                                <FiArrowRight className={`ml-2 transition-transform duration-200 ${isHovered ? 'translate-x-1' : ''}`} />
+                                            </>
+                                        )}
+                                    </button>
+                                </form>
+                            </div>
+                        ) : (
+                            <div className="px-8 py-8">
+                                <h2 className="text-2xl font-bold text-center text-gray-800 dark:text-white mb-2">
+                                    Welcome Back
+                                </h2>
+                                <p className="text-center text-gray-600 dark:text-gray-400 mb-8">
+                                    Sign in to continue to your account
+                                </p>
+
+                                <form onSubmit={handleSubmit} className="space-y-6">
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                            Email Address
+                                        </label>
+                                        <div className="relative">
+                                            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                                <FiMail className="text-gray-400" />
+                                            </div>
+                                            <input
+                                                name="email"
+                                                type="email"
+                                                value={formData.email}
+                                                onChange={handleChange}
+                                                className={`block w-full pl-10 pr-3 py-3 rounded-lg border ${errors.email ? 'border-red-500' : 'border-[#E5E7EB] dark:border-[#323232]'} bg-[#F9FAFB] dark:bg-[#1E1E1E] focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:focus:ring-purple-500 dark:focus:border-purple-500 transition-all duration-200`}
+                                                placeholder="your@email.com"
+                                            />
+                                        </div>
+                                        {errors.email && (
+                                            <p className="mt-2 text-sm text-red-600">{errors.email}</p>
+                                        )}
+                                    </div>
+
+                                    <div>
+                                        <div className="flex justify-between items-center mb-2">
+                                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                                                Password
+                                            </label>
+                                            <button
+                                                type="button"
+                                                onClick={() => setShowReset(true)}
+                                                className="text-sm text-blue-600 dark:text-purple-400 hover:text-blue-800 dark:hover:text-purple-300 transition-colors"
+                                            >
+                                                Forgot password?
+                                            </button>
+                                        </div>
+                                        <div className="relative">
+                                            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                                <FiLock className="text-gray-400" />
+                                            </div>
+                                            <input
+                                                name="password"
+                                                type="password"
+                                                value={formData.password}
+                                                onChange={handleChange}
+                                                className={`block w-full pl-10 pr-3 py-3 rounded-lg border ${errors.password ? 'border-red-500' : 'border-[#E5E7EB] dark:border-[#323232]'} bg-[#F9FAFB] dark:bg-[#1E1E1E] focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:focus:ring-purple-500 dark:focus:border-purple-500 transition-all duration-200`}
+                                                placeholder="••••••••"
+                                            />
+                                        </div>
+                                        {errors.password && (
+                                            <p className="mt-2 text-sm text-red-600">{errors.password}</p>
+                                        )}
+                                    </div>
+
+                                    <div>
+                                        <button
+                                            type="submit"
+                                            disabled={isLoading}
+                                            className={`w-full flex justify-center items-center py-3 px-4 rounded-lg bg-[#2563EB] dark:bg-[#7C3AED] text-white font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-[#5B21B6] dark:focus:ring-offset-2 dark:focus:ring-offset-[#1e1e1e] transition-all duration-200 ${isLoading ? 'opacity-75' : ''}`}
+                                            onMouseEnter={() => setIsHovered(true)}
+                                            onMouseLeave={() => setIsHovered(false)}
+                                        >
+                                            {isLoading ? (
+                                                <>
+                                                    <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                                    </svg>
+                                                    Signing in...
+                                                </>
+                                            ) : (
+                                                <>
+                                                    Sign In
+                                                    <FiArrowRight className={`ml-2 transition-transform duration-200 ${isHovered ? 'translate-x-1' : ''}`} />
+                                                </>
+                                            )}
+                                        </button>
+                                    </div>
+                                </form>
+
+                                <div className="mt-6">
+                                    <div className="relative">
+                                        <div className="absolute inset-0 flex items-center">
+                                            <div className="w-full border-t border-gray-300 dark:border-gray-600"></div>
+                                        </div>
+                                        <div className="relative flex justify-center text-sm">
+                                            <span className="px-2 bg-white/80 dark:bg-[#1e1e1e] text-gray-500 dark:text-gray-400">
+                                                Don't have an account?
+                                            </span>
+                                        </div>
+                                    </div>
+
+                                    <div className="mt-6">
+                                        <Link
+                                            to="/register"
+                                            className="w-full flex justify-center items-center py-3 px-4 rounded-lg border border-[#E5E7EB] dark:border-[#323232] bg-[#F9FAFB] dark:bg-[#1E1E1E] text-gray-700 dark:text-gray-300 font-medium hover:bg-[#e8e8e8] dark:hover:bg-[#262626] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-[#5B21B6] dark:focus:ring-offset-2 dark:focus:ring-offset-[#1e1e1e] transition-all duration-200"
+                                        >
+                                            <FiUser className="mr-2" />
+                                            Create Account
+                                        </Link>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+                    </div>
                 </div>
 
-                <div className="relative bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl rounded-2xl shadow-2xl border border-white/20 p-8 transform hover:scale-105 transition-all duration-300">
-                    {showReset ? (
-                        <div className="animate-fadeIn">
-                            <div className="text-center mb-8">
-                                <div className="w-16 h-16 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
-                                    <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                                    </svg>
-                                </div>
-                                <h1 className="text-3xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 dark:from-white dark:to-gray-300 bg-clip-text text-transparent mb-2">
-                                    Reset Password
-                                </h1>
-                                <p className="text-gray-600 dark:text-gray-300">
-                                    Enter your email to receive a reset link
-                                </p>
-                            </div>
-
-                            <form onSubmit={handleResetSubmit} className="space-y-6">
-                                <div className="group">
-                                    <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-                                        Email address
-                                    </label>
-                                    <div className="relative">
-                                        <input
-                                            type="email"
-                                            value={resetEmail}
-                                            onChange={(e) => setResetEmail(e.target.value)}
-                                            className="w-full px-4 py-4 rounded-xl border-2 border-gray-200 dark:border-gray-600 bg-white/50 dark:bg-gray-700/50 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/20 transition-all duration-300 placeholder-gray-400"
-                                            placeholder="Enter your email"
-                                            required
-                                        />
-                                        <div className="absolute inset-y-0 right-0 pr-3 flex items-center">
-                                            <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207" />
-                                            </svg>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <button
-                                    type="submit"
-                                    disabled={isLoading}
-                                    className="w-full px-6 py-4 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-semibold hover:from-indigo-700 hover:to-purple-700 focus:ring-4 focus:ring-indigo-500/20 transform hover:scale-105 transition-all duration-300 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
-                                >
-                                    {isLoading ? (
-                                        <div className="flex items-center justify-center">
-                                            <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
-                                            Sending...
-                                        </div>
-                                    ) : (
-                                        'Send Reset Link'
-                                    )}
-                                </button>
-
-                                <button
-                                    type="button"
-                                    onClick={() => setShowReset(false)}
-                                    className="w-full text-center text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-300 font-medium transition-colors duration-300"
-                                >
-                                    ← Back to Sign In
-                                </button>
-                            </form>
-                        </div>
-                    ) : (
-                        <div className="animate-fadeIn">
-                            <div className="text-center mb-8">
-                                <div className="w-16 h-16 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
-                                    <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                                    </svg>
-                                </div>
-                                <h1 className="text-3xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 dark:from-white dark:to-gray-300 bg-clip-text text-transparent mb-2">
-                                    Welcome back!
-                                </h1>
-                                <p className="text-gray-600 dark:text-gray-300">
-                                    Sign in to continue your learning journey
-                                </p>
-                            </div>
-
-                            <form onSubmit={handleSubmit} className="space-y-6">
-                                <div className="group">
-                                    <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-                                        Email address
-                                    </label>
-                                    <div className="relative">
-                                        <input
-                                            name="email"
-                                            type="email"
-                                            value={formData.email}
-                                            onChange={handleChange}
-                                            className="w-full px-4 py-4 rounded-xl border-2 border-gray-200 dark:border-gray-600 bg-white/50 dark:bg-gray-700/50 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/20 transition-all duration-300 placeholder-gray-400"
-                                            placeholder="Enter your email"
-                                        />
-                                        <div className="absolute inset-y-0 right-0 pr-3 flex items-center">
-                                            <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207" />
-                                            </svg>
-                                        </div>
-                                    </div>
-                                    {errors.email && (
-                                        <p className="mt-2 text-sm text-red-500 animate-pulse">{errors.email}</p>
-                                    )}
-                                </div>
-
-                                <div className="group">
-                                    <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-                                        Password
-                                    </label>
-                                    <div className="relative">
-                                        <input
-                                            name="password"
-                                            type="password"
-                                            value={formData.password}
-                                            onChange={handleChange}
-                                            className="w-full px-4 py-4 rounded-xl border-2 border-gray-200 dark:border-gray-600 bg-white/50 dark:bg-gray-700/50 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/20 transition-all duration-300 placeholder-gray-400"
-                                            placeholder="Enter your password"
-                                        />
-                                        <div className="absolute inset-y-0 right-0 pr-3 flex items-center">
-                                            <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                                            </svg>
-                                        </div>
-                                    </div>
-                                    {errors.password && (
-                                        <p className="mt-2 text-sm text-red-500 animate-pulse">{errors.password}</p>
-                                    )}
-                                </div>
-
-                                <button
-                                    type="submit"
-                                    disabled={isLoading}
-                                    className="w-full px-6 py-4 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-semibold hover:from-indigo-700 hover:to-purple-700 focus:ring-4 focus:ring-indigo-500/20 transform hover:scale-105 transition-all duration-300 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
-                                >
-                                    {isLoading ? (
-                                        <div className="flex items-center justify-center">
-                                            <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
-                                            Signing in...
-                                        </div>
-                                    ) : (
-                                        'Sign In'
-                                    )}
-                                </button>
-
-                                <div className="text-center">
-                                    <button
-                                        type="button"
-                                        onClick={() => setShowReset(true)}
-                                        className="text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-300 font-medium transition-colors duration-300"
-                                    >
-                                        Forgot your password?
-                                    </button>
-                                </div>
-                            </form>
-
-                            <div className="mt-8 pt-6 border-t border-gray-200 dark:border-gray-600 text-center">
-                                <p className="text-gray-600 dark:text-gray-400">
-                                    Don't have an account?{' '}
-                                    <Link
-                                        to="/register"
-                                        className="text-indigo-600 dark:text-indigo-400 font-semibold hover:text-indigo-800 dark:hover:text-indigo-300 transition-colors duration-300"
-                                    >
-                                        Sign up
-                                    </Link>
-                                </p>
-                            </div>
-                        </div>
-                    )}
+                <div className="mt-6 text-center text-sm text-gray-500 dark:text-gray-400">
+                    © {new Date().getFullYear()} Virtual Lab. All rights reserved.
                 </div>
             </div>
-
-            <style jsx>{`
-                @keyframes fadeIn {
-                    from { opacity: 0; transform: translateY(20px); }
-                    to { opacity: 1; transform: translateY(0); }
-                }
-                .animate-fadeIn {
-                    animation: fadeIn 0.5s ease-out;
-                }
-            `}</style>
         </div>
     );
 };

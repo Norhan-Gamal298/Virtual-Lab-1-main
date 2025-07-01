@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, PieChart, Pie, Cell, ResponsiveContainer } from 'recharts';
-import { FiUsers, FiBook, FiAward, FiActivity, FiTrendingUp, FiBarChart2, FiUser } from 'react-icons/fi';
+import { FiMessageCircle, FiUsers, FiBook, FiFilter, FiAward, FiActivity, FiTrendingUp, FiBarChart2, FiUser } from 'react-icons/fi';
 import { motion } from 'framer-motion';
 import defaultAvatar from "../../assets/default-avatar.png";
+import FeedbackTable from './components/FeedbackTable';
 
 const Dashboard = () => {
     const [showAllActivities, setShowAllActivities] = useState(false);
@@ -17,75 +18,118 @@ const Dashboard = () => {
     });
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [feedback, setFeedback] = useState([]);
+    const [feedbackLoading, setFeedbackLoading] = useState(true);
+    const [feedbackError, setFeedbackError] = useState(null);
+    const [feedbackFilter, setFeedbackFilter] = useState('all');
 
     // Fetch dashboard data from server
     // Dashboard.jsx
+
     useEffect(() => {
-        const fetchData = async () => {
-            setLoading(true);
-            setError(null);
+        const fetchFeedback = async () => {
+            setFeedbackLoading(true);
+            setFeedbackError(null);
 
             try {
-                const [
-                    userStats,
-                    contentStats,
-                    quizStats,
-                    topContributors,
-                    mostAchievedTopics,
-                    quizPerformance,
-                    recentActivity
-                ] = await Promise.all([
+                const response = await fetchWithAuth('/api/feedback/all');
+                if (!response || !Array.isArray(response)) {
+                    throw new Error('Invalid feedback data received');
+                }
+                setFeedback(response);
+            } catch (err) {
+                console.error('Error fetching feedback:', err);
+                setFeedbackError(err.message || 'Failed to load feedback');
+                setFeedback([]); // Reset feedback to empty array on error
+            } finally {
+                setFeedbackLoading(false);
+            }
+        };
+
+        fetchFeedback();
+    }, []);
+
+
+    // Instead of fetching all data at once, implement progressive loading
+    useEffect(() => {
+        const loadInitialData = async () => {
+            setLoading(true);
+            try {
+                // First load critical data
+                const [userStats, contentStats] = await Promise.all([
                     fetchWithAuth('/api/dashboard/user-stats'),
-                    fetchWithAuth('/api/dashboard/content-stats'),
+                    fetchWithAuth('/api/dashboard/content-stats')
+                ]);
+
+                setDashboardData(prev => ({
+                    ...prev,
+                    userStats,
+                    contentStats
+                }));
+
+                // Then load secondary data
+                const [quizStats, topContributors] = await Promise.all([
                     fetchWithAuth('/api/dashboard/quiz-stats'),
-                    fetchWithAuth('/api/dashboard/top-contributors'),
+                    fetchWithAuth('/api/dashboard/top-contributors')
+                ]);
+
+                setDashboardData(prev => ({
+                    ...prev,
+                    quizStats,
+                    topContributors
+                }));
+
+                // Finally load less critical data
+                const [mostAchievedTopics, quizPerformance, recentActivity] = await Promise.all([
                     fetchWithAuth('/api/dashboard/most-achieved-topics'),
                     fetchWithAuth('/api/dashboard/quiz-performance'),
                     fetchWithAuth(`/api/dashboard/recent-activity?showAll=${showAllActivities}`)
                 ]);
 
-                // Process responses and set state
-                setDashboardData({
-                    userStats: {
-                        ...userStats,
-                        roleDistribution: userStats.roleDistribution || [],
-                        educationLevel: userStats.educationLevel || {},
-                        professionalStatus: userStats.professionalStatus || {},
-                        avgProgress: userStats.avgProgress || 0
-                    },
-                    contentStats: contentStats || {},
-                    quizStats: quizStats || { averageScore: 0, completedQuizzes: 0 },
-                    topContributors: topContributors || [],
-                    mostAchievedTopics: mostAchievedTopics || [],
-                    quizPerformance: quizPerformance || [],
-                    recentActivity: recentActivity || []
-                });
+                setDashboardData(prev => ({
+                    ...prev,
+                    mostAchievedTopics,
+                    quizPerformance,
+                    recentActivity
+                }));
             } catch (err) {
-                console.error('Failed to fetch dashboard data:', err);
                 setError(err.message || 'Failed to load dashboard data');
             } finally {
                 setLoading(false);
             }
         };
 
-        fetchData();
+        loadInitialData();
     }, [showAllActivities]);
 
     // Helper function
     const fetchWithAuth = async (url) => {
-        const response = await fetch(url, {
-            headers: {
-                'Authorization': `Bearer ${localStorage.getItem('token')}`,
-                'Content-Type': 'application/json'
+        try {
+            const response = await fetch(url, {
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error(`API request failed: ${response.statusText}`);
             }
-        });
 
-        if (!response.ok) {
-            throw new Error(`API request failed: ${response.statusText}`);
+            return await response.json();
+        } catch (error) {
+            console.error('Fetch error:', error);
+            throw error; // Re-throw to be caught by the calling function
         }
-
-        return response.json();
     };
+
+    const filteredFeedback = feedback.filter(item => {
+        if (feedbackFilter === 'all') return true;
+        if (feedbackFilter === 'positive') return item.rating >= 4;
+        if (feedbackFilter === 'neutral') return item.rating === 3;
+        if (feedbackFilter === 'negative') return item.rating <= 2;
+        return true;
+    });
 
     // Colors for charts (aligned with sidebar indigo theme)
     const COLORS = ['#4f46e5', '#6366f1', '#818cf8', '#a5b4fc', '#c7d2fe'];
@@ -105,7 +149,7 @@ const Dashboard = () => {
     };
 
     // User role distribution chart
-    const RoleDistributionChart = () => (
+    const RoleDistributionChart = React.memo(() => (
         <ResponsiveContainer width="100%" height={300}>
             <PieChart>
                 <Pie
@@ -141,7 +185,7 @@ const Dashboard = () => {
                 />
             </PieChart>
         </ResponsiveContainer>
-    );
+    ));
 
     // Top Contributors Component
     const TopContributors = ({ contributors }) => {
@@ -260,7 +304,7 @@ const Dashboard = () => {
     };
 
     // Content stats chart
-    const ContentStatsChart = () => (
+    const ContentStatsChart = React.memo(() => (
         <ResponsiveContainer width="100%" height={300}>
             <BarChart
                 data={[
@@ -305,10 +349,10 @@ const Dashboard = () => {
                 </Bar>
             </BarChart>
         </ResponsiveContainer>
-    );
+    ));
 
     // Recent activity table
-    const RecentActivityTable = () => (
+    const RecentActivityTable = React.memo(() => (
         <div className="overflow-x-auto rounded-lg border border-gray-200 dark:border-[#2d2d2d] transition-all duration-300">
             <table className="min-w-full divide-y divide-gray-200 dark:divide-[#2d2d2d]">
                 <thead className="bg-gray-50 dark:bg-[#1a1a1a]">
@@ -347,14 +391,16 @@ const Dashboard = () => {
                 </tbody>
             </table>
         </div>
-    );
+    ));
 
     // Quiz performance chart
-    const QuizPerformanceChart = () => {
+    const QuizPerformanceChart = React.memo(() => {
         if (!dashboardData) {
             return (
-                <div className="flex items-center justify-center h-64">
-                    <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-indigo-600"></div>
+                <div className="bg-white dark:bg-[#1f1f1f] rounded-lg shadow-sm border border-gray-200 dark:border-[#2d2d2d] p-6 h-[300px]">
+                    <div className="animate-pulse flex items-center justify-center h-full">
+                        <div className="h-[200px] w-full bg-gray-300 dark:bg-gray-700 rounded"></div>
+                    </div>
                 </div>
             );
         }
@@ -409,16 +455,132 @@ const Dashboard = () => {
                 </BarChart>
             </ResponsiveContainer>
         );
-    };
+    });
 
+    // Skeleton components
+    const CardSkeleton = () => (
+        <div className="bg-white dark:bg-[#1f1f1f] rounded-lg shadow-sm border border-gray-200 dark:border-[#2d2d2d] p-6">
+            <div className="animate-pulse flex space-x-4">
+                <div className="rounded-full bg-gray-300 dark:bg-gray-700 h-12 w-12"></div>
+                <div className="flex-1 space-y-4 py-1">
+                    <div className="h-4 bg-gray-300 dark:bg-gray-700 rounded w-3/4"></div>
+                    <div className="space-y-2">
+                        <div className="h-4 bg-gray-300 dark:bg-gray-700 rounded"></div>
+                        <div className="h-4 bg-gray-300 dark:bg-gray-700 rounded w-5/6"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+
+    const ChartSkeleton = () => (
+        <div className="bg-white dark:bg-[#1f1f1f] rounded-lg shadow-sm border border-gray-200 dark:border-[#2d2d2d] p-6 h-[300px]">
+            <div className="animate-pulse space-y-4">
+                <div className="h-6 bg-gray-300 dark:bg-gray-700 rounded w-1/2"></div>
+                <div className="h-4 bg-gray-300 dark:bg-gray-700 rounded w-1/4"></div>
+                <div className="h-[200px] bg-gray-300 dark:bg-gray-700 rounded mt-4"></div>
+            </div>
+        </div>
+    );
+
+    const TableSkeleton = ({ rows = 5 }) => (
+        <div className="animate-pulse space-y-4">
+            <div className="grid grid-cols-4 gap-4">
+                <div className="h-4 bg-gray-300 dark:bg-gray-700 rounded col-span-1"></div>
+                <div className="h-4 bg-gray-300 dark:bg-gray-700 rounded col-span-1"></div>
+                <div className="h-4 bg-gray-300 dark:bg-gray-700 rounded col-span-1"></div>
+                <div className="h-4 bg-gray-300 dark:bg-gray-700 rounded col-span-1"></div>
+            </div>
+            {[...Array(rows)].map((_, i) => (
+                <div key={i} className="grid grid-cols-4 gap-4">
+                    <div className="h-4 bg-gray-300 dark:bg-gray-700 rounded col-span-1"></div>
+                    <div className="h-4 bg-gray-300 dark:bg-gray-700 rounded col-span-1"></div>
+                    <div className="h-4 bg-gray-300 dark:bg-gray-700 rounded col-span-1"></div>
+                    <div className="h-4 bg-gray-300 dark:bg-gray-700 rounded col-span-1"></div>
+                </div>
+            ))}
+        </div>
+    );
+
+    const ListSkeleton = ({ items = 3 }) => (
+        <div className="animate-pulse space-y-4">
+            {[...Array(items)].map((_, i) => (
+                <div key={i} className="flex items-center space-x-4">
+                    <div className="rounded-full bg-gray-300 dark:bg-gray-700 h-10 w-10"></div>
+                    <div className="flex-1 space-y-2">
+                        <div className="h-4 bg-gray-300 dark:bg-gray-700 rounded w-3/4"></div>
+                        <div className="h-3 bg-gray-300 dark:bg-gray-700 rounded w-1/2"></div>
+                    </div>
+                    <div className="h-6 bg-gray-300 dark:bg-gray-700 rounded w-16"></div>
+                </div>
+            ))}
+        </div>
+    );
+
+
+
+    // Loading state
     // Loading state
     if (loading || !dashboardData.userStats || !dashboardData.contentStats) {
         return (
             <div className="min-h-screen w-full p-6 bg-gray-50 dark:bg-[#1a1a1a]">
-                <div className="flex justify-center items-center h-screen">
-                    <div className="flex flex-col items-center">
-                        <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-indigo-600"></div>
-                        <p className="mt-4 text-gray-600 dark:text-gray-300">Loading dashboard data...</p>
+                <div className="max-w-7xl mx-auto space-y-6">
+                    {/* Header Skeleton */}
+                    <div className="bg-white dark:bg-[#1f1f1f] rounded-lg shadow-sm border border-gray-200 dark:border-[#2d2d2d] p-6 mb-6">
+                        <div className="animate-pulse flex items-center space-x-3">
+                            <div className="p-2 bg-gray-300 dark:bg-gray-700 rounded-lg h-10 w-10"></div>
+                            <div className="space-y-2">
+                                <div className="h-6 bg-gray-300 dark:bg-gray-700 rounded w-48"></div>
+                                <div className="h-4 bg-gray-300 dark:bg-gray-700 rounded w-64"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Summary Cards Skeleton */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                        {[...Array(4)].map((_, i) => (
+                            <CardSkeleton key={i} />
+                        ))}
+                    </div>
+
+                    {/* Charts Section Skeleton */}
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div className="bg-white dark:bg-[#1f1f1f] rounded-lg shadow-sm border border-gray-200 dark:border-[#2d2d2d] p-6">
+                            <div className="animate-pulse space-y-4">
+                                <div className="h-6 bg-gray-300 dark:bg-gray-700 rounded w-1/2"></div>
+                                <div className="h-4 bg-gray-300 dark:bg-gray-700 rounded w-1/3"></div>
+                                <ListSkeleton items={3} />
+                            </div>
+                        </div>
+                        <div className="bg-white dark:bg-[#1f1f1f] rounded-lg shadow-sm border border-gray-200 dark:border-[#2d2d2d] p-6">
+                            <div className="animate-pulse space-y-4">
+                                <div className="h-6 bg-gray-300 dark:bg-gray-700 rounded w-1/2"></div>
+                                <div className="h-4 bg-gray-300 dark:bg-gray-700 rounded w-1/3"></div>
+                                <ListSkeleton items={3} />
+                            </div>
+                        </div>
+                        <ChartSkeleton />
+                        <ChartSkeleton />
+                        <ChartSkeleton />
+                        <ChartSkeleton />
+                    </div>
+
+                    {/* Recent Activity Skeleton */}
+                    <div className="bg-white dark:bg-[#1f1f1f] rounded-lg shadow-sm border border-gray-200 dark:border-[#2d2d2d] p-6">
+                        <div className="animate-pulse space-y-4">
+                            <div className="h-6 bg-gray-300 dark:bg-gray-700 rounded w-1/3"></div>
+                            <div className="h-4 bg-gray-300 dark:bg-gray-700 rounded w-1/2"></div>
+                            <TableSkeleton rows={5} />
+                        </div>
+                    </div>
+
+                    {/* Feedback Skeleton */}
+                    <div className="bg-white dark:bg-[#1f1f1f] rounded-lg shadow-sm border border-gray-200 dark:border-[#2d2d2d] p-6">
+                        <div className="animate-pulse space-y-4">
+                            <div className="h-6 bg-gray-300 dark:bg-gray-700 rounded w-1/3"></div>
+                            <div className="h-4 bg-gray-300 dark:bg-gray-700 rounded w-1/2"></div>
+                            <TableSkeleton rows={3} />
+                        </div>
                     </div>
                 </div>
             </div>
@@ -478,6 +640,29 @@ const Dashboard = () => {
                                 Insights and analytics about your platform's performance
                             </p>
                         </div>
+                    </div>
+                </motion.div>
+
+                <motion.div
+                    variants={cardVariants}
+                    className="bg-white dark:bg-[#1f1f1f] mb-6 rounded-lg shadow-sm border border-gray-200 dark:border-[#2d2d2d] p-6 border-l-4 border-l-indigo-200"
+                >
+                    <div className="flex items-center">
+                        <div className="p-3 rounded-full bg-indigo-100 dark:bg-indigo-900 text-indigo-600 dark:text-indigo-300">
+                            <FiMessageCircle className="h-6 w-6" />
+                        </div>
+                        <div className="ml-4">
+                            <h3 className="text-lg font-medium text-gray-500 dark:text-gray-400">Avg. Feedback</h3>
+                            <p className="text-2xl font-semibold text-gray-900 dark:text-white">
+                                {feedback.length > 0
+                                    ? (feedback.reduce((sum, item) => sum + item.rating, 0) / feedback.length).toFixed(1)
+                                    : '0.0'
+                                }/5
+                            </p>
+                        </div>
+                    </div>
+                    <div className="mt-4 text-sm text-gray-500 dark:text-gray-400">
+                        {feedback.length} feedback items received
                     </div>
                 </motion.div>
 
@@ -685,6 +870,108 @@ const Dashboard = () => {
                     </div>
                     <div className="p-6">
                         <RecentActivityTable />
+                    </div>
+                </motion.div>
+
+                <motion.div
+                    variants={cardVariants}
+                    className=" dark:bg-[#1f1f1f] mb-6 rounded-lg shadow-sm border border-gray-200 dark:border-[#2d2d2d] overflow-hidden mt-6"
+                >
+                    <div className="px-6 py-5 border-b border-gray-200 dark:border-[#2d2d2d] flex items-center justify-between">
+                        <div>
+                            <h3 className="text-lg font-medium leading-6 text-gray-900 dark:text-white">
+                                <FiMessageCircle className="inline mr-2" />
+                                Topic Feedback
+                            </h3>
+                            <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                                User feedback and ratings for learning topics
+                            </p>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                            <div className="relative">
+                                <select
+                                    value={feedbackFilter}
+                                    onChange={(e) => setFeedbackFilter(e.target.value)}
+                                    className="appearance-none bg-white dark:bg-[#2d2d2d] border border-gray-300 dark:border-[#3d3d3d] rounded-md pl-3 pr-8 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                >
+                                    <option value="all">All Feedback</option>
+                                    <option value="positive">Positive (4-5 stars)</option>
+                                    <option value="neutral">Neutral (3 stars)</option>
+                                    <option value="negative">Negative (1-2 stars)</option>
+                                </select>
+                                <FiFilter className="absolute right-3 top-2.5 text-gray-400" />
+                            </div>
+                        </div>
+                    </div>
+                    <div className="p-6">
+                        {feedbackLoading ? (
+                            <div className="bg-white dark:bg-[#1f1f1f] rounded-lg shadow-sm border border-gray-200 dark:border-[#2d2d2d] p-6">
+                                <div className="animate-pulse space-y-4">
+                                    <div className="h-6 bg-gray-300 dark:bg-gray-700 rounded w-1/3"></div>
+                                    <div className="h-4 bg-gray-300 dark:bg-gray-700 rounded w-1/2"></div>
+                                    <TableSkeleton rows={5} />
+                                </div>
+                            </div>
+                        ) : feedbackError ? (
+                            <div className="bg-red-50 dark:bg-red-900/30 border-l-4 border-red-500 p-4 rounded-md">
+                                <div className="flex">
+                                    <div className="flex-shrink-0">
+                                        <svg className="h-5 w-5 text-red-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                                        </svg>
+                                    </div>
+                                    <div className="ml-3">
+                                        <h3 className="text-sm font-medium text-red-800 dark:text-red-300">Error loading feedback</h3>
+                                        <div className="mt-2 text-sm text-red-700 dark:text-red-200">
+                                            <p>{feedbackError}</p>
+                                        </div>
+                                        <div className="mt-4">
+                                            <button
+                                                onClick={() => window.location.reload()}
+                                                className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-red-700 dark:text-red-200 bg-red-100 dark:bg-red-800/50 hover:bg-red-200 dark:hover:bg-red-800/70 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors duration-200"
+                                            >
+                                                Retry
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        ) : (
+                            <>
+                                {filteredFeedback.length === 0 ? (
+                                    <div className="flex flex-col items-center justify-center py-12">
+                                        <FiMessageCircle className="h-12 w-12 text-gray-400 dark:text-gray-500 mb-4" />
+                                        <h4 className="text-lg font-medium text-gray-700 dark:text-gray-300 mb-1">
+                                            No feedback available
+                                        </h4>
+                                        <p className="text-sm text-gray-500 dark:text-gray-500">
+                                            {feedbackFilter !== 'all' ? 'No feedback matches your filter' : 'No feedback has been submitted yet'}
+                                        </p>
+                                    </div>
+                                ) : (
+                                    <>
+                                        <div className="mb-4 flex justify-between items-center">
+                                            <div className="text-sm text-gray-500 dark:text-gray-400">
+                                                Showing {filteredFeedback.length} of {feedback.length} feedback items
+                                            </div>
+                                            <div className="flex items-center space-x-2">
+                                                <span className="text-sm font-medium text-gray-500 dark:text-gray-400">
+                                                    Average Rating:
+                                                </span>
+                                                <span className="text-lg font-bold text-gray-900 dark:text-white">
+                                                    {(
+                                                        filteredFeedback.reduce((sum, item) => sum + item.rating, 0) /
+                                                        filteredFeedback.length
+                                                    ).toFixed(1)}
+                                                    /5
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <FeedbackTable feedback={filteredFeedback} />
+                                    </>
+                                )}
+                            </>
+                        )}
                     </div>
                 </motion.div>
             </div>

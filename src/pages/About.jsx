@@ -19,7 +19,7 @@ import { Link, useNavigate, useLocation } from "react-router-dom";
 const teamMembers = [
     {
         name: "Ahmed Omar",
-        role: "Frontend Team",
+        role: "Frontend & Backend Team",
         image: ahmedImg,
     },
     {
@@ -111,16 +111,16 @@ const About = () => {
                 {/* Hero Section */}
                 <div className="flex flex-col-reverse md:flex-row items-center justify-between gap-8 sm:gap-12 mb-16 sm:mb-24">
                     <div className="flex-1 text-center md:text-left">
-                        <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4 leading-tight bg-gradient-to-r from-[#612EBE] via-[#8434f5] to-[#5d2bb5] bg-clip-text text-transparent">
+                        <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4 leading-tight text-[#2563EB] dark:text-[#7C3AED]">
                             Who We Are at Virtual Lab
                         </h1>
-                        <p className="text-base sm:text-lg mb-6 text-gray-700 dark:text-gray-300">
+                        <p className="text-base sm:text-lg mb-6 text-[#4B5563] dark:text-[#D1D5DB]">
                             Empowering learners to explore the world of Image Processing & Computer Vision through innovative virtual experiences.
                         </p>
                         <div className="flex justify-center md:justify-start">
                             <button
                                 onClick={handleDocsClick}
-                                className="bg-gradient-to-r from-[#612EBE] to-[#8434f5] text-white px-8 py-4 rounded-xl hover:from-[#5d2bb5] hover:to-[#612EBE] transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl w-full sm:w-auto text-center font-semibold"
+                                className="bg-[#2563EB] dark:bg-[#7C3AED] text-white px-8 py-4 rounded-xl hover:from-[#5d2bb5] hover:to-[#612EBE] transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl w-full sm:w-auto text-center font-semibold"
                             >
                                 Start Learning
                             </button>
@@ -142,25 +142,25 @@ const About = () => {
 
                 {/* Mission & Vision */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 mb-16 sm:mb-24">
-                    <div className="bg-white/80 dark:bg-[#0f0f0f]/80 backdrop-blur-sm border border-purple-200/50 dark:border-purple-800/30 p-6 sm:p-8 rounded-xl shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105">
+                    <div className="bg-white/80 dark:bg-[#0f0f0f]/80 backdrop-blur-sm border border-[#2563EB] dark:border-[#7C3AED] p-6 sm:p-8 rounded-xl shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105">
                         <div className="flex items-center mb-4">
-                            <div className="w-12 h-12 bg-gradient-to-r from-[#612EBE] to-[#8434f5] rounded-full flex items-center justify-center mr-4">
+                            <div className="w-12 h-12 bg-[#2563EB] dark:bg-[#7C3AED] rounded-full flex items-center justify-center mr-4">
                                 <HiOutlineLightBulb className="w-6 h-6 text-white" />
                             </div>
-                            <h2 className="text-xl sm:text-2xl font-semibold text-gray-900 dark:text-white">Our Mission</h2>
+                            <h2 className="text-xl sm:text-2xl font-semibold text-[#1F2937] dark:text-[#F3F4F6]">Our Mission</h2>
                         </div>
-                        <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
+                        <p className="text-[#4B5563] dark:text-[#D1D5DB] leading-relaxed">
                             Democratize access to high-quality image processing education through cutting-edge virtual laboratory experiences.
                         </p>
                     </div>
-                    <div className="bg-white/80 dark:bg-[#0f0f0f]/80 backdrop-blur-sm border border-purple-200/50 dark:border-purple-800/30 p-6 sm:p-8 rounded-xl shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105">
+                    <div className="bg-white/80 dark:bg-[#0f0f0f]/80 backdrop-blur-sm border border-[#2563EB] dark:border-[#7C3AED] p-6 sm:p-8 rounded-xl shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105">
                         <div className="flex items-center mb-4">
-                            <div className="w-12 h-12 bg-gradient-to-r from-[#8434f5] to-[#5d2bb5] rounded-full flex items-center justify-center mr-4">
+                            <div className="w-12 h-12 bg-[#2563EB] dark:bg-[#7C3AED] rounded-full flex items-center justify-center mr-4">
                                 <AiFillExperiment className="w-6 h-6 text-white" />
                             </div>
-                            <h2 className="text-xl sm:text-2xl font-semibold text-gray-900 dark:text-white">Our Vision</h2>
+                            <h2 className="text-xl sm:text-2xl font-semibold text-[#1F2937] dark:text-[#F3F4F6]">Our Vision</h2>
                         </div>
-                        <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
+                        <p className="text-[#4B5563] dark:text-[#D1D5DB] leading-relaxed">
                             Bridge the gap between theory and real-world applications, creating the next generation of computer vision experts.
                         </p>
                     </div>
@@ -168,9 +168,9 @@ const About = () => {
 
                 {/* What Makes Us Unique */}
                 <div className="mb-16 sm:mb-24">
-                    <h2 className="text-2xl sm:text-3xl font-bold mb-6 sm:mb-8 text-center md:text-left text-gray-900 dark:text-white">
+                    <h2 className="text-2xl sm:text-3xl font-bold mb-6 sm:mb-8 text-center md:text-left text-[#1F2937] dark:text-[#F3F4F6]">
                         What Makes Virtual Lab
-                        <span className="bg-gradient-to-r from-[#612EBE] to-[#8434f5] bg-clip-text text-transparent"> Unique</span>
+                        <span className="text-[#2563EB] dark:text-[#7C3AED]"> Unique</span>
                     </h2>
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
                         {[
@@ -178,36 +178,32 @@ const About = () => {
                                 icon: (<RxCode size={32} className="sm:w-10 sm:h-10 lg:w-12 lg:h-12" />),
                                 title: "Hands-on Labs",
                                 desc: "With OpenCV/MATLAB",
-                                gradient: "from-blue-500 to-purple-600"
                             },
                             {
                                 icon: (<LuPresentation size={32} className="sm:w-10 sm:h-10 lg:w-12 lg:h-12" />),
                                 title: "Expert-led Sessions",
                                 desc: "Live & recorded",
-                                gradient: "from-purple-500 to-pink-600"
                             },
                             {
                                 icon: (<HiOutlineLightBulb size={32} className="sm:w-10 sm:h-10 lg:w-12 lg:h-12" />),
                                 title: "Real-world Cases",
                                 desc: "Projects & challenges",
-                                gradient: "from-pink-500 to-red-500"
                             },
                             {
                                 icon: (<AiFillExperiment size={32} className="sm:w-10 sm:h-10 lg:w-12 lg:h-12" />),
                                 title: "Virtual Experiments",
                                 desc: "Interactive simulations",
-                                gradient: "from-indigo-500 to-purple-600"
                             }
                         ].map((feature, idx) => (
-                            <div key={idx} className="group bg-white/80 dark:bg-[#0f0f0f]/80 backdrop-blur-sm border border-purple-200/50 dark:border-purple-800/30 p-6 sm:p-8 lg:p-12 rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:scale-105 hover:-translate-y-2">
+                            <div key={idx} className="group bg-white/80 dark:bg-[#0f0f0f]/80 backdrop-blur-sm border border-[#2563EB] dark:border-[#7C3AED] p-6 sm:p-8 lg:p-12 rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:scale-105 hover:-translate-y-2">
                                 <div className="flex flex-col items-center text-center">
-                                    <div className={`w-16 h-16 bg-gradient-to-r ${feature.gradient} rounded-full flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300 shadow-lg`}>
+                                    <div className={`w-16 h-16 bg-[#2563EB] dark:bg-[#7C3AED] rounded-full flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300 shadow-lg`}>
                                         <div className="text-white">
                                             {feature.icon}
                                         </div>
                                     </div>
-                                    <h3 className="text-lg sm:text-xl font-semibold mb-2 text-gray-900 dark:text-white">{feature.title}</h3>
-                                    <p className="text-gray-600 dark:text-gray-400 text-sm sm:text-base">{feature.desc}</p>
+                                    <h3 className="text-lg sm:text-xl font-semibold mb-2 text-[#1F2937] dark:text-[#F3F4F6]">{feature.title}</h3>
+                                    <p className="text-[#4B5563] dark:text-[#D1D5DB] text-sm sm:text-base">{feature.desc}</p>
                                 </div>
                             </div>
                         ))}
@@ -222,7 +218,7 @@ const About = () => {
                     </h2>
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
                         {teamMembers.map((member, idx) => (
-                            <div key={idx} className="group bg-white/80 dark:bg-[#0f0f0f]/80 backdrop-blur-sm border border-purple-200/50 dark:border-purple-800/30 p-4 sm:p-6 rounded-xl text-center shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:scale-105 hover:-translate-y-2">
+                            <div key={idx} className="group bg-white/80 dark:bg-[#0f0f0f]/80 backdrop-blur-sm border border-[#2563EB] dark:border-[#7C3AED] p-4 sm:p-6 rounded-xl text-center shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:scale-105 hover:-translate-y-2">
                                 {member.image && (
                                     <div className="relative mb-4">
                                         <div className="absolute inset-0 bg-gradient-to-r from-[#612EBE] to-[#8434f5] rounded-full blur-sm opacity-0 dark:group-hover:opacity-20 transition-opacity duration-300"></div>
@@ -233,27 +229,27 @@ const About = () => {
                                         />
                                     </div>
                                 )}
-                                <h3 className="text-base sm:text-lg text-gray-900 dark:text-white font-semibold mb-1">
+                                <h3 className="text-base sm:text-lg text-[#1F2937] dark:text-[#F3F4F6] font-semibold mb-1">
                                     {member.name}
                                 </h3>
-                                <p className="text-[#612EBE] dark:text-[#8434f5] text-sm sm:text-base font-medium">{member.role}</p>
+                                <p className="text-[#2563EB] dark:text-[#7C3AED] text-sm sm:text-base font-medium">{member.role}</p>
                             </div>
                         ))}
                     </div>
                 </div>
 
                 {/* Call to Action */}
-                <div className="bg-gradient-to-r from-[#612EBE] via-[#8434f5] to-[#5d2bb5] rounded-2xl p-8 text-center shadow-2xl">
+                <div className="bg-[#2563EB] dark:bg-[#7C3AED] rounded-2xl p-8 text-center shadow-2xl">
                     <div className="max-w-2xl mx-auto">
-                        <h2 className="text-2xl sm:text-3xl font-bold text-white mb-4">
+                        <h2 className="text-2xl sm:text-3xl font-bold text-white dark:text-[#F3F4F6] mb-4">
                             Ready to Start Your Journey?
                         </h2>
-                        <p className="text-purple-100 mb-6 text-lg">
+                        <p className="text-white dark:text-[#D1D5DB] mb-6 text-lg">
                             Join thousands of students already learning with Virtual Lab
                         </p>
                         <button
                             onClick={handleDocsClick}
-                            className="inline-block bg-white text-[#612EBE] font-semibold px-8 py-3 rounded-lg hover:bg-purple-50 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105"
+                            className="inline-block bg-white text-[#2563EB] dark:text-[#7C3AED] font-semibold px-8 py-3 rounded-lg dark:hover:bg-purple-50 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105"
                         >
                             Get Started Now
                         </button>

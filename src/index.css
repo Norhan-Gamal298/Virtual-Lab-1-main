@@ -1517,7 +1517,7 @@ pre {
   transition: all ease-in-out 0.2s;
 /*   filter: hue-rotate(180deg);
  */
- filter: hue-rotate(220deg);
+ filter: hue-rotate(190deg);
 }
 
 .dark .aboutUsImg{
@@ -1667,4 +1667,46 @@ img {
     max-height: 50vh;
     overflow-y: auto;
   }
+}
+
+
+
+
+
+
+.css-19y0qf7-MuiFormControl-root-MuiPickersTextField-root{
+  border: 1px solid #d1d5db !important;
+  border-radius: 0.5rem  !important;
+  background: #f9fafb !important;
+}
+
+.dark .css-19y0qf7-MuiFormControl-root-MuiPickersTextField-root{
+  border: 1px solid #323232 !important;
+  background: #1e1e1e !important;
+}
+
+.css-lqwr9g-MuiPickersOutlinedInput-notchedOutline{
+  border:none !important;
+}
+
+.css-1y4gq5a-MuiPickersSectionList-root-MuiPickersInputBase-sectionsContainer-MuiPickersOutlinedInput-sectionsContainer{
+  padding: 12px 0 !important;
+}
+
+.MuiPickersSectionList-root.MuiPickersInputBase-sectionsContainer.css-1fb7els-MuiPickersSectionList-root-MuiPickersInputBase-sectionsContainer-MuiPickersOutlinedInput-sectionsContainer{
+  padding: 12px 0 !important;
+}
+
+.dark .MuiPickersSectionList-root.MuiPickersInputBase-sectionsContainer.css-1fb7els-MuiPickersSectionList-root-MuiPickersInputBase-sectionsContainer-MuiPickersOutlinedInput-sectionsContainer{
+  padding: 12px 0 !important;
+}
+.dark .css-1y4gq5a-MuiPickersSectionList-root-MuiPickersInputBase-sectionsContainer-MuiPickersOutlinedInput-sectionsContainer{
+  color: white !important;
+
+}
+.dark .css-1hgcujo-MuiPickersInputBase-root-MuiPickersOutlinedInput-root{
+color: #fff !important;
+}
+.dark .MuiSvgIcon-root.MuiSvgIcon-fontSizeMedium.css-1umw9bq-MuiSvgIcon-root{
+  color: white;
 }

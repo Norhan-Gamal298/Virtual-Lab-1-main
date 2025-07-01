@@ -414,6 +414,20 @@ const activityLogSchema = new mongoose.Schema({
 const ActivityLog = mongoose.model('ActivityLog', activityLogSchema);
 
 
+// Add to your schemas
+const feedbackSchema = new mongoose.Schema({
+  email: { type: String, required: true },
+  topicId: { type: String, required: true },
+  rating: { type: Number, required: true, min: 1, max: 5 },
+  message: { type: String },
+  createdAt: { type: Date, default: Date.now }
+});
+
+const Feedback = mongoose.model('Feedback', feedbackSchema);
+
+// Add feedback endpoint
+
+
 // Utility function to log activities
 const logActivity = async (userId, userEmail, actionType, details = {}) => {
   try {
@@ -567,6 +581,53 @@ const userAuth = [
 const hasProfileImage = (user) => {
   return user.profileImage && user.profileImage.data && user.profileImage.data.length > 0;
 };
+
+app.post('/api/feedback', async (req, res) => {
+  try {
+    const { email, topicId, rating, message } = req.body;
+
+    const feedback = new Feedback({
+      email,
+      topicId,
+      rating,
+      message
+    });
+
+    await feedback.save();
+
+    res.status(201).json({ message: 'Feedback submitted successfully' });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to submit feedback' });
+  }
+});
+
+// Add this to your server.js file
+app.get('/api/feedback/all', adminAuth, async (req, res) => {
+  try {
+    const feedback = await Feedback.find()
+      .sort({ createdAt: -1 })
+      .lean();
+
+    // Get topic titles for the feedback
+    const topics = await Topic.find({}, 'topicId title').lean();
+    const topicMap = topics.reduce((acc, topic) => {
+      acc[topic.topicId] = topic.title;
+      return acc;
+    }, {});
+
+    // Enhance feedback with topic titles
+    const enhancedFeedback = feedback.map(item => ({
+      ...item,
+      topicTitle: topicMap[item.topicId] || 'Unknown Topic',
+      formattedDate: new Date(item.createdAt).toLocaleString()
+    }));
+
+    res.json(enhancedFeedback);
+  } catch (error) {
+    console.error('Error fetching feedback:', error);
+    res.status(500).json({ error: 'Failed to fetch feedback' });
+  }
+});
 
 app.post("/api/profile/upload-image", userAuth, profileImageUpload.single('profileImage'), async (req, res) => {
   try {

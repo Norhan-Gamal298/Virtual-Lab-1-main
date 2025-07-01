@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
@@ -21,6 +21,11 @@ export default function MarkdownPage() {
   const [showCongratulations, setShowCongratulations] = useState(false);
   const videoRef = useRef(null);
   const hasRedirectedRef = useRef(false);
+  const [connectionError, setConnectionError] = useState(false);
+  {/* Handling Topics ratings */ }
+  const [showFeedbackModal, setShowFeedbackModal] = useState(false);
+  const [rating, setRating] = useState(0);
+  const [feedbackMessage, setFeedbackMessage] = useState('');
 
   const { user } = useSelector((state) => state.auth);
   const userEmail =
@@ -44,27 +49,29 @@ export default function MarkdownPage() {
   }, []);
 
   // Sort chapters and topics
-  const sortedChapters = [...chapters].sort((a, b) => {
-    const numA =
-      a.chapterId || parseInt(a.chapter.match(/^\d+/)?.[0] || "0", 10);
-    const numB =
-      b.chapterId || parseInt(b.chapter.match(/^\d+/)?.[0] || "0", 10);
-    return numA - numB;
-  });
+  const sortedChapters = useMemo(() => {
+    return [...chapters].sort((a, b) => {
+      const numA = a.chapterId || parseInt(a.chapter.match(/^\d+/)?.[0] || "0", 10);
+      const numB = b.chapterId || parseInt(b.chapter.match(/^\d+/)?.[0] || "0", 10);
+      return numA - numB;
+    });
+  }, [chapters]);
 
-  const allTopics = sortedChapters.flatMap((chapter) =>
-    [...chapter.topics].sort((a, b) => {
-      const getParts = (t) => {
-        const match = t.id.match(/^chapter_(\d+)_(\d+)_(\d+)_/);
-        return match
-          ? [parseInt(match[1]), parseInt(match[2]), parseInt(match[3])]
-          : [0, 0, 0];
-      };
-      const [a1, a2, a3] = getParts(a);
-      const [b1, b2, b3] = getParts(b);
-      return a1 - b1 || a2 - b2 || a3 - b3;
-    })
-  );
+  const allTopics = useMemo(() => {
+    return sortedChapters.flatMap((chapter) =>
+      [...chapter.topics].sort((a, b) => {
+        const getParts = (t) => {
+          const match = t.id.match(/^chapter_(\d+)_(\d+)_(\d+)_/);
+          return match
+            ? [parseInt(match[1]), parseInt(match[2]), parseInt(match[3])]
+            : [0, 0, 0];
+        };
+        const [a1, a2, a3] = getParts(a);
+        const [b1, b2, b3] = getParts(b);
+        return a1 - b1 || a2 - b2 || a3 - b3;
+      })
+    );
+  }, [sortedChapters]);
 
   const currentIndex = allTopics.findIndex((topic) => topic.id === topicId);
   const prevTopic = currentIndex > 0 ? allTopics[currentIndex - 1] : null;
@@ -77,7 +84,10 @@ export default function MarkdownPage() {
 
     try {
       const response = await fetch(`http://localhost:8080/api/user-progress/${userEmail}`);
-      if (!response.ok) return false;
+      if (!response.ok) {
+        setConnectionError(true);
+        return false;
+      }
 
       const progressData = await response.json();
       const userProgress = Array.isArray(progressData)
@@ -224,6 +234,43 @@ export default function MarkdownPage() {
     }
   };
 
+  const handleSubmitFeedback = async () => {
+    try {
+      const response = await fetch('http://localhost:8080/api/feedback', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: userEmail,
+          topicId,
+          rating,
+          message: feedbackMessage
+        }),
+      });
+
+      if (!response.ok) throw new Error('Failed to submit feedback');
+
+      // Close modal first
+      setShowFeedbackModal(false);
+
+      // Reset feedback state
+      setRating(0);
+      setFeedbackMessage('');
+
+      // Then navigate after a brief delay to allow the modal to fully close
+      setTimeout(() => {
+        if (nextTopic) {
+          navigate(`/docs/${nextTopic.id}`);
+        } else if (showFinishButton) {
+          handleFinishJourney();
+        }
+      }, 100);
+    } catch (error) {
+      console.error('Error submitting feedback:', error);
+    }
+  };
+
   const handleNextTopicClick = () => {
     if (user) {
       const topicExists = allTopics.some(t => t.id === topicId);
@@ -231,6 +278,11 @@ export default function MarkdownPage() {
         console.error(`Topic ${topicId} not found`);
         return navigate(`/docs/${nextTopic.id}`);
       }
+
+      // Show feedback modal first
+      setShowFeedbackModal(true);
+
+      // Update progress but DON'T navigate yet
       fetch("http://localhost:8080/api/update-progress", {
         method: "POST",
         headers: {
@@ -244,13 +296,14 @@ export default function MarkdownPage() {
         .then((response) => response.json())
         .then((data) => {
           console.log("Progress updated:", data);
-          navigate(`/docs/${nextTopic.id}`);
+          // DON'T navigate here - let the feedback modal handle navigation
         })
         .catch((error) => {
           console.error("Error updating progress:", error);
-          navigate(`/docs/${nextTopic.id}`);
+          // DON'T navigate here either
         });
     } else {
+      // If no user, navigate directly without feedback
       navigate(`/docs/${nextTopic.id}`);
     }
   };
@@ -370,21 +423,39 @@ export default function MarkdownPage() {
                     img: ({ src, alt }) => {
                       if (!src) return null;
 
-                      const currentTopic = allTopics.find(
-                        (t) => t.id === topicId
-                      );
+                      const currentTopic = allTopics.find((t) => t.id === topicId);
                       if (!currentTopic) return null;
 
                       const filename = src.split("/").pop();
                       const imageUrl = `http://localhost:8080/api/image/${currentTopic.id}/${filename}`;
 
+                      const [loading, setLoading] = useState(true);
+                      const [error, setError] = useState(false);
+
                       return (
-                        <img
-                          src={imageUrl}
-                          alt={alt || ""}
-                          loading="lazy"
-                          className="max-w-full h-auto my-6 rounded-lg border border-neutral-border shadow-sm"
-                        />
+                        <div className="relative">
+                          {loading && (
+                            <div className="absolute inset-0 bg-gray-200 dark:bg-gray-700 animate-pulse rounded-lg" />
+                          )}
+                          {error ? (
+                            <div className="bg-red-100 dark:bg-red-900 p-4 rounded-lg">
+                              Image failed to load
+                            </div>
+                          ) : (
+                            <img
+                              src={imageUrl}
+                              alt={alt || ""}
+                              loading="lazy"
+                              className={`max-w-full h-auto my-6 rounded-lg border border-neutral-border shadow-sm ${loading ? 'opacity-0' : 'opacity-100'
+                                }`}
+                              onLoad={() => setLoading(false)}
+                              onError={() => {
+                                setLoading(false);
+                                setError(true);
+                              }}
+                            />
+                          )}
+                        </div>
                       );
                     },
                     video: ({ src, ...props }) => {
@@ -412,74 +483,75 @@ export default function MarkdownPage() {
                         />
                       </div>
                     ),
-                    code({ className, children }) {
-                      const language = className?.replace("language-", "");
+                    code({ node, inline, className, children, ...props }) {
+                      const language = className?.replace('language-', '');
 
-                      if (language === "python") {
-                        const codeString = String(children).trim();
-                        const encodedCode = encodeURIComponent(codeString);
-
+                      // For inline code
+                      if (inline) {
                         return (
-                          <div className="relative mb-6">
-                            <pre className="bg-neutral-surface border border-neutral-border rounded-lg p-4 overflow-x-auto">
-                              <code
-                                className={`${className} text-neutral-text-primary text-sm`}
-                              >
-                                {children}
-                              </code>
-                            </pre>
-                            <div className="mt-3">
-                              <button
-                                className="text-[#fff] bg-[#1F2937] dark:bg-[#612EBE] hover:bg-primary-hover text-primary-on px-4 py-2 rounded-lg transition-colors duration-200 poppins-regular float-right top-[-4rem] relative left-[-1rem]"
-                                onClick={() =>
-                                  navigate(
-                                    `/terminal-page?code=${encodedCode}`,
-                                    { state: { fromLesson: true } }
-                                  )
-                                }
-                              >
-                                Try it yourself
-                              </button>
-                              <div className="text-sm mt-2 text-neutral-text-secondary">
-                                Note: You'll be able to upload required files in
-                                the terminal
-                              </div>
-                            </div>
-                          </div>
-                        );
-                      }
-                      if (language === "matlab") {
-                        return (
-                          <div className="relative mb-6">
-                            <pre className="bg-neutral-surface border border-neutral-border rounded-lg p-4 overflow-x-auto">
-                              <code
-                                className={`${className} text-neutral-text-primary text-sm`}
-                              >
-                                {children}
-                              </code>
-                            </pre>
-                            <div className="mt-3">
-                              <a
-                                href="https://www.mathworks.com/products/matlab-online.html"
-                                target="_blank"
-                                rel="noopener noreferrer nofollow"
-                                className="inline-block bg-primary text-[#fff] bg-[#1F2937] dark:bg-[#612EBE] hover:bg-primary-hover text-primary-on px-4 py-2 rounded-lg transition-colors duration-200 font-medium"
-                              >
-                                Try on MATLAB Online
-                              </a>
-                            </div>
-                          </div>
-                        );
-                      }
-
-                      return (
-                        <pre className="bg-neutral-surface border border-neutral-border rounded-lg p-4 overflow-x-auto my-4">
-                          <code
-                            className={`${className} text-neutral-text-primary text-sm`}
-                          >
+                          <code className="bg-neutral-surface-secondary px-1.5 py-0.5 rounded text-sm border border-neutral-border text-neutral-text-primary font-mono">
                             {children}
                           </code>
-                        </pre>
+                        );
+                      }
+
+                      // For code blocks
+                      return (
+                        <div className="relative my-6 rounded-lg overflow-hidden bg-[#1E1E1E] shadow-lg">
+                          {/* Editor header */}
+                          <div className="flex items-center justify-between px-4 py-2 bg-[#252526] border-b border-[#333]">
+                            <div className="flex items-center space-x-2">
+                              <span className="w-3 h-3 rounded-full bg-[#FF5F56]"></span>
+                              <span className="w-3 h-3 rounded-full bg-[#FFBD2E]"></span>
+                              <span className="w-3 h-3 rounded-full bg-[#27C93F]"></span>
+                            </div>
+                            <div className="text-xs text-neutral-400 font-mono">
+                              {language || 'text'}
+                            </div>
+                          </div>
+
+                          {/* Line numbers and code */}
+                          <div className="flex overflow-x-auto font-mono text-sm">
+                            <div className="text-neutral-500 select-none pr-4 py-3 text-right border-r border-[#333] bg-[#1E1E1E]">
+                              {Array.from({ length: String(children).split('\n').length }, (_, i) => (
+                                <div key={i} className="px-2">{i + 1}</div>
+                              ))}
+                            </div>
+                            <pre className="flex-1 py-3 px-4 overflow-x-auto">
+                              <code className={`language-${language} block text-[#D4D4D4]`}>
+                                {children}
+                              </code>
+                            </pre>
+                          </div>
+
+                          {/* Action buttons */}
+                          <div className="absolute top-[3rem] right-2 flex space-x-2">
+                            <button
+                              className="text-xs bg-[#333] hover:bg-[#3a3a3a] text-neutral-300 px-2 py-1 rounded"
+                              onClick={() => navigator.clipboard.writeText(String(children))}
+                            >
+                              Copy
+                            </button>
+
+                            {language === 'python' && (
+                              <button
+                                className="text-xs bg-[#007acc] hover:bg-[#0062a3] text-white px-2 py-1 rounded"
+                                onClick={() => navigate(`/terminal-page?code=${encodeURIComponent(String(children))}`)}
+                              >
+                                Run
+                              </button>
+                            )}
+
+                            {(language === 'matlab' || language === 'm') && (
+                              <button
+                                className="text-xs bg-[#e97627] hover:bg-[#d16619] text-white px-2 py-1 rounded"
+                                onClick={() => window.open('https://www.mathworks.com/products/matlab-online.html', '_blank')}
+                              >
+                                Try on Matlab
+                              </button>
+                            )}
+                          </div>
+                        </div>
                       );
                     },
                     a: ({ href, children }) => (
@@ -582,7 +654,7 @@ export default function MarkdownPage() {
                       {nextTopic.title}
                     </div>
                   </button>
-                ) : showFinishButton ? (
+                ) : showFinishButton && !connectionError ? (
                   <button
                     onClick={handleFinishJourney}
                     className="border border-green-500 hover:border-green-600 bg-green-500 hover:bg-green-600 text-white rounded-lg text-right cursor-pointer paginationNavLink paginationNavLinkNext p-4 transition-all duration-200"
@@ -634,6 +706,121 @@ export default function MarkdownPage() {
           )}
         </div>
       </div>
+      {showFeedbackModal && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="bg-[#E5E7EB] dark:bg-[#1E1E1E] rounded-2xl shadow-2xl max-w-lg w-full mx-4 overflow-hidden border border-[#E5E7EB] dark:border-[#323232]">
+            {/* Header */}
+            <div className="bg-gradient-to-r from-blue-600 to-purple-600 dark:from-purple-600 dark:to-purple-700 px-8 py-6 text-white">
+              <div className="flex items-center space-x-3">
+                <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
+                  </svg>
+                </div>
+                <div>
+                  <h3 className="text-xl font-semibold">Share Your Experience</h3>
+                  <p className="text-blue-100 dark:text-purple-100 text-sm">Help us improve the learning experience</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Content */}
+            <div className="px-8 py-6">
+              {/* Rating Section */}
+              <div className="mb-6">
+                <label className="block text-sm font-medium text-gray-800 dark:text-gray-100 mb-3">
+                  How would you rate this topic?
+                </label>
+                <div className="flex justify-center space-x-2">
+                  {[1, 2, 3, 4, 5].map((star) => (
+                    <button
+                      key={star}
+                      onClick={() => setRating(star)}
+                      className={`group relative transition-all duration-200 hover:scale-110 ${star <= rating ? 'text-yellow-400' : 'text-gray-400 dark:text-gray-500 hover:text-yellow-300'
+                        }`}
+                    >
+                      <svg className="w-8 h-8" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+                      </svg>
+                      {/* Hover tooltip */}
+                      <div className="absolute -top-10 left-1/2 transform -translate-x-1/2 bg-gray-800 dark:bg-gray-200 text-white dark:text-gray-800 text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+                        {['Poor', 'Fair', 'Good', 'Very Good', 'Excellent'][star - 1]}
+                      </div>
+                    </button>
+                  ))}
+                </div>
+                {rating > 0 && (
+                  <p className="text-center text-sm text-gray-600 dark:text-gray-400 mt-2">
+                    {['Poor', 'Fair', 'Good', 'Very Good', 'Excellent'][rating - 1]} - Thank you for your rating!
+                  </p>
+                )}
+              </div>
+
+              {/* Feedback Text */}
+              <div className="mb-6">
+                <label className="block text-sm font-medium text-gray-800 dark:text-gray-100 mb-2">
+                  Additional feedback <span className="text-gray-500 dark:text-gray-400">(optional)</span>
+                </label>
+                <div className="relative">
+                  <textarea
+                    placeholder="Share what you liked or suggest improvements..."
+                    className="w-full p-4 bg-white dark:bg-[#1E1E1E] border border-[#E5E7EB] dark:border-[#323232] rounded-lg focus:ring-2 focus:ring-blue-600 dark:focus:ring-purple-600 focus:border-transparent text-gray-800 dark:text-gray-100 resize-none transition-all duration-200"
+                    rows={4}
+                    value={feedbackMessage}
+                    onChange={(e) => setFeedbackMessage(e.target.value)}
+                  />
+                  <div className="absolute bottom-3 right-3 text-xs text-gray-500 dark:text-gray-400">
+                    {feedbackMessage.length}/500
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Footer */}
+            <div className="bg-white dark:bg-[#1E1E1E] border-t border-[#E5E7EB] dark:border-[#323232] px-8 py-4 flex justify-between items-center">
+              <button
+                onClick={() => {
+                  setShowFeedbackModal(false);
+                  setRating(0);
+                  setFeedbackMessage('');
+                  // Skip feedback and go to next topic
+                  if (nextTopic) {
+                    navigate(`/docs/${nextTopic.id}`);
+                  } else if (showFinishButton) {
+                    handleFinishJourney();
+                  }
+                }}
+                className="px-4 py-2 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 transition-colors duration-200 font-medium"
+              >
+                Skip for now
+              </button>
+
+              <div className="flex space-x-3">
+                <button
+                  onClick={() => {
+                    setShowFeedbackModal(false);
+                    setRating(0);
+                    setFeedbackMessage('');
+                  }}
+                  className="px-4 py-2 border border-[#E5E7EB] dark:border-[#323232] text-gray-800 dark:text-gray-100 hover:bg-gray-100 dark:hover:bg-[#323232] rounded-lg transition-all duration-200 font-medium"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleSubmitFeedback}
+                  disabled={rating === 0}
+                  className={`px-6 py-2 rounded-lg font-medium transition-all duration-200 ${rating === 0
+                    ? 'bg-gray-300 dark:bg-gray-600 text-gray-500 dark:text-gray-400 cursor-not-allowed'
+                    : 'bg-gradient-to-r from-blue-600 to-purple-600 dark:from-purple-600 dark:to-purple-700 hover:from-blue-700 hover:to-purple-700 dark:hover:from-purple-700 dark:hover:to-purple-800 text-white shadow-lg hover:shadow-xl transform hover:scale-105'
+                    }`}
+                >
+                  {rating === 0 ? 'Select a rating' : 'Submit Feedback'}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
       {showCongratulations && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
           <div className="bg-white dark:bg-[#1E1E1E] rounded-xl shadow-xl max-w-md w-full p-6 text-center">

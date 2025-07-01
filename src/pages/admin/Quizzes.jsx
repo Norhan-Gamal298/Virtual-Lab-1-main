@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { Plus, Edit3, Trash2, Save, X, BookOpen, HelpCircle, CheckCircle, Search, Filter } from "lucide-react";
 
 const initialForm = {
@@ -17,6 +17,14 @@ export default function QuizQuestionsAdmin() {
     const [filterChapter, setFilterChapter] = useState("");
     const [showForm, setShowForm] = useState(false);
 
+
+    const [currentPage, setCurrentPage] = useState(1);
+    const [questionsPerPage] = useState(10); // Adjust as needed
+
+
+
+
+
     // Fetch all questions
     useEffect(() => {
         fetch("http://localhost:8080/api/quizs/all")
@@ -28,16 +36,22 @@ export default function QuizQuestionsAdmin() {
     }, []);
 
     // Get unique chapters for filter
-    const uniqueChapters = [...new Set(questions.map(q => q.chapterId))];
+    const uniqueChapters = useMemo(() => [...new Set(questions.map(q => q.chapterId))], [questions]);
 
     // Filter questions based on search and chapter
-    const filteredQuestions = questions.filter(q => {
-        const matchesSearch = q.question.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            q.chapterTitle?.toLowerCase().includes(searchTerm.toLowerCase());
-        const matchesChapter = !filterChapter || q.chapterId === filterChapter;
-        return matchesSearch && matchesChapter;
-    });
-
+    const filteredQuestions = useMemo(() => {
+        return questions.filter(q => {
+            const matchesSearch = q.question.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                q.chapterTitle?.toLowerCase().includes(searchTerm.toLowerCase());
+            const matchesChapter = !filterChapter || q.chapterId === filterChapter;
+            return matchesSearch && matchesChapter;
+        });
+    }, [questions, searchTerm, filterChapter]);
+    // Calculate pagination
+    const indexOfLastQuestion = currentPage * questionsPerPage;
+    const indexOfFirstQuestion = indexOfLastQuestion - questionsPerPage;
+    const currentQuestions = filteredQuestions.slice(indexOfFirstQuestion, indexOfLastQuestion);
+    const totalPages = Math.ceil(filteredQuestions.length / questionsPerPage);
     // Handle form input
     const handleChange = e => {
         setForm({ ...form, [e.target.name]: e.target.value });
@@ -112,6 +126,33 @@ export default function QuizQuestionsAdmin() {
             .then(() => setQuestions(questions.filter(q => q._id !== id)))
             .catch(err => console.error("Failed to delete question:", err));
     };
+
+    const PaginationControls = () => (
+        <div className="flex items-center justify-between px-6 py-4 border-t dark:border-[#3a3a3a] border-gray-200 mt-[3rem]">
+            <div className="text-sm dark:text-gray-400 text-gray-600">
+                Showing {indexOfFirstQuestion + 1}-{Math.min(indexOfLastQuestion, filteredQuestions.length)} of {filteredQuestions.length} questions
+            </div>
+            <div className="flex space-x-2">
+                <button
+                    onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                    disabled={currentPage === 1}
+                    className="px-3 py-1 rounded-md dark:bg-[#3a3a3a] bg-gray-200 dark:hover:bg-[#4a4a4a] hover:bg-gray-300 disabled:opacity-50"
+                >
+                    Previous
+                </button>
+                <span className="px-3 py-1 dark:text-gray-300 text-gray-700">
+                    Page {currentPage} of {totalPages}
+                </span>
+                <button
+                    onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                    disabled={currentPage === totalPages}
+                    className="px-3 py-1 rounded-md dark:bg-[#3a3a3a] bg-gray-200 dark:hover:bg-[#4a4a4a] hover:bg-gray-300 disabled:opacity-50"
+                >
+                    Next
+                </button>
+            </div>
+        </div>
+    );
 
     return (
         <div className="min-h-screen w-full p-6">
@@ -289,7 +330,7 @@ export default function QuizQuestionsAdmin() {
                     </div>
 
                     <div className="divide-y dark:divide-[#3a3a3a] divide-gray-200">
-                        {filteredQuestions.length === 0 ? (
+                        {currentQuestions.length === 0 ? (
                             <div className="p-8 text-center">
                                 <HelpCircle className="mx-auto h-12 w-12 dark:text-gray-600 text-gray-400 mb-4" />
                                 <p className="dark:text-gray-400 text-gray-500 text-lg">No questions found</p>
@@ -298,7 +339,7 @@ export default function QuizQuestionsAdmin() {
                                 </p>
                             </div>
                         ) : (
-                            filteredQuestions.map((q, index) => (
+                            currentQuestions.map((q, index) => (
                                 <div key={q._id} className="p-6 dark:hover:bg-[#3a3a3a] hover:bg-gray-50 transition-colors duration-200">
                                     <div className="flex items-start justify-between mb-4">
                                         <div className="flex-1">
@@ -365,6 +406,7 @@ export default function QuizQuestionsAdmin() {
                     </div>
                 </div>
             </div>
+            <PaginationControls />
         </div>
     );
 }

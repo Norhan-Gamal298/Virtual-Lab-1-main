@@ -23,27 +23,11 @@ export default function Footer() {
                                 alt="logo"
                             />
                         </div>
-                        <p className="text-gray-600 dark:text-gray-400 mb-6 max-w-md">
+                        <p className="text-[#4B5563] dark:text-[#D1D5DB] mb-6 max-w-md">
                             Empowering learners with interactive quizzes, comprehensive documentation,
                             and a vibrant community. Join us on your learning journey.
                         </p>
                         <div className="flex space-x-4">
-                            {/* <a
-                                href="https://github.com"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
-                            >
-                                <Github className="w-5 h-5" />
-                            </a>
-                            <a
-                                href="https://twitter.com"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="text-gray-400 hover:text-blue-500 transition-colors"
-                            >
-                                <Twitter className="w-5 h-5" />
-                            </a> */}
                             <a
                                 href="mailto:virtual.image.lab@gmail.com"
                                 className="text-gray-400 hover:text-red-500 transition-colors"
@@ -56,14 +40,14 @@ export default function Footer() {
 
                     {/* Quick Links */}
                     <div>
-                        <h3 className="text-sm font-semibold text-gray-900 dark:text-white uppercase tracking-wider mb-4">
+                        <h3 className="text-sm font-semibold text-[#4B5563] dark:text-[#D1D5DB] uppercase tracking-wider mb-4">
                             Quick Links
                         </h3>
                         <ul className="space-y-3">
                             <li>
                                 <Link
                                     to="/"
-                                    className="text-gray-600 dark:text-gray-400 hover:text-[#612EBE] transition-colors"
+                                    className="text-gray-600 dark:text-gray-400 hover:text-[#2563EB] dark:hover:text-[#7C3AED] transition-colors"
                                 >
                                     Home
                                 </Link>
@@ -71,7 +55,7 @@ export default function Footer() {
                             <li>
                                 <Link
                                     to="/docs"
-                                    className="text-gray-600 dark:text-gray-400 hover:text-[#612EBE] transition-colors"
+                                    className="text-gray-600 dark:text-gray-400 hover:text-[#2563EB] dark:hover:text-[#7C3AED] transition-colors"
                                 >
                                     Documentation
                                 </Link>
@@ -79,7 +63,7 @@ export default function Footer() {
                             <li>
                                 <Link
                                     to="/quizzes"
-                                    className="text-gray-600 dark:text-gray-400 hover:text-[#612EBE] transition-colors"
+                                    className="text-gray-600 dark:text-gray-400 hover:text-[#2563EB] dark:hover:text-[#7C3AED] transition-colors"
                                 >
                                     Quizzes
                                 </Link>
@@ -87,7 +71,7 @@ export default function Footer() {
                             <li>
                                 <Link
                                     to="/blogs"
-                                    className="text-gray-600 dark:text-gray-400 hover:text-[#612EBE] transition-colors"
+                                    className="text-gray-600 dark:text-gray-400 hover:text-[#2563EB] dark:hover:text-[#7C3AED] transition-colors"
                                 >
                                     Blog
                                 </Link>
@@ -104,7 +88,7 @@ export default function Footer() {
                             <li>
                                 <Link
                                     to="/community"
-                                    className="text-gray-600 dark:text-gray-400 hover:text-[#612EBE] transition-colors"
+                                    className="text-gray-600 dark:text-gray-400 hover:text-[#2563EB] dark:hover:text-[#7C3AED] transition-colors"
                                 >
                                     Community
                                 </Link>
@@ -112,7 +96,7 @@ export default function Footer() {
                             <li>
                                 <Link
                                     to="/about"
-                                    className="text-gray-600 dark:text-gray-400 hover:text-[#612EBE] transition-colors"
+                                    className="text-gray-600 dark:text-gray-400 hover:text-[#2563EB] dark:hover:text-[#7C3AED] transition-colors"
                                 >
                                     About Us
                                 </Link>
@@ -120,7 +104,7 @@ export default function Footer() {
                             <li>
                                 <Link
                                     to="/terminal-page"
-                                    className="text-gray-600 dark:text-gray-400 hover:text-[#612EBE] transition-colors"
+                                    className="text-gray-600 dark:text-gray-400 hover:text-[#2563EB] dark:hover:text-[#7C3AED] transition-colors"
                                 >
                                     Terminal
                                 </Link>
@@ -128,7 +112,7 @@ export default function Footer() {
                             <li>
                                 <Link
                                     to="/faq"
-                                    className="text-gray-600 dark:text-gray-400 hover:text-[#612EBE] transition-colors"
+                                    className="text-gray-600 dark:text-gray-400 hover:text-[#2563EB] dark:hover:text-[#7C3AED] transition-colors"
                                 >
                                     FAQ
                                 </Link>
@@ -148,10 +132,10 @@ export default function Footer() {
                         <div className="flex flex-col md:flex-row items-center space-y-2 md:space-y-0 md:space-x-6 text-sm text-gray-600 dark:text-gray-400">
                             <p>&copy; {currentYear} Virtual Lab. All rights reserved.</p>
                             <div className="flex space-x-6">
-                                <Link to="/privacy" className="hover:text-[#612EBE] dark:hover:text-[#612EBE] transition-colors">
+                                <Link to="/privacy" className="hover:text-[#2563EB] dark:hover:text-[#7C3AED] transition-colors">
                                     Privacy Policy
                                 </Link>
-                                <Link to="/terms" className="hover:text-[#612EBE] dark:hover:text-[#612EBE] transition-colors">
+                                <Link to="/terms" className="hover:text-[#2563EB] dark:hover:text-[#7C3AED] transition-colors">
                                     Terms of Service
                                 </Link>
                             </div>
