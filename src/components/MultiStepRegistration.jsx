@@ -721,7 +721,7 @@ const MultiStepRegistration = () => {
                                     </div>
                                 </motion.div>
 
-                                <motion.div variants={itemVariants}>
+                                {/*                                 <motion.div variants={itemVariants}>
                                     <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                                         Time Zone
                                     </label>
@@ -744,7 +744,7 @@ const MultiStepRegistration = () => {
                                             <option value="Asia/Tokyo">Tokyo (JST)</option>
                                         </select>
                                     </div>
-                                </motion.div>
+                                </motion.div> */}
 
                                 <motion.div variants={itemVariants} className="md:col-span-2">
                                     <div className="flex items-center">
